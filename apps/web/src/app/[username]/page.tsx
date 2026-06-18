@@ -30,7 +30,7 @@ export default async function CreatorProfile({
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
           <div>
-            <div className="relative aspect-[2/1] rounded-2xl overflow-hidden bg-[#f3f4f6]">
+            <div className="relative aspect-[2/1] rounded-2xl overflow-hidden bg-surface">
               <Image src={cover} alt={c.user.name} fill className="object-cover" priority />
             </div>
             <div className="flex items-end gap-4 -mt-12 px-4">
@@ -78,7 +78,7 @@ export default async function CreatorProfile({
               <h2 className="text-xl font-black mb-3">Portfolio</h2>
               <div className="grid grid-cols-3 gap-2">
                 {c.portfolio.map((src, i) => (
-                  <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-[#f3f4f6]">
+                  <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-surface">
                     <Image src={src} alt="" fill className="object-cover" sizes="33vw" />
                   </div>
                 ))}
@@ -105,7 +105,7 @@ export default async function CreatorProfile({
                       <li key={l.code} className="flex items-center gap-2">
                         <span>{l.flag}</span>
                         <span className="flex-1">{l.code}</span>
-                        <div className="w-24 h-1.5 bg-[#f3f4f6] rounded-full overflow-hidden">
+                        <div className="w-24 h-1.5 bg-surface rounded-full overflow-hidden">
                           <div className="h-full brand-gradient" style={{ width: `${l.pct}%` }} />
                         </div>
                         <span className="text-muted w-8 text-right">{l.pct}%</span>
@@ -119,7 +119,7 @@ export default async function CreatorProfile({
                     {c.audience.ages.map((a) => (
                       <li key={a.range} className="flex items-center gap-2">
                         <span className="w-12">{a.range}</span>
-                        <div className="flex-1 h-1.5 bg-[#f3f4f6] rounded-full overflow-hidden">
+                        <div className="flex-1 h-1.5 bg-surface rounded-full overflow-hidden">
                           <div className="h-full brand-gradient" style={{ width: `${a.pct}%` }} />
                         </div>
                         <span className="text-muted w-8 text-right">{a.pct}%</span>

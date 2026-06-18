@@ -74,10 +74,14 @@ export class AdminService {
     if (adminId === userId) throw new ForbiddenException("Can't ban yourself");
     const u = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!u) throw new NotFoundException();
-    return this.prisma.user.update({
-      where: { id: userId },
-      data: { bannedAt: new Date() },
-    });
+    const [user] = await this.prisma.$transaction([
+      this.prisma.user.update({ where: { id: userId }, data: { bannedAt: new Date() } }),
+      this.prisma.refreshToken.updateMany({
+        where: { userId, revokedAt: null },
+        data: { revokedAt: new Date() },
+      }),
+    ]);
+    return user;
   }
 
   async unbanUser(userId: string) {
@@ -151,8 +155,17 @@ export class AdminService {
     return o;
   }
 
+  // Admin overrides are NOT a free pass. Each force-action declares which source
+  // states it accepts. Anything else is rejected — payouts must not be conjured
+  // from unpaid or already-closed orders.
+  private static readonly ADMIN_TRANSITIONS: Partial<Record<OrderStatus, OrderStatus[]>> = {
+    released: ["approved", "disputed"],
+    cancelled: ["pending_payment", "awaiting_creator", "in_progress", "submitted", "revision_requested", "disputed"],
+    disputed: ["submitted", "revision_requested", "approved"],
+  };
+
   async forceRelease(orderId: string, note: string) {
-    return this.transition(orderId, "released", note ?? "Admin force release");
+    return this.transition(orderId, "released", note || "Admin force release");
   }
 
   async forceCancel(orderId: string, reason: string) {
@@ -168,6 +181,12 @@ export class AdminService {
   private async transition(orderId: string, to: OrderStatus, note: string) {
     const order = await this.prisma.order.findUnique({ where: { id: orderId } });
     if (!order) throw new NotFoundException();
+    const allowed = AdminService.ADMIN_TRANSITIONS[to];
+    if (!allowed || !allowed.includes(order.status)) {
+      throw new BadRequestException(
+        `Admin cannot move order from "${order.status}" to "${to}". Allowed sources: ${(allowed ?? []).join(", ") || "none"}.`
+      );
+    }
     const [updated] = await this.prisma.$transaction([
       this.prisma.order.update({ where: { id: orderId }, data: { status: to } }),
       this.prisma.orderEvent.create({ data: { orderId, status: to, note: `[ADMIN] ${note}` } }),

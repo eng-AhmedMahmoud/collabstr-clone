@@ -66,7 +66,7 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
                       active?.id === t.id ? "bg-surface" : "hover:bg-surface"
                     }`}
                   >
-                    <div className="relative h-11 w-11 rounded-full overflow-hidden bg-[#f3f4f6] shrink-0">
+                    <div className="relative h-11 w-11 rounded-full overflow-hidden bg-surface shrink-0">
                       <Image src={counter.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(counter.name)}`} alt={counter.name} fill className="object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -84,13 +84,13 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
           {active ? (
             <>
               <header className="flex items-center gap-3 p-4 border-b border-border">
-                <div className="relative h-10 w-10 rounded-full overflow-hidden bg-[#f3f4f6]">
+                <div className="relative h-10 w-10 rounded-full overflow-hidden bg-surface">
                   <Image src={(me.role === "brand" ? active.creator : active.brand).avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent((me.role === "brand" ? active.creator : active.brand).name)}`} alt="" fill className="object-cover" />
                 </div>
                 <p className="font-bold">{(me.role === "brand" ? active.creator : active.brand).name}</p>
               </header>
 
-              <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-[#fafafe]">
+              <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-surface">
                 {loading && <p className="text-center text-xs text-muted">Loading…</p>}
                 {msgs.map((m) => (
                   <div key={m.id} className={`flex ${m.senderId === me.id ? "justify-end" : "justify-start"}`}>

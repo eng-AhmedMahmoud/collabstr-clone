@@ -111,7 +111,7 @@ export function CheckoutForm({ creator, pkg }: { creator: ApiCreator; pkg: Pkg }
         <div className="rounded-2xl border border-border bg-elevated p-5 sticky top-24">
           <h2 className="font-bold">Order summary</h2>
           <div className="flex items-center gap-3 mt-4">
-            <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-[#f3f4f6]">
+            <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-surface">
               <Image src={avatar} alt={creator.user.name} fill className="object-cover" />
             </div>
             <div>

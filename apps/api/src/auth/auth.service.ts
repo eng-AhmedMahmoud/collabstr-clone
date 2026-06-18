@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { ConflictException, ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import * as crypto from "crypto";
@@ -71,6 +71,7 @@ export class AuthService {
   async login(input: LoginInput) {
     const user = await this.prisma.user.findUnique({ where: { email: input.email } });
     if (!user) throw new UnauthorizedException("Invalid credentials");
+    if (user.bannedAt) throw new ForbiddenException("Account disabled");
     const ok = await bcrypt.compare(input.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException("Invalid credentials");
     const tokens = await this.issueTokens(user.id, user.email, user.role);
@@ -85,13 +86,24 @@ export class AuthService {
       throw new UnauthorizedException("Invalid refresh token");
     }
     const tokenHash = crypto.createHash("sha256").update(refreshToken).digest("hex");
-    const record = await this.prisma.refreshToken.findUnique({ where: { tokenHash } });
-    if (!record || record.revokedAt || record.expiresAt < new Date() || record.userId !== payload.sub) {
-      throw new UnauthorizedException("Invalid refresh token");
+
+    // Atomic rotation: only one concurrent refresh can flip the row from active to revoked.
+    const claim = await this.prisma.refreshToken.updateMany({
+      where: { tokenHash, revokedAt: null, userId: payload.sub, expiresAt: { gt: new Date() } },
+      data: { revokedAt: new Date() },
+    });
+    if (claim.count !== 1) {
+      // Either token is reused (possible compromise) or never existed: nuke the family.
+      await this.prisma.refreshToken.updateMany({
+        where: { userId: payload.sub, revokedAt: null },
+        data: { revokedAt: new Date() },
+      });
+      throw new UnauthorizedException("Refresh token reused or invalid");
     }
-    await this.prisma.refreshToken.update({ where: { id: record.id }, data: { revokedAt: new Date() } });
-    const user = await this.prisma.user.findUnique({ where: { id: record.userId } });
+
+    const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
     if (!user) throw new UnauthorizedException();
+    if (user.bannedAt) throw new ForbiddenException("Account disabled");
     return this.issueTokens(user.id, user.email, user.role);
   }
 
@@ -107,6 +119,7 @@ export class AuthService {
       include: { creatorProfile: true, brandProfile: true },
     });
     if (!user) throw new UnauthorizedException();
+    if (user.bannedAt) throw new ForbiddenException("Account disabled");
     return {
       id: user.id,
       email: user.email,

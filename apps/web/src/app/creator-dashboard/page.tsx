@@ -96,9 +96,9 @@ export default async function CreatorDashboard() {
         </section>
 
         <section className="rounded-2xl border border-border bg-elevated p-5">
-          <h2 className="font-bold text-lg mb-3">My applications</h2>
+          <h2 className="font-bold text-lg mb-3">طلباتي · My applications</h2>
           {applications.length === 0 ? (
-            <p className="text-sm text-muted">No applications yet. <Link href="/campaigns" className="underline">Browse campaigns</Link>.</p>
+            <p className="text-sm text-muted">لا توجد طلبات بعد. <Link href="/campaigns" className="underline">تصفّح الحملات</Link>.</p>
           ) : (
             <ul className="space-y-3">
               {applications.slice(0, 6).map((a) => (

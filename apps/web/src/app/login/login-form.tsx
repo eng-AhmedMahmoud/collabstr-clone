@@ -28,7 +28,9 @@ export function LoginForm({ next }: { next?: string }) {
       }
       const user = await res.json();
       router.refresh();
-      router.push(next || (user.role === "creator" ? "/creator-dashboard" : "/dashboard"));
+      const fallback = user.role === "creator" ? "/creator-dashboard" : "/dashboard";
+      const safe = next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : fallback;
+      router.push(safe);
     } catch (err: any) {
       setError(err.message);
     } finally {

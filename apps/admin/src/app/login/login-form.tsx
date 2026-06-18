@@ -30,7 +30,9 @@ export function LoginForm({ next, labels }: { next?: string; labels: Labels }) {
         return;
       }
       router.refresh();
-      router.push(next || "/");
+      // Defense in depth: server already sanitized `next` via safeNext().
+      const safe = next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : "/";
+      router.push(safe);
     } catch (err: any) {
       setError(err.message);
     } finally {

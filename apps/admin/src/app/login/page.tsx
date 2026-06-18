@@ -1,5 +1,6 @@
 import { LoginForm } from "./login-form";
 import { t as serverT } from "@/lib/i18n";
+import { safeNext } from "@/lib/safe-next";
 
 export const metadata = { title: "Admin · Sign in · Nakhla" };
 export const dynamic = "force-dynamic";
@@ -9,6 +10,8 @@ export default async function AdminLoginPage({
 }: { searchParams: Promise<{ next?: string; error?: string }> }) {
   const { next, error } = await searchParams;
   const t = await serverT();
+  const showDemoCreds = process.env.SHOW_DEMO_CREDS === "1";
+
   return (
     <div className="min-h-screen grid place-items-center bg-[#0b0b14] px-4">
       <div className="w-full max-w-sm">
@@ -27,11 +30,13 @@ export default async function AdminLoginPage({
               {t.login.notAdmin}
             </p>
           )}
-          <LoginForm next={next} labels={{ email: t.login.email, password: t.login.password, submit: t.login.submit }} />
+          <LoginForm next={safeNext(next)} labels={{ email: t.login.email, password: t.login.password, submit: t.login.submit }} />
         </div>
-        <p className="text-xs text-[#8b8ba0] text-center mt-4">
-          Demo: <code>admin@nakhla.sa</code> · <code>Admin1234!</code>
-        </p>
+        {showDemoCreds && (
+          <p className="text-xs text-[#8b8ba0] text-center mt-4">
+            Demo (dev only): <code>admin@nakhla.sa</code> · <code>Admin1234!</code>
+          </p>
+        )}
       </div>
     </div>
   );
