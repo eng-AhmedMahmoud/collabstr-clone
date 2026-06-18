@@ -1,6 +1,7 @@
 type Flow = { from: string; to: string };
+type RoleBlock = { role: "Logged-out" | "Brand" | "Creator"; color: string; emoji: string; steps: Flow[] };
 
-const FLOWS: { role: "Logged-out"; color: string; emoji: string; steps: Flow[] }[] | { role: "Brand"; color: string; emoji: string; steps: Flow[] }[] | { role: "Creator"; color: string; emoji: string; steps: Flow[] }[] = [
+const FLOWS: RoleBlock[] = [
   {
     role: "Logged-out",
     color: "#6b7280",
