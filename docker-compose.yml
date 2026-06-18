@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: collabstr-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: collabstr
+      POSTGRES_PASSWORD: collabstr
+      POSTGRES_DB: collabstr
+    ports:
+      - "55432:5432"
+    volumes:
+      - collabstr-pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U collabstr -d collabstr"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  collabstr-pg-data:

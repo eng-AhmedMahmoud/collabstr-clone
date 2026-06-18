@@ -1,26 +1,20 @@
 {
-  "name": "collabstr-clone",
-  "version": "0.1.0",
+  "name": "collabstr-monorepo",
   "private": true,
+  "version": "0.1.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
-  },
-  "dependencies": {
-    "next": "16.2.9",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "dev": "turbo run dev --parallel",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "web": "pnpm --filter @collabstr/web",
+    "api": "pnpm --filter @collabstr/api",
+    "db:migrate": "pnpm --filter @collabstr/api prisma:migrate",
+    "db:seed": "pnpm --filter @collabstr/api seed"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "16.2.9",
-    "tailwindcss": "^4",
-    "typescript": "^5"
-  }
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.3"
+  },
+  "packageManager": "pnpm@10.32.1"
 }
