@@ -1,16 +1,22 @@
-export const metadata = { title: "About — Collabstr" };
+export const metadata = { title: "About — Nakhla · نخلة" };
 
 export default function AboutPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
-      <h1 className="text-4xl font-black">About</h1>
-      <p className="text-lg text-[#374151] mt-4 leading-relaxed">
-        Collabstr clone is a reference build of a modern influencer marketplace — Next.js on the frontend,
-        NestJS + Prisma + PostgreSQL on the backend. It exists to show end-to-end flows: browse, hire,
-        escrow, deliver, review.
+      <h1 className="text-4xl font-black">
+        About <span className="brand-text">Nakhla · نخلة</span>
+      </h1>
+      <p className="text-lg text-fg/80 mt-4 leading-relaxed">
+        Nakhla (نخلة — &ldquo;palm tree&rdquo;) is an influencer marketplace built for the Kingdom of Saudi Arabia.
+        Brands hire vetted Saudi creators on Instagram, TikTok, Snapchat, YouTube, and UGC. Payments settle in
+        SAR, escrowed until content is approved.
       </p>
-      <p className="text-[#374151] mt-4 leading-relaxed">
-        This isn&apos;t a production product. Auth tokens, payments, and notifications are simplified for demo purposes.
+      <p className="text-fg/80 mt-4 leading-relaxed">
+        نحن نخدم السوق السعودي بدفع آمن بالريال، دعم بالعربية والإنجليزية، وفواتير ضريبية معتمدة. مهمتنا أن
+        نُسهّل التعاون بين العلامات التجارية وصنّاع المحتوى في المملكة.
+      </p>
+      <p className="text-muted mt-6 text-sm">
+        Demo build · Next.js + NestJS + Prisma + PostgreSQL.
       </p>
     </div>
   );

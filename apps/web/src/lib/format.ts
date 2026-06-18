@@ -5,6 +5,21 @@ export function fmtFollowers(n?: number | null): string {
   return `${n}`;
 }
 
-export function fmtMoney(n: number): string {
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+export const CURRENCY = "SAR" as const;
+export const CURRENCY_SYMBOL = "ر.س" as const;
+export const LOCALE = "en-SA" as const;
+
+export function fmtMoney(n: number, opts: { compact?: boolean; locale?: string } = {}): string {
+  const locale = opts.locale ?? LOCALE;
+  return n.toLocaleString(locale, {
+    style: "currency",
+    currency: CURRENCY,
+    currencyDisplay: "narrowSymbol",
+    notation: opts.compact ? "compact" : "standard",
+    maximumFractionDigits: 0,
+  });
+}
+
+export function fmtPrice(n: number): string {
+  return `${CURRENCY_SYMBOL} ${n.toLocaleString("en-SA")}`;
 }

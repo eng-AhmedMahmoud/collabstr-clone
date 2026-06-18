@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0b0b14;
+  --color-surface: #11111c;
+  --color-surface-2: #161624;
+  --color-fg: #f5f5f7;
+  --color-muted: #8b8ba0;
+  --color-border: #1f1f30;
+  --color-brand: #7c3aed;
+  --color-brand-2: #ec4899;
+  --color-success: #10b981;
+  --color-danger: #ef4444;
+  --color-warn: #f59e0b;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+html, body {
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+.brand-gradient {
+  background-image: linear-gradient(135deg, #7c3aed 0%, #ec4899 50%, #f59e0b 100%);
+}
+.brand-text {
+  background-image: linear-gradient(135deg, #a78bfa 0%, #f472b6 60%, #fcd34d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+}
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }
+
+input, select, textarea {
+  color: var(--color-fg);
+}

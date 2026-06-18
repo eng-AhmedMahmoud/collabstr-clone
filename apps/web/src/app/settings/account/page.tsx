@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { AccountForm } from "./account-form";
 
-export const metadata = { title: "Account — Collabstr" };
+export const metadata = { title: "Account — Nakhla" };
 export const dynamic = "force-dynamic";
 
 export default async function AccountPage() {

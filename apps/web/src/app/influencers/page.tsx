@@ -5,7 +5,7 @@ import type { ApiCreator } from "@/lib/types";
 
 type Resp = { total: number; page: number; pageSize: number; items: ApiCreator[] };
 
-export const metadata = { title: "Find creators — Collabstr" };
+export const metadata = { title: "Find creators — Nakhla" };
 export const dynamic = "force-dynamic";
 
 export default async function InfluencersPage({
@@ -26,11 +26,11 @@ export default async function InfluencersPage({
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
       <h1 className="text-3xl sm:text-4xl font-black">Find creators</h1>
-      <p className="text-[#6b7280] mt-1">
+      <p className="text-muted mt-1">
         {data.total > 0 ? `${data.total.toLocaleString()} vetted creators` : "No creators found — try adjusting your filters."}
       </p>
 
-      <div className="mt-6 sticky top-16 z-30 bg-white/95 backdrop-blur py-3 -mx-2 px-2">
+      <div className="mt-6 sticky top-16 z-30 bg-bg/95 backdrop-blur py-3 -mx-2 px-2">
         <FilterBar />
       </div>
 
@@ -39,7 +39,7 @@ export default async function InfluencersPage({
       </div>
 
       {data.items.length === 0 && (
-        <p className="text-center text-[#6b7280] mt-12">No matches. Start API + seed DB, or try different filters.</p>
+        <p className="text-center text-muted mt-12">No matches. Start API + seed DB, or try different filters.</p>
       )}
     </div>
   );

@@ -33,7 +33,7 @@ export function OrderActions({ order, isBrand }: { order: { id: string; status: 
   }
 
   return (
-    <section className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
+    <section className="rounded-2xl border border-border bg-elevated p-5">
       <h2 className="font-bold">Actions</h2>
       <div className="mt-3 space-y-2">
         {isBrand && order.status === "pending_payment" && (
@@ -48,7 +48,7 @@ export function OrderActions({ order, isBrand }: { order: { id: string; status: 
         )}
         {!isBrand && ["in_progress", "revision_requested"].includes(order.status) && (
           <div className="space-y-2">
-            <input value={deliverUrl} onChange={(e) => setDeliverUrl(e.target.value)} placeholder="Delivery URL (Drive / Dropbox)" className="w-full px-3.5 py-2.5 rounded-lg border border-[#e5e7eb] text-sm" />
+            <input value={deliverUrl} onChange={(e) => setDeliverUrl(e.target.value)} placeholder="Delivery URL (Drive / Dropbox)" className="w-full px-3.5 py-2.5 rounded-lg border border-border text-sm" />
             <button onClick={() => call("submit", { url: deliverUrl })} disabled={busy || !deliverUrl} className="w-full px-4 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">
               Submit delivery
             </button>
@@ -60,8 +60,8 @@ export function OrderActions({ order, isBrand }: { order: { id: string; status: 
               Approve
             </button>
             <div className="space-y-2">
-              <input value={revisionNote} onChange={(e) => setRevisionNote(e.target.value)} placeholder="Revision note" className="w-full px-3.5 py-2.5 rounded-lg border border-[#e5e7eb] text-sm" />
-              <button onClick={() => call("revision", { note: revisionNote })} disabled={busy || !revisionNote} className="w-full px-4 py-2.5 rounded-lg border border-[#0b0b14] text-[#0b0b14] font-semibold disabled:opacity-60">
+              <input value={revisionNote} onChange={(e) => setRevisionNote(e.target.value)} placeholder="Revision note" className="w-full px-3.5 py-2.5 rounded-lg border border-border text-sm" />
+              <button onClick={() => call("revision", { note: revisionNote })} disabled={busy || !revisionNote} className="w-full px-4 py-2.5 rounded-lg border border-fg text-fg font-semibold disabled:opacity-60">
                 Request revision
               </button>
             </div>
@@ -78,7 +78,7 @@ export function OrderActions({ order, isBrand }: { order: { id: string; status: 
           </button>
         )}
         {["released", "cancelled"].includes(order.status) && (
-          <p className="text-sm text-[#6b7280]">No actions available — order is closed.</p>
+          <p className="text-sm text-muted">No actions available — order is closed.</p>
         )}
         {error && <p className="text-sm text-red-600">{error}</p>}
       </div>

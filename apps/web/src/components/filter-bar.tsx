@@ -26,15 +26,15 @@ export function FilterBar() {
               onClick={() => setOpen(open === f.label ? null : f.label)}
               className={`text-sm font-medium px-3.5 py-2 rounded-full border transition ${
                 selected[f.label]
-                  ? "bg-[#0b0b14] text-white border-[#0b0b14]"
-                  : "bg-white text-[#374151] border-[#e5e7eb] hover:border-[#0b0b14]"
+                  ? "bg-fg text-white border-fg"
+                  : "bg-elevated text-fg/80 border-border hover:border-fg"
               }`}
             >
               {selected[f.label] ?? f.label}
               <span className="ml-1 opacity-60">▾</span>
             </button>
             {open === f.label && (
-              <div className="absolute z-30 mt-2 w-56 rounded-xl border border-[#e5e7eb] bg-white shadow-xl p-2">
+              <div className="absolute z-30 mt-2 w-56 rounded-xl border border-border bg-elevated shadow-xl p-2">
                 {f.options.map((o) => (
                   <button
                     key={o}
@@ -42,7 +42,7 @@ export function FilterBar() {
                       setSelected((s) => ({ ...s, [f.label]: o }));
                       setOpen(null);
                     }}
-                    className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-[#f7f7fb]"
+                    className="w-full text-left px-3 py-2 rounded-lg text-sm hover:bg-surface"
                   >
                     {o}
                   </button>
@@ -54,7 +54,7 @@ export function FilterBar() {
         {Object.keys(selected).length > 0 && (
           <button
             onClick={() => setSelected({})}
-            className="text-sm font-medium px-3.5 py-2 rounded-full text-[#7c3aed] hover:bg-[#f5f3ff]"
+            className="text-sm font-medium px-3.5 py-2 rounded-full text-brand hover:bg-[#f5f3ff]"
           >
             Clear all
           </button>

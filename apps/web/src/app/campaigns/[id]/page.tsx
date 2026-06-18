@@ -44,33 +44,33 @@ export default async function CampaignDetailPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
-      <Link href="/campaigns" className="text-sm text-[#6b7280]">← All campaigns</Link>
+      <Link href="/campaigns" className="text-sm text-muted">← All campaigns</Link>
       <header className="mt-4">
-        <div className="text-xs text-[#6b7280]">{c.brand.name} · Posted {days}d ago · {c.applications.length} applicants</div>
+        <div className="text-xs text-muted">{c.brand.name} · Posted {days}d ago · {c.applications.length} applicants</div>
         <h1 className="text-3xl font-black mt-1">{c.title}</h1>
         <p className="mt-2 font-bold">{fmtMoney(c.budgetMin)} – {fmtMoney(c.budgetMax)}</p>
         <div className="flex gap-1.5 mt-3 flex-wrap">
-          {c.platforms.map((p) => <span key={p} className="text-[11px] uppercase font-semibold px-2 py-1 rounded-full bg-[#f7f7fb]">{p}</span>)}
-          {c.categories.map((cat) => <span key={cat} className="text-[11px] font-semibold px-2 py-1 rounded-full bg-violet-50 text-[#7c3aed]">{cat}</span>)}
+          {c.platforms.map((p) => <span key={p} className="text-[11px] uppercase font-semibold px-2 py-1 rounded-full bg-surface">{p}</span>)}
+          {c.categories.map((cat) => <span key={cat} className="text-[11px] font-semibold px-2 py-1 rounded-full bg-brand-50 text-brand">{cat}</span>)}
         </div>
       </header>
 
-      <section className="mt-6 rounded-2xl border border-[#e5e7eb] bg-white p-6 whitespace-pre-wrap">
+      <section className="mt-6 rounded-2xl border border-border bg-elevated p-6 whitespace-pre-wrap">
         <h2 className="font-bold text-lg mb-3">Brief</h2>
-        <p className="text-[#374151] leading-relaxed">{c.description}</p>
+        <p className="text-fg/80 leading-relaxed">{c.description}</p>
       </section>
 
       {!isOwner && me?.role === "creator" && (
-        <section className="mt-6 rounded-2xl border border-[#e5e7eb] bg-white p-6">
+        <section className="mt-6 rounded-2xl border border-border bg-elevated p-6">
           <h2 className="font-bold text-lg">Apply</h2>
           <form action={`/campaigns/${c.id}/apply`} method="post" className="mt-4 space-y-3">
             <label className="block">
               <span className="text-xs font-semibold">Your price ($)</span>
-              <input type="number" name="price" min={10} required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-[#e5e7eb]" />
+              <input type="number" name="price" min={10} required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border" />
             </label>
             <label className="block">
               <span className="text-xs font-semibold">Pitch</span>
-              <textarea name="pitch" rows={4} required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-[#e5e7eb]" placeholder="Why you're the right fit, what you'd deliver, timeline." />
+              <textarea name="pitch" rows={4} required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border" placeholder="Why you're the right fit, what you'd deliver, timeline." />
             </label>
             <button className="px-5 py-3 rounded-xl brand-gradient text-white font-bold">Submit application</button>
           </form>
@@ -78,18 +78,18 @@ export default async function CampaignDetailPage({
       )}
 
       {isOwner && (
-        <section className="mt-6 rounded-2xl border border-[#e5e7eb] bg-white">
-          <header className="p-5 border-b border-[#e5e7eb] flex items-center justify-between">
+        <section className="mt-6 rounded-2xl border border-border bg-elevated">
+          <header className="p-5 border-b border-border flex items-center justify-between">
             <h2 className="font-bold text-lg">Applicants ({c.applications.length})</h2>
-            <span className="text-xs text-[#6b7280]">Tap an applicant to view profile</span>
+            <span className="text-xs text-muted">Tap an applicant to view profile</span>
           </header>
-          <ul className="divide-y divide-[#e5e7eb]">
+          <ul className="divide-y divide-border">
             {c.applications.map((a) => (
               <li key={a.id} className="p-5 flex flex-col sm:flex-row sm:items-center gap-3">
                 <div className="flex-1">
-                  <Link href={`/${a.creator.username}`} className="font-semibold hover:text-[#7c3aed]">{a.creator.user.name}</Link>
-                  <p className="text-xs text-[#6b7280]">{a.creator.headline}</p>
-                  <p className="mt-2 text-sm text-[#374151] line-clamp-3">{a.pitch}</p>
+                  <Link href={`/${a.creator.username}`} className="font-semibold hover:text-brand">{a.creator.user.name}</Link>
+                  <p className="text-xs text-muted">{a.creator.headline}</p>
+                  <p className="mt-2 text-sm text-fg/80 line-clamp-3">{a.pitch}</p>
                 </div>
                 <div className="flex items-center gap-3 ml-auto">
                   <span className="font-bold">{fmtMoney(a.price)}</span>
@@ -97,13 +97,13 @@ export default async function CampaignDetailPage({
                 </div>
               </li>
             ))}
-            {c.applications.length === 0 && <li className="p-8 text-center text-[#6b7280] text-sm">No applications yet.</li>}
+            {c.applications.length === 0 && <li className="p-8 text-center text-muted text-sm">No applications yet.</li>}
           </ul>
         </section>
       )}
 
       {!me && (
-        <p className="mt-6 text-sm text-[#6b7280] text-center">
+        <p className="mt-6 text-sm text-muted text-center">
           <Link href={`/login?next=/campaigns/${c.id}`} className="font-semibold underline">Log in</Link> to apply.
         </p>
       )}

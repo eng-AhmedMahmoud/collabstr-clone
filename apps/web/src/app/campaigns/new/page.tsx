@@ -68,33 +68,33 @@ export default function NewCampaignPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
-      <Link href="/campaigns" className="text-sm text-[#6b7280] hover:text-[#0b0b14]">← Back to campaigns</Link>
+      <Link href="/campaigns" className="text-sm text-muted hover:text-fg">← Back to campaigns</Link>
       <h1 className="text-3xl font-black mt-3">Post a campaign</h1>
 
       <ol className="flex items-center gap-2 mt-6">
         {Array.from({ length: total }, (_, i) => i + 1).map((n) => (
           <li key={n} className="flex-1">
-            <div className={`h-1.5 rounded-full ${n <= step ? "brand-gradient" : "bg-[#e5e7eb]"}`} />
-            <p className={`mt-1.5 text-xs font-semibold ${n <= step ? "text-[#0b0b14]" : "text-[#6b7280]"}`}>Step {n}</p>
+            <div className={`h-1.5 rounded-full ${n <= step ? "brand-gradient" : "bg-border"}`} />
+            <p className={`mt-1.5 text-xs font-semibold ${n <= step ? "text-fg" : "text-muted"}`}>Step {n}</p>
           </li>
         ))}
       </ol>
 
-      <div className="mt-8 rounded-2xl border border-[#e5e7eb] bg-white p-6">
+      <div className="mt-8 rounded-2xl border border-border bg-elevated p-6">
         {step === 1 && (
           <>
             <h2 className="font-bold text-xl">Brief</h2>
-            <p className="text-sm text-[#6b7280] mt-1">Tell creators what you&apos;re building.</p>
+            <p className="text-sm text-muted mt-1">Tell creators what you&apos;re building.</p>
             <div className="mt-5 space-y-3">
               <Field label="Campaign title" value={f.title} onChange={(v) => setF({ ...f, title: v })} placeholder="Spring drop — sustainable activewear" />
               <label className="block">
-                <span className="text-xs font-semibold text-[#374151]">Description</span>
+                <span className="text-xs font-semibold text-fg/80">Description</span>
                 <textarea
                   value={f.description}
                   onChange={(e) => setF({ ...f, description: e.target.value })}
                   rows={5}
                   placeholder="What creators should know, show, or say."
-                  className="mt-1 w-full px-3.5 py-3 rounded-xl border border-[#e5e7eb]"
+                  className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border"
                 />
               </label>
             </div>
@@ -104,7 +104,7 @@ export default function NewCampaignPage() {
         {step === 2 && (
           <>
             <h2 className="font-bold text-xl">Platforms</h2>
-            <p className="text-sm text-[#6b7280] mt-1">Pick where content lives.</p>
+            <p className="text-sm text-muted mt-1">Pick where content lives.</p>
             <div className="mt-5 grid grid-cols-2 sm:grid-cols-4 gap-2">
               {PLATFORMS.map((p) => (
                 <button
@@ -112,7 +112,7 @@ export default function NewCampaignPage() {
                   key={p.value}
                   onClick={() => toggle("platforms", p.value)}
                   className={`p-4 rounded-xl border text-left ${
-                    f.platforms.includes(p.value) ? "border-[#0b0b14] bg-[#f7f7fb]" : "border-[#e5e7eb] hover:border-[#0b0b14]"
+                    f.platforms.includes(p.value) ? "border-fg bg-surface" : "border-border hover:border-fg"
                   }`}
                 >
                   <div className="text-2xl">{p.icon}</div>
@@ -126,10 +126,10 @@ export default function NewCampaignPage() {
         {step === 3 && (
           <>
             <h2 className="font-bold text-xl">Targeting</h2>
-            <p className="text-sm text-[#6b7280] mt-1">Match with the right creators.</p>
+            <p className="text-sm text-muted mt-1">Match with the right creators.</p>
             <div className="mt-5 space-y-3">
               <div>
-                <p className="text-xs font-semibold text-[#374151] mb-2">Categories</p>
+                <p className="text-xs font-semibold text-fg/80 mb-2">Categories</p>
                 <div className="flex flex-wrap gap-2">
                   {CATEGORIES.map((c) => (
                     <button
@@ -137,7 +137,7 @@ export default function NewCampaignPage() {
                       key={c.label}
                       onClick={() => toggle("categories", c.label)}
                       className={`text-sm px-3 py-1.5 rounded-full border ${
-                        f.categories.includes(c.label) ? "border-[#0b0b14] bg-[#f7f7fb]" : "border-[#e5e7eb] hover:border-[#0b0b14]"
+                        f.categories.includes(c.label) ? "border-fg bg-surface" : "border-border hover:border-fg"
                       }`}
                     >
                       {c.emoji} {c.label}
@@ -166,7 +166,7 @@ export default function NewCampaignPage() {
           <button
             onClick={() => setStep((s) => Math.max(1, s - 1))}
             disabled={step === 1}
-            className="px-4 py-2.5 rounded-xl border border-[#e5e7eb] font-semibold disabled:opacity-40"
+            className="px-4 py-2.5 rounded-xl border border-border font-semibold disabled:opacity-40"
           >
             Back
           </button>
@@ -188,12 +188,12 @@ export default function NewCampaignPage() {
 function Field({ label, value, onChange, ...rest }: { label: string; value: string; onChange: (v: string) => void } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   return (
     <label className="block">
-      <span className="text-xs font-semibold text-[#374151]">{label}</span>
+      <span className="text-xs font-semibold text-fg/80">{label}</span>
       <input
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full px-3.5 py-3 rounded-xl border border-[#e5e7eb]"
+        className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border"
       />
     </label>
   );

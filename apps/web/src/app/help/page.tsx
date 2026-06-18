@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export const metadata = { title: "Help — Collabstr" };
+export const metadata = { title: "Help — Nakhla" };
 
 export default function HelpPage() {
   const topics = [
@@ -13,18 +13,18 @@ export default function HelpPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-16">
       <h1 className="text-4xl font-black">Help center</h1>
-      <p className="text-[#6b7280] mt-2">Quick answers to common questions.</p>
-      <div className="mt-8 divide-y divide-[#e5e7eb] rounded-2xl border border-[#e5e7eb] bg-white">
+      <p className="text-muted mt-2">Quick answers to common questions.</p>
+      <div className="mt-8 divide-y divide-border rounded-2xl border border-border bg-elevated">
         {topics.map((t) => (
           <details key={t.t} className="p-5 group">
             <summary className="font-semibold cursor-pointer list-none flex justify-between items-center">
-              {t.t}<span className="text-[#6b7280] group-open:rotate-45 transition">+</span>
+              {t.t}<span className="text-muted group-open:rotate-45 transition">+</span>
             </summary>
-            <p className="text-[#6b7280] mt-3 text-sm leading-relaxed">{t.d}</p>
+            <p className="text-muted mt-3 text-sm leading-relaxed">{t.d}</p>
           </details>
         ))}
       </div>
-      <p className="text-center text-sm text-[#6b7280] mt-6">
+      <p className="text-center text-sm text-muted mt-6">
         Still stuck? <Link href="/contact" className="underline">Contact support</Link>.
       </p>
     </div>

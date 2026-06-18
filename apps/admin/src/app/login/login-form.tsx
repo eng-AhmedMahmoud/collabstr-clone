@@ -1,0 +1,57 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+type Labels = { email: string; password: string; submit: string };
+
+export function LoginForm({ next, labels }: { next?: string; labels: Labels }) {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setBusy(true); setError(null);
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/auth/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password }),
+      });
+      if (!res.ok) throw new Error((await res.json())?.message ?? "Login failed");
+      const me = await res.json();
+      if (me.role !== "admin") {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/auth/logout`, { method: "POST", credentials: "include" });
+        router.push("/login?error=not_admin");
+        return;
+      }
+      router.refresh();
+      router.push(next || "/");
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="mt-5 space-y-3">
+      <label className="block">
+        <span className="text-xs font-semibold text-[#8b8ba0]">{labels.email}</span>
+        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30] focus:border-violet-500 focus:outline-none" />
+      </label>
+      <label className="block">
+        <span className="text-xs font-semibold text-[#8b8ba0]">{labels.password}</span>
+        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30] focus:border-violet-500 focus:outline-none" />
+      </label>
+      {error && <p className="text-xs text-red-300">{error}</p>}
+      <button disabled={busy} className="w-full px-4 py-2.5 rounded-lg brand-gradient text-white font-bold disabled:opacity-60">
+        {busy ? "…" : labels.submit}
+      </button>
+    </form>
+  );
+}

@@ -26,17 +26,17 @@ export function PasswordForm() {
   }
 
   return (
-    <form onSubmit={submit} className="mt-6 rounded-2xl border border-[#e5e7eb] bg-white p-6 space-y-3">
+    <form onSubmit={submit} className="mt-6 rounded-2xl border border-border bg-elevated p-6 space-y-3">
       <h2 className="font-bold text-lg">Change password</h2>
       <label className="block">
         <span className="text-xs font-semibold">Current password</span>
-        <input value={current} onChange={(e) => setCurrent(e.target.value)} type="password" required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-[#e5e7eb]" />
+        <input value={current} onChange={(e) => setCurrent(e.target.value)} type="password" required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border" />
       </label>
       <label className="block">
         <span className="text-xs font-semibold">New password</span>
-        <input value={next} onChange={(e) => setNext(e.target.value)} type="password" minLength={8} required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-[#e5e7eb]" />
+        <input value={next} onChange={(e) => setNext(e.target.value)} type="password" minLength={8} required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border" />
       </label>
-      {msg && <p className="text-sm text-[#6b7280]">{msg}</p>}
+      {msg && <p className="text-sm text-muted">{msg}</p>}
       <button disabled={busy} className="px-5 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">{busy ? "Saving…" : "Update password"}</button>
     </form>
   );

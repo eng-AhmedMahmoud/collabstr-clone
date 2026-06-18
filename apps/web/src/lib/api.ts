@@ -17,8 +17,9 @@ async function call<T>(path: string, opts: FetchOpts = {}): Promise<T> {
   });
 
   if (!res.ok) {
-    let detail: unknown;
-    try { detail = await res.json(); } catch { detail = await res.text(); }
+    const text = await res.text();
+    let detail: unknown = text;
+    try { detail = JSON.parse(text); } catch {}
     const err: Error & { status?: number; detail?: unknown } = new Error(`API ${res.status} ${path}`);
     err.status = res.status;
     err.detail = detail;

@@ -1,10 +1,10 @@
 type Flow = { from: string; to: string };
-type RoleBlock = { role: "Logged-out" | "Brand" | "Creator"; color: string; emoji: string; steps: Flow[] };
+type RoleBlock = { role: "Logged-out" | "Brand" | "Creator" | "Admin"; color: string; emoji: string; steps: Flow[] };
 
 const FLOWS: RoleBlock[] = [
   {
     role: "Logged-out",
-    color: "#6b7280",
+    color: "#8b8ba0",
     emoji: "👀",
     steps: [
       { from: "Land on /", to: "Browse /influencers" },
@@ -16,7 +16,7 @@ const FLOWS: RoleBlock[] = [
   },
   {
     role: "Brand",
-    color: "#7c3aed",
+    color: "#a78bfa",
     emoji: "🏢",
     steps: [
       { from: "Login", to: "/dashboard (KPIs + orders + campaigns)" },
@@ -43,31 +43,42 @@ const FLOWS: RoleBlock[] = [
       { from: "Reviews accumulate", to: "Rating + reviewsCount recomputed on release" },
     ],
   },
+  {
+    role: "Admin",
+    color: "#f59e0b",
+    emoji: "🛡",
+    steps: [
+      { from: "/login → /", to: "Overview KPIs, recent activity" },
+      { from: "/users", to: "Search, ban / unban, promote to admin" },
+      { from: "/orders", to: "Force release · force cancel · mark disputed" },
+      { from: "/disputes", to: "Triage open disputes" },
+      { from: "/payouts", to: "Per-creator released totals" },
+      { from: "/reviews", to: "Moderate / delete" },
+      { from: "/broadcast", to: "Send system notifications to roles" },
+      { from: "/audit", to: "Admin-only event trail" },
+    ],
+  },
 ];
 
 export function RoleFlows() {
   return (
-    <div className="grid lg:grid-cols-3 gap-5">
+    <div className="grid lg:grid-cols-2 xl:grid-cols-4 gap-4">
       {FLOWS.map((f) => (
-        <article key={f.role} className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
+        <article key={f.role} className="card p-5">
           <header className="flex items-center gap-3">
-            <span className="h-10 w-10 grid place-items-center rounded-xl text-xl" style={{ background: `${f.color}15`, color: f.color }}>
-              {f.emoji}
-            </span>
+            <span className="h-10 w-10 grid place-items-center rounded-xl text-xl" style={{ background: `${f.color}22`, color: f.color }}>{f.emoji}</span>
             <div>
               <h3 className="font-black text-lg">{f.role}</h3>
-              <p className="text-xs text-[#6b7280]">{f.steps.length} key journeys</p>
+              <p className="text-xs text-[#8b8ba0]">{f.steps.length} key journeys</p>
             </div>
           </header>
           <ol className="mt-4 space-y-3">
             {f.steps.map((s, i) => (
               <li key={i} className="flex gap-3">
-                <span className="h-6 w-6 rounded-full text-xs font-bold grid place-items-center shrink-0" style={{ background: `${f.color}15`, color: f.color }}>
-                  {i + 1}
-                </span>
+                <span className="h-6 w-6 rounded-full text-xs font-bold grid place-items-center shrink-0" style={{ background: `${f.color}22`, color: f.color }}>{i + 1}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold leading-tight">{s.from}</p>
-                  <p className="text-xs text-[#6b7280] mt-0.5">↳ {s.to}</p>
+                  <p className="text-sm font-semibold leading-tight text-[#f5f5f7]">{s.from}</p>
+                  <p className="text-xs text-[#8b8ba0] mt-0.5">↳ {s.to}</p>
                 </div>
               </li>
             ))}

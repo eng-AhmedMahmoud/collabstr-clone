@@ -44,50 +44,50 @@ export default async function OrderDetailPage({
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
-      <Link href={isBrand ? "/orders" : "/creator-dashboard/orders"} className="text-sm text-[#6b7280]">← All orders</Link>
+      <Link href={isBrand ? "/orders" : "/creator-dashboard/orders"} className="text-sm text-muted">← All orders</Link>
 
       <header className="mt-3 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-black">Order #{o.id.slice(0, 6)}</h1>
-          <p className="text-sm text-[#6b7280] mt-1">{o.package.title}</p>
+          <p className="text-sm text-muted mt-1">{o.package.title}</p>
         </div>
-        <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-violet-50 text-[#7c3aed]">{o.status.replace(/_/g, " ")}</span>
+        <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-brand-50 text-brand">{o.status.replace(/_/g, " ")}</span>
       </header>
 
       <div className="mt-6 grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <section className="rounded-2xl border border-[#e5e7eb] bg-white p-6">
+          <section className="rounded-2xl border border-border bg-elevated p-6">
             <header className="flex items-center gap-3 mb-4">
               <div className="relative h-12 w-12 rounded-xl overflow-hidden bg-[#f3f4f6]">
                 <Image src={counter.avatar || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(counter.name)}`} alt={counter.name} fill className="object-cover" />
               </div>
               <div>
-                <Link href={counter.href} className="font-bold hover:text-[#7c3aed]">{counter.name}</Link>
-                <p className="text-xs text-[#6b7280]">{isBrand ? "Creator" : "Brand"}</p>
+                <Link href={counter.href} className="font-bold hover:text-brand">{counter.name}</Link>
+                <p className="text-xs text-muted">{isBrand ? "Creator" : "Brand"}</p>
               </div>
-              <Link href="/messages" className="ml-auto px-3 py-2 rounded-lg border border-[#e5e7eb] text-sm font-semibold hover:bg-[#f7f7fb]">Message</Link>
+              <Link href="/messages" className="ml-auto px-3 py-2 rounded-lg border border-border text-sm font-semibold hover:bg-surface">Message</Link>
             </header>
             <h2 className="font-bold text-lg">Brief</h2>
-            <p className="text-[#374151] mt-2 whitespace-pre-wrap">{o.brief}</p>
-            {o.deadline && <p className="text-xs text-[#6b7280] mt-3">Deadline: {new Date(o.deadline).toLocaleDateString()}</p>}
+            <p className="text-fg/80 mt-2 whitespace-pre-wrap">{o.brief}</p>
+            {o.deadline && <p className="text-xs text-muted mt-3">Deadline: {new Date(o.deadline).toLocaleDateString()}</p>}
           </section>
 
           {o.deliveries.length > 0 && (
-            <section className="rounded-2xl border border-[#e5e7eb] bg-white p-6">
+            <section className="rounded-2xl border border-border bg-elevated p-6">
               <h2 className="font-bold text-lg mb-3">Deliveries</h2>
               <ul className="space-y-3">
                 {o.deliveries.map((d) => (
-                  <li key={d.id} className="border border-[#e5e7eb] rounded-lg p-3">
-                    <a href={d.url} target="_blank" className="text-sm font-semibold text-[#7c3aed] underline break-all">{d.url}</a>
-                    {d.note && <p className="text-sm text-[#374151] mt-1">{d.note}</p>}
-                    <p className="text-xs text-[#6b7280] mt-1">{new Date(d.createdAt).toLocaleString()}</p>
+                  <li key={d.id} className="border border-border rounded-lg p-3">
+                    <a href={d.url} target="_blank" className="text-sm font-semibold text-brand underline break-all">{d.url}</a>
+                    {d.note && <p className="text-sm text-fg/80 mt-1">{d.note}</p>}
+                    <p className="text-xs text-muted mt-1">{new Date(d.createdAt).toLocaleString()}</p>
                   </li>
                 ))}
               </ul>
             </section>
           )}
 
-          <section className="rounded-2xl border border-[#e5e7eb] bg-white p-6">
+          <section className="rounded-2xl border border-border bg-elevated p-6">
             <h2 className="font-bold text-lg mb-3">Activity</h2>
             <ol className="space-y-3">
               {o.events.map((e) => (
@@ -95,8 +95,8 @@ export default async function OrderDetailPage({
                   <span className="h-2 w-2 mt-2 rounded-full brand-gradient shrink-0" />
                   <div>
                     <p className="font-semibold">{e.status.replace(/_/g, " ")}</p>
-                    {e.note && <p className="text-[#6b7280]">{e.note}</p>}
-                    <p className="text-xs text-[#6b7280]">{new Date(e.createdAt).toLocaleString()}</p>
+                    {e.note && <p className="text-muted">{e.note}</p>}
+                    <p className="text-xs text-muted">{new Date(e.createdAt).toLocaleString()}</p>
                   </div>
                 </li>
               ))}
@@ -105,14 +105,14 @@ export default async function OrderDetailPage({
         </div>
 
         <aside className="space-y-5">
-          <section className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
+          <section className="rounded-2xl border border-border bg-elevated p-5">
             <h2 className="font-bold">Payment</h2>
             <ul className="mt-3 space-y-2 text-sm">
               <li className="flex justify-between"><span>{o.package.title}</span><span>{fmtMoney(o.amount)}</span></li>
-              <li className="flex justify-between text-[#6b7280]"><span>Service fee</span><span>{fmtMoney(o.serviceFee)}</span></li>
-              <li className="flex justify-between font-bold border-t border-[#e5e7eb] pt-2 mt-2"><span>Total</span><span>{fmtMoney(total)}</span></li>
+              <li className="flex justify-between text-muted"><span>Service fee</span><span>{fmtMoney(o.serviceFee)}</span></li>
+              <li className="flex justify-between font-bold border-t border-border pt-2 mt-2"><span>Total</span><span>{fmtMoney(total)}</span></li>
             </ul>
-            <p className="text-xs text-[#6b7280] mt-3">
+            <p className="text-xs text-muted mt-3">
               {["released", "cancelled"].includes(o.status) ? "Funds settled." : "Funds held in escrow."}
             </p>
           </section>

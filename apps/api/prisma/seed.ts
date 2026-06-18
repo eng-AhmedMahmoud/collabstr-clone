@@ -32,6 +32,19 @@ const SEEDS: Seed[] = [
 async function main() {
   console.log("Seeding…");
 
+  const adminHash = await bcrypt.hash("Admin1234!", 11);
+  await prisma.user.upsert({
+    where: { email: "admin@nakhla.sa" },
+    update: {},
+    create: {
+      email: "admin@nakhla.sa",
+      name: "Nakhla Admin",
+      role: "admin",
+      passwordHash: adminHash,
+      emailVerifiedAt: new Date(),
+    },
+  });
+
   const brandHash = await bcrypt.hash("Password123!", 11);
   const brand = await prisma.user.upsert({
     where: { email: "brand@example.dev" },
@@ -135,8 +148,10 @@ async function main() {
     });
   }
 
-  console.log("Seed done. Brand login: brand@example.dev / Password123!");
-  console.log("Creator example: ava@example.dev / Password123!");
+  console.log("Seed done.");
+  console.log("  Admin   : admin@nakhla.sa / Admin1234!");
+  console.log("  Brand   : brand@example.dev / Password123!");
+  console.log("  Creator : ava@example.dev / Password123!");
 }
 
 main()

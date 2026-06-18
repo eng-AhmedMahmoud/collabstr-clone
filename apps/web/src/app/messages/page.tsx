@@ -11,7 +11,7 @@ type Thread = {
   messages: { id: string; body: string; createdAt: string; senderId: string }[];
 };
 
-export const metadata = { title: "Messages — Collabstr" };
+export const metadata = { title: "Messages — Nakhla" };
 export const dynamic = "force-dynamic";
 
 export default async function MessagesPage({

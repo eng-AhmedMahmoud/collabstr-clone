@@ -15,7 +15,7 @@ type OrderRow = {
   package: { title: string };
 };
 
-export const metadata = { title: "Dashboard — Collabstr" };
+export const metadata = { title: "Dashboard — Nakhla" };
 export const dynamic = "force-dynamic";
 
 export default async function BrandDashboard() {
@@ -37,11 +37,11 @@ export default async function BrandDashboard() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
       <header className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p className="text-sm text-[#6b7280]">Welcome back</p>
+          <p className="text-sm text-muted">Welcome back</p>
           <h1 className="text-3xl font-black">Hey, {me.name.split(" ")[0]}</h1>
         </div>
         <div className="flex gap-2">
-          <Link href="/campaigns/new" className="px-4 py-2.5 rounded-xl border border-[#e5e7eb] font-semibold hover:bg-[#f7f7fb]">+ New campaign</Link>
+          <Link href="/campaigns/new" className="px-4 py-2.5 rounded-xl border border-border font-semibold hover:bg-surface">+ New campaign</Link>
           <Link href="/influencers" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">Hire a creator</Link>
         </div>
       </header>
@@ -53,24 +53,24 @@ export default async function BrandDashboard() {
           ["Total spent", fmtMoney(totalSpent), "all time"],
           ["Campaigns", String(campaigns.length), "open + draft"],
         ].map(([l, v, sub]) => (
-          <div key={l} className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
-            <p className="text-xs uppercase tracking-wide text-[#6b7280]">{l}</p>
+          <div key={l} className="rounded-2xl border border-border bg-elevated p-5">
+            <p className="text-xs uppercase tracking-wide text-muted">{l}</p>
             <p className="text-3xl font-black mt-1">{v}</p>
-            <p className="text-xs text-[#6b7280] mt-1">{sub}</p>
+            <p className="text-xs text-muted mt-1">{sub}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-10 grid lg:grid-cols-3 gap-6">
-        <section className="lg:col-span-2 rounded-2xl border border-[#e5e7eb] bg-white">
-          <header className="flex items-center justify-between p-5 border-b border-[#e5e7eb]">
+        <section className="lg:col-span-2 rounded-2xl border border-border bg-elevated">
+          <header className="flex items-center justify-between p-5 border-b border-border">
             <h2 className="font-bold text-lg">Recent orders</h2>
-            <Link href="/orders" className="text-sm font-semibold text-[#7c3aed]">View all</Link>
+            <Link href="/orders" className="text-sm font-semibold text-brand">View all</Link>
           </header>
           {orders.length === 0 ? (
-            <p className="p-8 text-center text-sm text-[#6b7280]">No orders yet. <Link href="/influencers" className="underline">Find a creator</Link>.</p>
+            <p className="p-8 text-center text-sm text-muted">No orders yet. <Link href="/influencers" className="underline">Find a creator</Link>.</p>
           ) : (
-            <ul className="divide-y divide-[#e5e7eb]">
+            <ul className="divide-y divide-border">
               {orders.slice(0, 5).map((o) => {
                 const avatar = o.creator.user.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(o.creator.user.name)}`;
                 return (
@@ -80,12 +80,12 @@ export default async function BrandDashboard() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{o.creator.user.name}</p>
-                      <p className="text-xs text-[#6b7280] truncate">{o.package.title} · #{o.id.slice(0, 6)}</p>
+                      <p className="text-xs text-muted truncate">{o.package.title} · #{o.id.slice(0, 6)}</p>
                     </div>
                     <span className={`text-xs font-semibold px-2.5 py-1 rounded-full whitespace-nowrap ${
                       o.status === "released" ? "bg-emerald-50 text-emerald-700"
                       : o.status === "submitted" ? "bg-amber-50 text-amber-700"
-                      : "bg-violet-50 text-[#7c3aed]"
+                      : "bg-brand-50 text-brand"
                     }`}>{o.status.replace(/_/g, " ")}</span>
                     <Link href={`/orders/${o.id}`} className="font-bold text-sm hover:underline">{fmtMoney(o.amount)}</Link>
                   </li>
@@ -95,20 +95,20 @@ export default async function BrandDashboard() {
           )}
         </section>
 
-        <section className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
+        <section className="rounded-2xl border border-border bg-elevated p-5">
           <header className="flex items-center justify-between mb-3">
             <h2 className="font-bold text-lg">My campaigns</h2>
-            <Link href="/campaigns/new" className="text-sm font-semibold text-[#7c3aed]">+ New</Link>
+            <Link href="/campaigns/new" className="text-sm font-semibold text-brand">+ New</Link>
           </header>
           {campaigns.length === 0 ? (
-            <p className="text-sm text-[#6b7280]">No campaigns yet. Post your first one.</p>
+            <p className="text-sm text-muted">No campaigns yet. Post your first one.</p>
           ) : (
             <ul className="space-y-3">
               {campaigns.map((c) => (
                 <li key={c.id}>
-                  <Link href={`/campaigns/${c.id}`} className="block rounded-lg p-3 -mx-3 hover:bg-[#f7f7fb]">
+                  <Link href={`/campaigns/${c.id}`} className="block rounded-lg p-3 -mx-3 hover:bg-surface">
                     <p className="font-semibold truncate">{c.title}</p>
-                    <p className="text-xs text-[#6b7280]">{c.status} · {c._count?.applications ?? 0} applicants</p>
+                    <p className="text-xs text-muted">{c.status} · {c._count?.applications ?? 0} applicants</p>
                   </Link>
                 </li>
               ))}

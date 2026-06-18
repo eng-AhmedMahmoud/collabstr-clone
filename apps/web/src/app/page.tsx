@@ -27,34 +27,39 @@ export default async function Home() {
   return (
     <>
       <section className="relative overflow-hidden">
+        <div className="absolute inset-0 -z-10 brand-gradient-soft opacity-90" />
         <div className="absolute inset-0 -z-10">
-          <div className="absolute -top-32 -left-32 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-violet-200 via-pink-200 to-amber-100 blur-3xl opacity-70" />
-          <div className="absolute -bottom-32 -right-32 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-cyan-200 via-violet-200 to-pink-100 blur-3xl opacity-60" />
+          <div className="absolute -top-32 -left-32 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-brand-200 via-brand-100 to-amber-100 blur-3xl opacity-70 dark:opacity-30" />
+          <div className="absolute -bottom-32 -right-32 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-brand-300 via-brand-200 to-brand-100 blur-3xl opacity-60 dark:opacity-25" />
         </div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10 text-center">
-          <p className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-white/80 border border-[#e5e7eb] mb-5">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> 910,000+ vetted creators ready to collab
+          <p className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-elevated/80 border border-border mb-5">
+            <span className="text-base leading-none">🇸🇦</span>
+            Made in KSA · 910,000+ صانع محتوى موثوق
           </p>
           <h1 className="text-4xl sm:text-6xl font-black tracking-tight max-w-3xl mx-auto leading-[1.05]">
-            Influencer marketing,{" "}
-            <span className="brand-text">finally easy.</span>
+            تسويق المؤثرين في المملكة،{" "}
+            <span className="brand-text">أسهل من أي وقت.</span>
           </h1>
-          <p className="mt-5 text-lg text-[#374151] max-w-2xl mx-auto">
-            Hire top Instagram, TikTok, YouTube, and UGC creators in minutes. Browse vetted talent, pay
-            securely, and get content that actually converts.
+          <p className="mt-3 text-base text-fg/70 max-w-2xl mx-auto">
+            Influencer marketing for Saudi Arabia — finally easy.
+          </p>
+          <p className="mt-5 text-lg text-fg/80 max-w-2xl mx-auto">
+            Hire top KSA creators on Instagram, TikTok, Snapchat, YouTube, and UGC. Browse vetted Saudi talent,
+            pay securely in SAR (ر.س), and ship content that converts in Riyadh, Jeddah, Dammam, and beyond.
           </p>
 
-          <form action="/influencers" className="mt-9 max-w-3xl mx-auto rounded-2xl bg-white border border-[#e5e7eb] shadow-xl p-3 sm:p-4 text-left">
+          <form action="/influencers" className="mt-9 max-w-3xl mx-auto rounded-2xl bg-elevated border border-border shadow-xl p-3 sm:p-4 text-left">
             <FilterBar />
             <div className="flex items-center gap-2 mt-3">
               <input
                 type="search"
                 name="q"
-                placeholder="Search by niche, name, or city…"
-                className="flex-1 px-4 py-3 rounded-xl border border-[#e5e7eb] bg-[#f7f7fb] focus:bg-white focus:outline-none focus:ring-2 focus:ring-violet-200"
+                placeholder="ابحث عن مؤثر، تخصص، أو مدينة… / Search niche, name, or city"
+                className="flex-1 px-4 py-3 rounded-xl border border-border bg-surface focus:bg-elevated focus:outline-none focus:ring-2 focus:ring-brand-200"
               />
               <button type="submit" className="px-6 py-3 rounded-xl brand-gradient text-white font-semibold shadow-sm hover:opacity-95">
-                Search
+                بحث · Search
               </button>
             </div>
           </form>
@@ -64,7 +69,7 @@ export default async function Home() {
               <Link
                 key={c.label}
                 href={`/influencers?category=${c.label}`}
-                className="text-sm font-medium px-3.5 py-2 rounded-full bg-white border border-[#e5e7eb] hover:border-[#0b0b14]"
+                className="text-sm font-medium px-3.5 py-2 rounded-full bg-elevated border border-border hover:border-fg"
               >
                 <span className="mr-1.5">{c.emoji}</span>
                 {c.label}
@@ -76,8 +81,8 @@ export default async function Home() {
 
       {featured.length === 0 ? (
         <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16 text-center">
-          <p className="text-[#6b7280]">
-            API isn&apos;t reachable. Start the API with <code className="bg-[#f7f7fb] px-2 py-1 rounded">pnpm api dev</code> (and Postgres via <code className="bg-[#f7f7fb] px-2 py-1 rounded">docker compose up -d</code>), then refresh.
+          <p className="text-muted">
+            API isn&apos;t reachable. Start the API with <code className="bg-surface px-2 py-1 rounded">pnpm api dev</code> (and Postgres via <code className="bg-surface px-2 py-1 rounded">docker compose up -d</code>), then refresh.
           </p>
         </section>
       ) : (
@@ -93,14 +98,14 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20">
         <div className="grid md:grid-cols-3 gap-6">
           {[
-            { t: "Search for free", d: "Browse vetted creators with detailed audience analytics. No subscription, no contract." },
-            { t: "Pay securely", d: "We hold your payment in escrow until you approve the final content." },
-            { t: "Get content fast", d: "Receive ready-to-publish content directly in your dashboard." },
+            { t: "ابحث مجاناً · Browse for free", d: "Filter vetted KSA creators by niche, city (Riyadh, Jeddah, Dammam, Khobar), and audience demographics. No subscription." },
+            { t: "ادفع بأمان بالريال · Pay safely in SAR", d: "Funds held in escrow and released only on approval. Mada, Apple Pay, and bank transfer ready." },
+            { t: "محتوى سريع · Get content fast", d: "Receive ready-to-publish content shaped for Saudi audiences directly in your dashboard." },
           ].map((s, i) => (
-            <div key={s.t} className="rounded-2xl p-6 border border-[#e5e7eb] bg-white">
+            <div key={s.t} className="rounded-2xl p-6 border border-border bg-elevated">
               <div className="h-10 w-10 grid place-items-center rounded-xl brand-gradient text-white font-black mb-4">{i + 1}</div>
               <h3 className="font-bold text-lg">{s.t}</h3>
-              <p className="text-[#6b7280] mt-1.5 text-sm">{s.d}</p>
+              <p className="text-muted mt-1.5 text-sm">{s.d}</p>
             </div>
           ))}
         </div>
@@ -110,20 +115,20 @@ export default async function Home() {
         <div className="rounded-3xl p-10 md:p-14 brand-gradient text-white overflow-hidden relative">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
-              <p className="text-white/80 text-sm font-semibold">For brands</p>
-              <h2 className="text-3xl md:text-4xl font-black mt-2 leading-tight">Post a campaign. Let creators come to you.</h2>
-              <p className="text-white/90 mt-3 max-w-md">Set targeting, share your brief, let matched creators apply with pricing. You pick.</p>
+              <p className="text-white/80 text-sm font-semibold">For brands · للعلامات التجارية</p>
+              <h2 className="text-3xl md:text-4xl font-black mt-2 leading-tight">انشر حملتك. دع المؤثرين يتقدمون إليك.</h2>
+              <p className="text-white/90 mt-3 max-w-md">Set KSA-region targeting, share your brief in Arabic or English, and let matched Saudi creators apply with SAR pricing. You pick.</p>
               <div className="mt-6 flex gap-3">
-                <Link href="/campaigns/new" className="px-5 py-3 rounded-xl bg-white text-[#0b0b14] font-bold hover:bg-white/90">Post a campaign</Link>
+                <Link href="/campaigns/new" className="px-5 py-3 rounded-xl bg-elevated text-fg font-bold hover:bg-white/90">Post a campaign</Link>
                 <Link href="/campaigns" className="px-5 py-3 rounded-xl bg-white/10 text-white font-bold hover:bg-white/20">Browse campaigns</Link>
               </div>
             </div>
             <ul className="grid grid-cols-2 gap-4 text-sm">
               {[
-                ["Targeting", "Niche, location, follower size, age"],
-                ["Brief", "Images, deliverables, deadlines"],
-                ["Applications", "Creators apply with pricing"],
-                ["Tracking", "Real-time analytics across platforms"],
+                ["Targeting", "Niche, KSA city, follower size, age, gender"],
+                ["Brief", "Arabic/English copy, deliverables, deadlines"],
+                ["Applications", "Saudi creators apply with SAR pricing"],
+                ["Tracking", "Real-time analytics across IG, TikTok, Snap"],
               ].map(([t, d]) => (
                 <li key={t} className="rounded-xl p-4 bg-white/10"><p className="font-bold">{t}</p><p className="text-white/80 mt-1">{d}</p></li>
               ))}
@@ -134,25 +139,26 @@ export default async function Home() {
 
       <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 mt-20">
         <h2 className="text-3xl font-black text-center">Common questions</h2>
-        <div className="mt-8 divide-y divide-[#e5e7eb] rounded-2xl border border-[#e5e7eb] bg-white">
+        <div className="mt-8 divide-y divide-border rounded-2xl border border-border bg-elevated">
           {[
-            ["What is influencer marketing?", "Partnering with creators who have engaged followings to promote your brand authentically."],
-            ["How do I find the right creators?", "Filter by niche, platform, location, audience size, and budget. Open profiles for audience demographics."],
-            ["How much does it cost?", "Most bookings range from $50 for micro-creators to $5,000+ for established voices."],
-            ["How are payments protected?", "Funds held in escrow, released only on approval. Disputes get human review."],
+            ["ما هو تسويق المؤثرين؟ · What is influencer marketing?", "Partnering with Saudi creators who have engaged local followings to promote your brand authentically across the Kingdom."],
+            ["How do I find the right creators in KSA?", "Filter by niche, platform, Saudi city (الرياض، جدة، الدمام، الخبر), audience size, and budget. Open profiles for full audience demographics."],
+            ["How much does a campaign cost?", "Most bookings range from 200 ر.س for micro-creators up to 20,000+ ر.س for top KSA voices. You set the budget."],
+            ["كيف تتم حماية الدفع؟ · How are payments protected?", "All funds held in SAR escrow and released only after you approve. Disputes get human review within 48 hours."],
           ].map(([q, a]) => (
             <details key={q} className="p-5 group">
-              <summary className="font-semibold cursor-pointer list-none flex justify-between items-center">{q}<span className="text-[#6b7280] group-open:rotate-45 transition">+</span></summary>
-              <p className="text-[#6b7280] mt-3 text-sm leading-relaxed">{a}</p>
+              <summary className="font-semibold cursor-pointer list-none flex justify-between items-center">{q}<span className="text-muted group-open:rotate-45 transition">+</span></summary>
+              <p className="text-muted mt-3 text-sm leading-relaxed">{a}</p>
             </details>
           ))}
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20 text-center">
-        <h2 className="text-4xl font-black">Find creators worth working with.</h2>
-        <p className="text-[#6b7280] mt-3">Search Instagram, TikTok, YouTube, and UGC — all in one place.</p>
-        <Link href="/influencers" className="inline-flex mt-6 px-6 py-3 rounded-xl brand-gradient text-white font-semibold shadow-sm hover:opacity-95">Search creators</Link>
+        <h2 className="text-4xl font-black">اعثر على مؤثرين يستحقون التعاون.</h2>
+        <p className="mt-2 text-lg font-semibold text-fg/80">Find KSA creators worth working with.</p>
+        <p className="text-muted mt-3">Instagram · TikTok · Snapchat · YouTube · UGC — all in one Saudi platform.</p>
+        <Link href="/influencers" className="inline-flex mt-6 px-6 py-3 rounded-xl brand-gradient text-white font-semibold shadow-sm hover:opacity-95">ابحث الآن · Search creators</Link>
       </section>
     </>
   );
@@ -164,9 +170,9 @@ function Row({ title, subtitle, href, creators }: { title: string; subtitle: str
       <div className="flex items-end justify-between gap-4 mb-5">
         <div>
           <h2 className="text-2xl font-black">{title}</h2>
-          <p className="text-[#6b7280] text-sm">{subtitle}</p>
+          <p className="text-muted text-sm">{subtitle}</p>
         </div>
-        <Link href={href} className="text-sm font-semibold text-[#7c3aed] hover:underline whitespace-nowrap">See all →</Link>
+        <Link href={href} className="text-sm font-semibold text-brand hover:underline whitespace-nowrap">See all →</Link>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
         {creators.map((c) => <CreatorCard key={c.username} c={c} />)}

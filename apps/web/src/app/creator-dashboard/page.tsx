@@ -14,7 +14,7 @@ type OrderRow = {
   package: { title: string };
 };
 
-export const metadata = { title: "Creator dashboard — Collabstr" };
+export const metadata = { title: "Creator dashboard — Nakhla" };
 export const dynamic = "force-dynamic";
 
 export default async function CreatorDashboard() {
@@ -36,12 +36,12 @@ export default async function CreatorDashboard() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
       <header className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p className="text-sm text-[#6b7280]">Welcome back</p>
+          <p className="text-sm text-muted">Welcome back</p>
           <h1 className="text-3xl font-black">Hey, {me.name.split(" ")[0]}</h1>
         </div>
         <div className="flex gap-2">
           {me.creatorUsername && (
-            <Link href={`/${me.creatorUsername}`} className="px-4 py-2.5 rounded-xl border border-[#e5e7eb] font-semibold">Public profile</Link>
+            <Link href={`/${me.creatorUsername}`} className="px-4 py-2.5 rounded-xl border border-border font-semibold">Public profile</Link>
           )}
           <Link href="/creator-dashboard/packages" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">Manage packages</Link>
         </div>
@@ -54,24 +54,24 @@ export default async function CreatorDashboard() {
           ["Total earned", fmtMoney(released), "all time"],
           ["Open applications", String(applications.filter((a) => a.status === "pending").length), `${applications.length} total`],
         ].map(([l, v, sub]) => (
-          <div key={l} className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
-            <p className="text-xs uppercase tracking-wide text-[#6b7280]">{l}</p>
+          <div key={l} className="rounded-2xl border border-border bg-elevated p-5">
+            <p className="text-xs uppercase tracking-wide text-muted">{l}</p>
             <p className="text-3xl font-black mt-1">{v}</p>
-            <p className="text-xs text-[#6b7280] mt-1">{sub}</p>
+            <p className="text-xs text-muted mt-1">{sub}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-10 grid lg:grid-cols-3 gap-6">
-        <section className="lg:col-span-2 rounded-2xl border border-[#e5e7eb] bg-white">
-          <header className="flex items-center justify-between p-5 border-b border-[#e5e7eb]">
+        <section className="lg:col-span-2 rounded-2xl border border-border bg-elevated">
+          <header className="flex items-center justify-between p-5 border-b border-border">
             <h2 className="font-bold text-lg">Order queue</h2>
-            <Link href="/creator-dashboard/orders" className="text-sm font-semibold text-[#7c3aed]">View all</Link>
+            <Link href="/creator-dashboard/orders" className="text-sm font-semibold text-brand">View all</Link>
           </header>
           {orders.length === 0 ? (
-            <p className="p-8 text-center text-sm text-[#6b7280]">No orders yet.</p>
+            <p className="p-8 text-center text-sm text-muted">No orders yet.</p>
           ) : (
-            <ul className="divide-y divide-[#e5e7eb]">
+            <ul className="divide-y divide-border">
               {orders.slice(0, 6).map((o) => {
                 const avatar = o.brand.avatarUrl || `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(o.brand.name)}`;
                 return (
@@ -81,9 +81,9 @@ export default async function CreatorDashboard() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{o.brand.name}</p>
-                      <p className="text-xs text-[#6b7280] truncate">{o.package.title} · #{o.id.slice(0, 6)}</p>
+                      <p className="text-xs text-muted truncate">{o.package.title} · #{o.id.slice(0, 6)}</p>
                     </div>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-[#7c3aed]">{o.status.replace(/_/g, " ")}</span>
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand">{o.status.replace(/_/g, " ")}</span>
                     <Link href={`/orders/${o.id}`} className="font-bold text-sm hover:underline">{fmtMoney(o.amount)}</Link>
                   </li>
                 );
@@ -92,17 +92,17 @@ export default async function CreatorDashboard() {
           )}
         </section>
 
-        <section className="rounded-2xl border border-[#e5e7eb] bg-white p-5">
+        <section className="rounded-2xl border border-border bg-elevated p-5">
           <h2 className="font-bold text-lg mb-3">My applications</h2>
           {applications.length === 0 ? (
-            <p className="text-sm text-[#6b7280]">No applications yet. <Link href="/campaigns" className="underline">Browse campaigns</Link>.</p>
+            <p className="text-sm text-muted">No applications yet. <Link href="/campaigns" className="underline">Browse campaigns</Link>.</p>
           ) : (
             <ul className="space-y-3">
               {applications.slice(0, 6).map((a) => (
                 <li key={a.id}>
-                  <Link href={`/campaigns/${a.campaign.id}`} className="block rounded-lg p-3 -mx-3 hover:bg-[#f7f7fb]">
+                  <Link href={`/campaigns/${a.campaign.id}`} className="block rounded-lg p-3 -mx-3 hover:bg-surface">
                     <p className="font-semibold truncate">{a.campaign.title}</p>
-                    <p className="text-xs text-[#6b7280]">{fmtMoney(a.price)} · {a.status}</p>
+                    <p className="text-xs text-muted">{fmtMoney(a.price)} · {a.status}</p>
                   </Link>
                 </li>
               ))}

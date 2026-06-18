@@ -13,7 +13,7 @@ type OrderRow = {
   package: { title: string };
 };
 
-export const metadata = { title: "My orders — Collabstr" };
+export const metadata = { title: "My orders — Nakhla" };
 export const dynamic = "force-dynamic";
 
 const GROUPS: Record<string, string[]> = {
@@ -42,14 +42,14 @@ export default async function CreatorOrdersPage() {
         return (
           <section key={title} className="mt-8">
             <h2 className="font-bold text-lg mb-3">{title}</h2>
-            <div className="rounded-2xl border border-[#e5e7eb] bg-white divide-y divide-[#e5e7eb]">
+            <div className="rounded-2xl border border-border bg-elevated divide-y divide-border">
               {filtered.map((o) => (
                 <Link key={o.id} href={`/orders/${o.id}`} className="p-5 flex items-center gap-4 hover:bg-[#fafafe]">
                   <div className="flex-1">
                     <p className="font-semibold">{o.brand.name}</p>
-                    <p className="text-xs text-[#6b7280]">{o.package.title} · #{o.id.slice(0,6)}</p>
+                    <p className="text-xs text-muted">{o.package.title} · #{o.id.slice(0,6)}</p>
                   </div>
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-violet-50 text-[#7c3aed]">{o.status.replace(/_/g, " ")}</span>
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand">{o.status.replace(/_/g, " ")}</span>
                   <span className="font-bold">{fmtMoney(o.amount)}</span>
                 </Link>
               ))}
@@ -58,7 +58,7 @@ export default async function CreatorOrdersPage() {
         );
       })}
 
-      {orders.length === 0 && <p className="text-center text-sm text-[#6b7280] mt-12">No orders yet.</p>}
+      {orders.length === 0 && <p className="text-center text-sm text-muted mt-12">No orders yet.</p>}
     </div>
   );
 }

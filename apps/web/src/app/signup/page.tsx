@@ -42,7 +42,7 @@ export default function SignupPage() {
   return (
     <div className="min-h-[70vh] grid lg:grid-cols-2">
       <section className="hidden lg:flex relative brand-gradient text-white p-12 flex-col justify-between">
-        <Link href="/" className="font-black text-2xl">collabstr</Link>
+        <Link href="/" className="font-black text-2xl">nakhla</Link>
         <div>
           <p className="text-white/80 text-sm font-semibold">1.4M+ brands and creators</p>
           <h2 className="text-4xl font-black mt-3 max-w-md leading-tight">Join the marketplace built for modern creators.</h2>
@@ -52,23 +52,23 @@ export default function SignupPage() {
             <li>✓ Tools for messaging, briefs, and content delivery</li>
           </ul>
         </div>
-        <p className="text-xs text-white/70">© {new Date().getFullYear()} Collabstr clone</p>
+        <p className="text-xs text-white/70">© {new Date().getFullYear()} Nakhla clone</p>
       </section>
 
       <section className="p-6 sm:p-12 flex items-center justify-center">
         <div className="w-full max-w-md">
           <h1 className="text-3xl font-black">Create your account</h1>
-          <p className="text-[#6b7280] mt-1.5">Takes less than 60 seconds.</p>
+          <p className="text-muted mt-1.5">Takes less than 60 seconds.</p>
 
           <div className="mt-6 grid grid-cols-2 gap-3">
             {(["brand", "creator"] as const).map((r) => (
               <button
                 key={r}
                 onClick={() => setRole(r)}
-                className={`p-4 rounded-xl border text-left transition ${role === r ? "border-[#0b0b14] bg-[#f7f7fb]" : "border-[#e5e7eb] hover:border-[#0b0b14]"}`}
+                className={`p-4 rounded-xl border text-left transition ${role === r ? "border-fg bg-surface" : "border-border hover:border-fg"}`}
               >
                 <p className="font-bold capitalize">I&apos;m a {r}</p>
-                <p className="text-xs text-[#6b7280] mt-1">
+                <p className="text-xs text-muted mt-1">
                   {r === "brand" ? "Hire creators, run campaigns." : "Get hired by brands."}
                 </p>
               </button>
@@ -83,7 +83,7 @@ export default function SignupPage() {
               {role === "creator" && (
                 <Field label="Primary handle" value={handle} onChange={setHandle} required placeholder="@yourhandle" />
               )}
-              <p className="text-xs text-[#6b7280]">
+              <p className="text-xs text-muted">
                 By creating an account you agree to our{" "}
                 <Link className="underline" href="/terms">Terms</Link> and{" "}
                 <Link className="underline" href="/privacy">Privacy Policy</Link>.
@@ -95,9 +95,9 @@ export default function SignupPage() {
             </form>
           )}
 
-          <p className="mt-6 text-sm text-[#6b7280] text-center">
+          <p className="mt-6 text-sm text-muted text-center">
             Already have an account?{" "}
-            <Link href="/login" className="font-semibold text-[#0b0b14] underline">Log in</Link>
+            <Link href="/login" className="font-semibold text-fg underline">Log in</Link>
           </p>
         </div>
       </section>
@@ -108,12 +108,12 @@ export default function SignupPage() {
 function Field({ label, value, onChange, ...rest }: { label: string; value: string; onChange: (v: string) => void } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   return (
     <label className="block">
-      <span className="text-xs font-semibold text-[#374151]">{label}</span>
+      <span className="text-xs font-semibold text-fg/80">{label}</span>
       <input
         {...rest}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full px-3.5 py-3 rounded-xl border border-[#e5e7eb] bg-white"
+        className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border bg-elevated"
       />
     </label>
   );
