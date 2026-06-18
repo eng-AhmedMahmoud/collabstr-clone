@@ -14,7 +14,7 @@ type OrderRow = {
   package: { title: string };
 };
 
-export const metadata = { title: "Creator dashboard — Nakhla" };
+export const metadata = { title: "Creator dashboard · لوحة المؤثر — Nakhla · نخلة" };
 export const dynamic = "force-dynamic";
 
 export default async function CreatorDashboard() {
@@ -36,23 +36,26 @@ export default async function CreatorDashboard() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
       <header className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p className="text-sm text-muted">Welcome back</p>
-          <h1 className="text-3xl font-black">Hey, {me.name.split(" ")[0]}</h1>
+          <p className="text-sm text-muted">أهلاً بعودتك · Welcome back</p>
+          <h1 className="text-3xl font-black">
+            مرحباً، <span className="brand-text">{me.name.split(" ")[0]}</span>
+          </h1>
+          <p className="text-xs text-muted mt-1">🇸🇦 KSA creator dashboard · أرباحك بالريال السعودي</p>
         </div>
         <div className="flex gap-2">
           {me.creatorUsername && (
-            <Link href={`/${me.creatorUsername}`} className="px-4 py-2.5 rounded-xl border border-border font-semibold">Public profile</Link>
+            <Link href={`/${me.creatorUsername}`} className="px-4 py-2.5 rounded-xl border border-border font-semibold">ملفي العام · Public profile</Link>
           )}
-          <Link href="/creator-dashboard/packages" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">Manage packages</Link>
+          <Link href="/creator-dashboard/packages" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">إدارة الباقات · Manage packages</Link>
         </div>
       </header>
 
       <div className="mt-8 grid sm:grid-cols-4 gap-4">
         {[
-          ["Active deliveries", String(pendingDeliveries), "to ship"],
-          ["In escrow", fmtMoney(inEscrow), "pending release"],
-          ["Total earned", fmtMoney(released), "all time"],
-          ["Open applications", String(applications.filter((a) => a.status === "pending").length), `${applications.length} total`],
+          ["تسليمات نشطة · Active deliveries", String(pendingDeliveries), "to ship · للتسليم"],
+          ["في الضمان · In escrow", fmtMoney(inEscrow), "pending release · معلّق"],
+          ["إجمالي الأرباح · Total earned", fmtMoney(released), "all time · بالريال"],
+          ["طلبات مفتوحة · Open applications", String(applications.filter((a) => a.status === "pending").length), `${applications.length} total · إجمالي`],
         ].map(([l, v, sub]) => (
           <div key={l} className="rounded-2xl border border-border bg-elevated p-5">
             <p className="text-xs uppercase tracking-wide text-muted">{l}</p>
@@ -65,25 +68,25 @@ export default async function CreatorDashboard() {
       <div className="mt-10 grid lg:grid-cols-3 gap-6">
         <section className="lg:col-span-2 rounded-2xl border border-border bg-elevated">
           <header className="flex items-center justify-between p-5 border-b border-border">
-            <h2 className="font-bold text-lg">Order queue</h2>
-            <Link href="/creator-dashboard/orders" className="text-sm font-semibold text-brand">View all</Link>
+            <h2 className="font-bold text-lg">قائمة الطلبات · Order queue</h2>
+            <Link href="/creator-dashboard/orders" className="text-sm font-semibold text-brand">عرض الكل · View all</Link>
           </header>
           {orders.length === 0 ? (
-            <p className="p-8 text-center text-sm text-muted">No orders yet.</p>
+            <p className="p-8 text-center text-sm text-muted">لا توجد طلبات بعد · No orders yet.</p>
           ) : (
             <ul className="divide-y divide-border">
               {orders.slice(0, 6).map((o) => {
                 const avatar = o.brand.avatarUrl || `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(o.brand.name)}`;
                 return (
                   <li key={o.id} className="p-5 flex items-center gap-4">
-                    <div className="relative h-12 w-12 rounded-xl overflow-hidden bg-[#f3f4f6] shrink-0">
+                    <div className="relative h-12 w-12 rounded-xl overflow-hidden bg-surface shrink-0">
                       <Image src={avatar} alt={o.brand.name} fill className="object-cover" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{o.brand.name}</p>
                       <p className="text-xs text-muted truncate">{o.package.title} · #{o.id.slice(0, 6)}</p>
                     </div>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand">{o.status.replace(/_/g, " ")}</span>
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200">{o.status.replace(/_/g, " ")}</span>
                     <Link href={`/orders/${o.id}`} className="font-bold text-sm hover:underline">{fmtMoney(o.amount)}</Link>
                   </li>
                 );
