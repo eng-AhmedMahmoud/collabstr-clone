@@ -5,6 +5,7 @@ import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
 import { fmtAgo } from "@/lib/format";
 import { UserRowActions } from "./row-actions";
+import { t as serverT } from "@/lib/i18n";
 
 type User = { id: string; name: string; email: string; role: "brand" | "creator" | "admin"; createdAt: string; bannedAt?: string | null; emailVerifiedAt?: string | null };
 
@@ -16,6 +17,7 @@ export default async function UsersPage({
 }: { searchParams: Promise<{ role?: string; q?: string }> }) {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/users");
+  const i = await serverT();
   const sp = await searchParams;
   const params = new URLSearchParams();
   if (sp.role) params.set("role", sp.role);
@@ -26,29 +28,29 @@ export default async function UsersPage({
 
   return (
     <Shell me={me}>
-      <PageHeader title="Users" subtitle={`${users.length} matching · click a role pill below to filter`} />
+      <PageHeader title={i.users.title} subtitle={`${users.length} ${i.users.countSuffix}`} />
 
       <Card padding={false}>
         <div className="flex items-center gap-2 px-5 py-3 border-b border-[#1f1f30]">
           <form className="flex-1 flex gap-2">
-            <input name="q" defaultValue={sp.q} placeholder="Search email or name…" className="flex-1 px-3 py-2 rounded-lg bg-[#0b0b14] border border-[#1f1f30] text-sm" />
+            <input name="q" defaultValue={sp.q} placeholder={i.users.searchPh} className="flex-1 px-3 py-2 rounded-lg bg-[#0b0b14] border border-[#1f1f30] text-sm" />
             <select name="role" defaultValue={sp.role ?? ""} className="px-3 py-2 rounded-lg bg-[#0b0b14] border border-[#1f1f30] text-sm">
-              <option value="">All roles</option>
-              <option value="brand">Brand</option>
-              <option value="creator">Creator</option>
-              <option value="admin">Admin</option>
+              <option value="">{i.users.allRoles}</option>
+              <option value="brand">{i.users.role.brand}</option>
+              <option value="creator">{i.users.role.creator}</option>
+              <option value="admin">{i.users.role.admin}</option>
             </select>
-            <button className="px-4 py-2 rounded-lg brand-gradient text-white text-sm font-bold">Filter</button>
+            <button className="px-4 py-2 rounded-lg brand-gradient text-white text-sm font-bold">{i.common.filter}</button>
           </form>
         </div>
         <table className="w-full text-sm">
           <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
             <tr>
-              <th className="text-left px-5 py-2">User</th>
-              <th className="text-left px-5 py-2">Role</th>
-              <th className="text-left px-5 py-2">Status</th>
-              <th className="text-left px-5 py-2">Joined</th>
-              <th className="text-right px-5 py-2 pr-5">Actions</th>
+              <th className="text-left px-5 py-2">{i.users.colUser}</th>
+              <th className="text-left px-5 py-2">{i.users.colRole}</th>
+              <th className="text-left px-5 py-2">{i.users.colStatus}</th>
+              <th className="text-left px-5 py-2">{i.users.colJoined}</th>
+              <th className="text-right px-5 py-2 pr-5">{i.users.colActions}</th>
             </tr>
           </thead>
           <tbody>
@@ -60,7 +62,7 @@ export default async function UsersPage({
                 </td>
                 <td className="px-5 py-3"><Pill kind={u.role === "admin" ? "brand" : u.role === "creator" ? "warn" : "muted"}>{u.role}</Pill></td>
                 <td className="px-5 py-3">
-                  {u.bannedAt ? <Pill kind="bad">banned</Pill> : u.emailVerifiedAt ? <Pill kind="ok">verified</Pill> : <Pill kind="muted">unverified</Pill>}
+                  {u.bannedAt ? <Pill kind="bad">{i.users.pillBanned}</Pill> : u.emailVerifiedAt ? <Pill kind="ok">{i.users.pillVerified}</Pill> : <Pill kind="muted">{i.users.pillUnverified}</Pill>}
                 </td>
                 <td className="px-5 py-3 text-[#8b8ba0]">{fmtAgo(u.createdAt)}</td>
                 <td className="px-5 py-3 text-right pr-5">
@@ -68,7 +70,7 @@ export default async function UsersPage({
                 </td>
               </tr>
             ))}
-            {users.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-[#8b8ba0]">No users match.</td></tr>}
+            {users.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-[#8b8ba0]">{i.users.noMatch}</td></tr>}
           </tbody>
         </table>
       </Card>

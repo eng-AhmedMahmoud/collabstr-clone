@@ -2,12 +2,13 @@ import { cookies } from "next/headers";
 
 const BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
 
-type FetchOpts = RequestInit & { cookieHeader?: string; auth?: boolean };
+type FetchOpts = RequestInit & { cookieHeader?: string; auth?: boolean; locale?: string };
 
 async function call<T>(path: string, opts: FetchOpts = {}): Promise<T> {
   const headers = new Headers(opts.headers);
   if (!headers.has("Content-Type") && opts.body) headers.set("Content-Type", "application/json");
   if (opts.cookieHeader) headers.set("cookie", opts.cookieHeader);
+  if (opts.locale) headers.set("accept-language", opts.locale);
 
   const res = await fetch(`${BASE}/api/v1${path}`, {
     ...opts,
@@ -38,12 +39,17 @@ export const api = {
   delete: <T>(path: string, opts: FetchOpts = {}) => call<T>(path, { ...opts, method: "DELETE" }),
 };
 
+// Server-side API helper. Forwards both the user's cookies and their resolved
+// locale so the backend can render bilingual responses without a separate
+// query parameter. Locale falls back to the cookie value if present.
 export async function serverApi() {
   const jar = await cookies();
   const cookieHeader = jar.getAll().map((c) => `${c.name}=${c.value}`).join("; ");
+  const localeCookie = jar.get("locale")?.value;
+  const locale = localeCookie === "ar" ? "ar" : "en";
   return {
-    get: <T>(path: string) => call<T>(path, { method: "GET", cookieHeader }),
+    get: <T>(path: string) => call<T>(path, { method: "GET", cookieHeader, locale }),
     post: <T>(path: string, body?: unknown) =>
-      call<T>(path, { method: "POST", cookieHeader, body: body ? JSON.stringify(body) : undefined }),
+      call<T>(path, { method: "POST", cookieHeader, locale, body: body ? JSON.stringify(body) : undefined }),
   };
 }

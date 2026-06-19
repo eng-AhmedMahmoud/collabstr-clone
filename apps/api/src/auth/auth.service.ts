@@ -42,6 +42,7 @@ export class AuthService {
         name: input.name,
         role: input.role,
         passwordHash,
+        locale: input.locale ?? null,
         ...(input.role === "brand"
           ? { brandProfile: { create: { brandName: input.name } } }
           : {
@@ -128,6 +129,8 @@ export class AuthService {
       avatarUrl: user.avatarUrl,
       creatorUsername: user.creatorProfile?.username ?? null,
       brandName: user.brandProfile?.brandName ?? null,
+      // Default null → "en" so /me always returns a usable locale value.
+      locale: (user.locale === "ar" || user.locale === "en" ? user.locale : "en") as "en" | "ar",
     };
   }
 }

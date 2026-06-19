@@ -1,5 +1,24 @@
 import { z } from "zod";
 
+export const Locale = z.enum(["en", "ar"]);
+export type Locale = z.infer<typeof Locale>;
+export const LOCALES = ["en", "ar"] as const;
+export const DEFAULT_LOCALE: Locale = "en";
+
+// LocalizedString carries text in every supported locale. The backend stores
+// system-generated copy this way so it can render in the reader's language
+// regardless of the author's. Validate strictly to keep DB rows trustworthy.
+export const LocalizedString = z.object({
+  en: z.string().min(1).max(5000),
+  ar: z.string().min(1).max(5000),
+});
+export type LocalizedString = z.infer<typeof LocalizedString>;
+
+export function pickLocalized(s: LocalizedString | string, locale: Locale): string {
+  if (typeof s === "string") return s;
+  return s[locale] ?? s.en;
+}
+
 export const Platform = z.enum(["instagram", "tiktok", "youtube", "ugc"]);
 export type Platform = z.infer<typeof Platform>;
 
@@ -31,6 +50,7 @@ export const SignupInput = z.object({
   password: z.string().min(8).max(128),
   role: Role.exclude(["admin"]),
   handle: z.string().optional(),
+  locale: Locale.optional(),
 });
 export type SignupInput = z.infer<typeof SignupInput>;
 
@@ -84,6 +104,19 @@ export const MessageInput = z.object({
 });
 export type MessageInput = z.infer<typeof MessageInput>;
 
+// Broadcast accepts both EN and AR up front so the admin doesn't ship copy
+// only one half of the audience can read. Single-language broadcasts get
+// rejected at the controller layer to enforce parity.
+export const BroadcastInput = z.object({
+  titleEn: z.string().min(2).max(140),
+  titleAr: z.string().min(2).max(140),
+  bodyEn: z.string().min(2).max(2000),
+  bodyAr: z.string().min(2).max(2000),
+  href: z.string().max(500).optional(),
+  role: Role.optional(),
+});
+export type BroadcastInput = z.infer<typeof BroadcastInput>;
+
 export type Me = {
   id: string;
   email: string;
@@ -91,4 +124,5 @@ export type Me = {
   role: Role;
   avatarUrl?: string | null;
   creatorUsername?: string | null;
+  locale: Locale;
 };

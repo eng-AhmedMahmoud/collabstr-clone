@@ -47,7 +47,7 @@ export function Pill({ kind, children }: { kind: "ok" | "warn" | "bad" | "muted"
     warn:  "bg-amber-500/15 text-amber-300",
     bad:   "bg-red-500/15 text-red-300",
     muted: "bg-[#161624] text-[#8b8ba0]",
-    brand: "bg-violet-500/15 text-violet-300",
+    brand: "bg-emerald-500/15 text-emerald-300",
   }[kind];
   return <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${map}`}>{children}</span>;
 }

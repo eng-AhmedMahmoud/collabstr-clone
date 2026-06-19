@@ -5,6 +5,7 @@ import { Card, PageHeader, Pill } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
 import { fmtMoney, fmtNum, fmtAgo } from "@/lib/format";
+import { t as serverT } from "@/lib/i18n";
 
 type Row = {
   id: string;
@@ -26,23 +27,24 @@ export const dynamic = "force-dynamic";
 export default async function CreatorsAdmin() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/creators");
+  const i = await serverT();
   const api = await serverApi();
   let rows: Row[] = [];
   try { rows = await api.get<Row[]>("/admin/creators"); } catch {}
 
   return (
     <Shell me={me}>
-      <PageHeader title="Creators" subtitle={`${rows.length} creator profiles`} />
+      <PageHeader title={i.creators.title} subtitle={`${rows.length} ${i.creators.countSuffix}`} />
       <Card padding={false}>
         <table className="w-full text-sm">
           <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
             <tr>
-              <th className="text-left px-5 py-2">Creator</th>
-              <th className="text-left px-5 py-2">Followers</th>
-              <th className="text-left px-5 py-2">Rating</th>
-              <th className="text-right px-5 py-2">From</th>
-              <th className="text-left px-5 py-2">Badges</th>
-              <th className="text-right px-5 py-2 pr-5">Joined</th>
+              <th className="text-left px-5 py-2">{i.creators.colCreator}</th>
+              <th className="text-left px-5 py-2">{i.creators.colFollowers}</th>
+              <th className="text-left px-5 py-2">{i.creators.colRating}</th>
+              <th className="text-right px-5 py-2">{i.creators.colFrom}</th>
+              <th className="text-left px-5 py-2">{i.creators.colBadges}</th>
+              <th className="text-right px-5 py-2 pr-5">{i.creators.colJoined}</th>
             </tr>
           </thead>
           <tbody>
@@ -51,7 +53,7 @@ export default async function CreatorsAdmin() {
               return (
                 <tr key={c.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
                   <td className="px-5 py-3">
-                    <Link href={`https://collabstr-web.localhost/${c.username}`} target="_blank" className="font-semibold hover:text-violet-300">{c.user.name}</Link>
+                    <Link href={`https://collabstr-web.localhost/${c.username}`} target="_blank" className="font-semibold hover:text-emerald-300">{c.user.name}</Link>
                     <p className="text-[11px] text-[#8b8ba0]">@{c.username} · {c.user.email}</p>
                   </td>
                   <td className="px-5 py-3 text-[#d1d1da]">{fmtNum(total)}</td>
@@ -62,7 +64,7 @@ export default async function CreatorsAdmin() {
                 </tr>
               );
             })}
-            {rows.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-[#8b8ba0]">No creators yet.</td></tr>}
+            {rows.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-[#8b8ba0]">{i.creators.none}</td></tr>}
           </tbody>
         </table>
       </Card>

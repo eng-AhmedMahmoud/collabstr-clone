@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { fmtMoney } from "@/lib/format";
+import { t } from "@/lib/i18n";
 
 type OrderRow = {
   id: string;
@@ -14,10 +15,11 @@ type OrderRow = {
   package: { title: string };
 };
 
-export const metadata = { title: "Creator dashboard · لوحة المؤثر — Nakhla · نخلة" };
+export const metadata = { title: "Creator dashboard — Nakhla" };
 export const dynamic = "force-dynamic";
 
 export default async function CreatorDashboard() {
+  const i = await t();
   const me = await getSession();
   if (!me) redirect("/login?next=/creator-dashboard");
   if (me.role !== "creator") redirect("/dashboard");
@@ -36,26 +38,25 @@ export default async function CreatorDashboard() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
       <header className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p className="text-sm text-muted">أهلاً بعودتك · Welcome back</p>
+          <p className="text-sm text-muted">{i.dashboard.welcome}</p>
           <h1 className="text-3xl font-black">
-            مرحباً، <span className="brand-text">{me.name.split(" ")[0]}</span>
+            {i.dashboard.hey} <span className="brand-text">{me.name.split(" ")[0]}</span>
           </h1>
-          <p className="text-xs text-muted mt-1">🇸🇦 KSA creator dashboard · أرباحك بالريال السعودي</p>
         </div>
         <div className="flex gap-2">
           {me.creatorUsername && (
-            <Link href={`/${me.creatorUsername}`} className="px-4 py-2.5 rounded-xl border border-border font-semibold">ملفي العام · Public profile</Link>
+            <Link href={`/${me.creatorUsername}`} className="px-4 py-2.5 rounded-xl border border-border font-semibold">{i.creatorDashboard.publicProfile}</Link>
           )}
-          <Link href="/creator-dashboard/packages" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">إدارة الباقات · Manage packages</Link>
+          <Link href="/creator-dashboard/packages" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">{i.creatorDashboard.managePackages}</Link>
         </div>
       </header>
 
       <div className="mt-8 grid sm:grid-cols-4 gap-4">
         {[
-          ["تسليمات نشطة · Active deliveries", String(pendingDeliveries), "to ship · للتسليم"],
-          ["في الضمان · In escrow", fmtMoney(inEscrow), "pending release · معلّق"],
-          ["إجمالي الأرباح · Total earned", fmtMoney(released), "all time · بالريال"],
-          ["طلبات مفتوحة · Open applications", String(applications.filter((a) => a.status === "pending").length), `${applications.length} total · إجمالي`],
+          [i.creatorDashboard.activeDeliveries, String(pendingDeliveries), i.creatorDashboard.toShip],
+          [i.creatorDashboard.inEscrow, fmtMoney(inEscrow), i.creatorDashboard.pendingRelease],
+          [i.creatorDashboard.totalEarned, fmtMoney(released), i.dashboard.kpis.allTime],
+          [i.creatorDashboard.openApps, String(applications.filter((a) => a.status === "pending").length), `${applications.length} ${i.dashboard.kpis.totalLabel}`],
         ].map(([l, v, sub]) => (
           <div key={l} className="rounded-2xl border border-border bg-elevated p-5">
             <p className="text-xs uppercase tracking-wide text-muted">{l}</p>
@@ -68,11 +69,11 @@ export default async function CreatorDashboard() {
       <div className="mt-10 grid lg:grid-cols-3 gap-6">
         <section className="lg:col-span-2 rounded-2xl border border-border bg-elevated">
           <header className="flex items-center justify-between p-5 border-b border-border">
-            <h2 className="font-bold text-lg">قائمة الطلبات · Order queue</h2>
-            <Link href="/creator-dashboard/orders" className="text-sm font-semibold text-brand">عرض الكل · View all</Link>
+            <h2 className="font-bold text-lg">{i.creatorDashboard.orderQueue}</h2>
+            <Link href="/creator-dashboard/orders" className="text-sm font-semibold text-brand">{i.common.viewAll}</Link>
           </header>
           {orders.length === 0 ? (
-            <p className="p-8 text-center text-sm text-muted">لا توجد طلبات بعد · No orders yet.</p>
+            <p className="p-8 text-center text-sm text-muted">{i.creatorDashboard.noOrders}</p>
           ) : (
             <ul className="divide-y divide-border">
               {orders.slice(0, 6).map((o) => {
@@ -86,7 +87,7 @@ export default async function CreatorDashboard() {
                       <p className="font-semibold truncate">{o.brand.name}</p>
                       <p className="text-xs text-muted truncate">{o.package.title} · #{o.id.slice(0, 6)}</p>
                     </div>
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200">{o.status.replace(/_/g, " ")}</span>
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200">{i.status[o.status as keyof typeof i.status] ?? o.status.replace(/_/g, " ")}</span>
                     <Link href={`/orders/${o.id}`} className="font-bold text-sm hover:underline">{fmtMoney(o.amount)}</Link>
                   </li>
                 );
@@ -96,16 +97,16 @@ export default async function CreatorDashboard() {
         </section>
 
         <section className="rounded-2xl border border-border bg-elevated p-5">
-          <h2 className="font-bold text-lg mb-3">طلباتي · My applications</h2>
+          <h2 className="font-bold text-lg mb-3">{i.creatorDashboard.myApps}</h2>
           {applications.length === 0 ? (
-            <p className="text-sm text-muted">لا توجد طلبات بعد. <Link href="/campaigns" className="underline">تصفّح الحملات</Link>.</p>
+            <p className="text-sm text-muted">{i.creatorDashboard.noApps} <Link href="/campaigns" className="underline">{i.creatorDashboard.browseCampaigns}</Link>.</p>
           ) : (
             <ul className="space-y-3">
               {applications.slice(0, 6).map((a) => (
                 <li key={a.id}>
                   <Link href={`/campaigns/${a.campaign.id}`} className="block rounded-lg p-3 -mx-3 hover:bg-surface">
                     <p className="font-semibold truncate">{a.campaign.title}</p>
-                    <p className="text-xs text-muted">{fmtMoney(a.price)} · {a.status}</p>
+                    <p className="text-xs text-muted">{fmtMoney(a.price)} · {i.status[a.status as keyof typeof i.status] ?? a.status}</p>
                   </Link>
                 </li>
               ))}

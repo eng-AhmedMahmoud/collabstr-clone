@@ -5,6 +5,7 @@ import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
 import { fmtAgo } from "@/lib/format";
 import { DeleteReviewButton } from "./delete-button";
+import { t as serverT } from "@/lib/i18n";
 
 type Row = {
   id: string;
@@ -21,13 +22,14 @@ export const dynamic = "force-dynamic";
 export default async function ReviewsPage() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/reviews");
+  const i = await serverT();
   const api = await serverApi();
   let rows: Row[] = [];
   try { rows = await api.get<Row[]>("/admin/reviews"); } catch {}
 
   return (
     <Shell me={me}>
-      <PageHeader title="Reviews" subtitle={`${rows.length} latest reviews · click delete to remove abusive content`} />
+      <PageHeader title={i.reviews.title} subtitle={i.reviews.countTpl.replace("{n}", String(rows.length))} />
       <Card padding={false}>
         <ul className="divide-y divide-[#1f1f30]">
           {rows.map((r) => (
@@ -45,7 +47,7 @@ export default async function ReviewsPage() {
               <DeleteReviewButton id={r.id} />
             </li>
           ))}
-          {rows.length === 0 && <li className="px-5 py-12 text-center text-[#8b8ba0]">No reviews yet.</li>}
+          {rows.length === 0 && <li className="px-5 py-12 text-center text-[#8b8ba0]">{i.reviews.none}</li>}
         </ul>
       </Card>
     </Shell>

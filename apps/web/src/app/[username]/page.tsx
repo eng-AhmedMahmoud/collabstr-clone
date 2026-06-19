@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { serverApi } from "@/lib/api";
 import { fmtFollowers, fmtMoney } from "@/lib/format";
+import { t } from "@/lib/i18n";
 import type { ApiCreator } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export default async function CreatorProfile({
 }: {
   params: Promise<{ username: string }>;
 }) {
+  const i = await t();
   const { username } = await params;
   const api = await serverApi();
   let c: ApiCreator;
@@ -43,16 +45,16 @@ export default async function CreatorProfile({
                 <div className="text-sm text-muted mt-0.5 flex items-center gap-3">
                   <span className="flex items-center gap-1 text-amber-500 font-semibold">
                     ★ <span className="text-fg">{c.rating.toFixed(1)}</span>
-                    <span className="text-muted font-normal">· {c.reviewsCount} reviews</span>
+                    <span className="text-muted font-normal">· {c.reviewsCount} {i.profile.reviewsTitle.toLowerCase()}</span>
                   </span>
                   <span>·</span>
                   <span>{c.city}, {c.country}</span>
                 </div>
               </div>
               <div className="ml-auto flex gap-2 pb-2">
-                <button className="px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-surface">Share</button>
+                <button className="px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-surface">{i.profile.shareLabel}</button>
                 <form action={`/api/save/${c.id}`} method="post">
-                  <button className="px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-surface">Save</button>
+                  <button className="px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-surface">{i.profile.saveLabel}</button>
                 </form>
               </div>
             </div>
@@ -63,22 +65,22 @@ export default async function CreatorProfile({
               <div key={p} className="rounded-xl border border-border bg-elevated p-4">
                 <p className="text-xs uppercase tracking-wide text-muted">{p}</p>
                 <p className="text-2xl font-black mt-1">{fmtFollowers(f ?? undefined)}</p>
-                <p className="text-xs text-muted">followers</p>
+                <p className="text-xs text-muted">{i.profile.followers}</p>
               </div>
             ))}
           </div>
 
           <section>
-            <h2 className="text-xl font-black mb-3">About {c.user.name.split(" ")[0]}</h2>
+            <h2 className="text-xl font-black mb-3">{i.profile.aboutPrefix} {c.user.name.split(" ")[0]}</h2>
             <p className="text-fg/80 leading-relaxed">{c.bio}</p>
           </section>
 
           {c.portfolio.length > 0 && (
             <section>
-              <h2 className="text-xl font-black mb-3">Portfolio</h2>
+              <h2 className="text-xl font-black mb-3">{i.profile.portfolio}</h2>
               <div className="grid grid-cols-3 gap-2">
-                {c.portfolio.map((src, i) => (
-                  <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-surface">
+                {c.portfolio.map((src, idx) => (
+                  <div key={idx} className="relative aspect-square rounded-lg overflow-hidden bg-surface">
                     <Image src={src} alt="" fill className="object-cover" sizes="33vw" />
                   </div>
                 ))}
@@ -88,18 +90,18 @@ export default async function CreatorProfile({
 
           {c.audience && (
             <section className="rounded-2xl border border-border bg-elevated p-6">
-              <h2 className="text-xl font-black mb-4">Audience analytics</h2>
+              <h2 className="text-xl font-black mb-4">{i.profile.audienceTitle}</h2>
               <div className="grid sm:grid-cols-3 gap-4 mb-6">
-                <Stat label="Followers" value={fmtFollowers(
+                <Stat label={i.profile.audienceFollowers} value={fmtFollowers(
                   (c.followersIg ?? 0) + (c.followersTt ?? 0) + (c.followersYt ?? 0)
                 )} />
-                <Stat label="Average views" value={fmtFollowers(c.avgViews ?? undefined)} />
-                <Stat label="Engagement" value={`${c.engagement ?? "—"}%`} />
+                <Stat label={i.profile.audienceAvgViews} value={fmtFollowers(c.avgViews ?? undefined)} />
+                <Stat label={i.profile.audienceEngagement} value={`${c.engagement ?? "—"}%`} />
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
-                  <h3 className="font-bold text-sm mb-3">Audience location</h3>
+                  <h3 className="font-bold text-sm mb-3">{i.profile.audienceLocation}</h3>
                   <ul className="space-y-2 text-sm">
                     {c.audience.locations.map((l) => (
                       <li key={l.code} className="flex items-center gap-2">
@@ -114,7 +116,7 @@ export default async function CreatorProfile({
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm mb-3">Audience age</h3>
+                  <h3 className="font-bold text-sm mb-3">{i.profile.audienceAge}</h3>
                   <ul className="space-y-2 text-sm">
                     {c.audience.ages.map((a) => (
                       <li key={a.range} className="flex items-center gap-2">
@@ -128,7 +130,7 @@ export default async function CreatorProfile({
                   </ul>
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm mb-3">Audience gender</h3>
+                  <h3 className="font-bold text-sm mb-3">{i.profile.audienceGender}</h3>
                   <div className="rounded-lg overflow-hidden flex h-6 mt-2">
                     <div className="brand-gradient grid place-items-center text-white text-xs font-semibold" style={{ width: `${c.audience.gender.female}%` }}>
                       {c.audience.gender.female}%
@@ -137,7 +139,7 @@ export default async function CreatorProfile({
                       {c.audience.gender.male}%
                     </div>
                   </div>
-                  <p className="text-xs text-muted mt-2">Female / Male</p>
+                  <p className="text-xs text-muted mt-2">{i.profile.genderLegend}</p>
                 </div>
               </div>
             </section>
@@ -145,13 +147,13 @@ export default async function CreatorProfile({
 
           {c.reviewsReceived && c.reviewsReceived.length > 0 && (
             <section className="rounded-2xl border border-border bg-elevated p-6">
-              <h2 className="text-xl font-black mb-4">Reviews ({c.reviewsCount})</h2>
+              <h2 className="text-xl font-black mb-4">{i.profile.reviewsTitle} ({c.reviewsCount})</h2>
               <ul className="space-y-5">
                 {c.reviewsReceived.map((r) => (
                   <li key={r.id} className="border-b last:border-0 border-border pb-5 last:pb-0">
                     <div className="flex items-center justify-between">
                       <p className="font-semibold">{r.author.name}</p>
-                      <p className="text-xs text-muted">{new Date(r.createdAt).toLocaleDateString()}</p>
+                      <p className="text-xs text-muted">{new Date(r.createdAt).toLocaleDateString("en-SA", { timeZone: "Asia/Riyadh" })}</p>
                     </div>
                     <p className="text-amber-500 text-sm">{"★".repeat(Math.round(r.rating))}</p>
                     <p className="text-fg/80 mt-1.5 text-sm">{r.text}</p>
@@ -164,7 +166,7 @@ export default async function CreatorProfile({
 
         <aside className="lg:sticky lg:top-24 self-start">
           <div className="rounded-2xl border border-border bg-elevated p-5 shadow-sm">
-            <p className="text-sm text-muted">From</p>
+            <p className="text-sm text-muted">{i.profile.from}</p>
             <p className="text-3xl font-black">{fmtMoney(c.startingPrice)}</p>
 
             <ul className="mt-5 space-y-2">
@@ -177,16 +179,16 @@ export default async function CreatorProfile({
             </ul>
 
             <Link href={`/checkout?creator=${c.username}&package=${c.packages?.[0]?.id ?? ""}`} className="mt-5 w-full inline-flex justify-center px-4 py-3 rounded-xl brand-gradient text-white font-bold hover:opacity-95">
-              Add to cart
+              {i.profile.addToCart}
             </Link>
             <Link href={`/messages?to=${c.username}`} className="mt-2 w-full inline-flex justify-center px-4 py-3 rounded-xl border border-fg text-fg font-bold hover:bg-surface">
-              Negotiate a package
+              {i.profile.negotiate}
             </Link>
 
             <ul className="mt-5 space-y-2 text-xs text-muted">
-              <li>✓ Funds held in escrow until approval</li>
-              <li>✓ Average delivery: 5 days</li>
-              <li>✓ Free revisions on every package</li>
+              <li>✓ {i.profile.escrow}</li>
+              <li>✓ {i.profile.delivery}</li>
+              <li>✓ {i.profile.revisions}</li>
             </ul>
           </div>
         </aside>

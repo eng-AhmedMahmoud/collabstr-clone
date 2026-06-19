@@ -11,6 +11,7 @@ import { MessagesModule } from "./messages/messages.module";
 import { NotificationsModule } from "./notifications/notifications.module";
 import { ReviewsModule } from "./reviews/reviews.module";
 import { AdminModule } from "./admin/admin.module";
+import { I18nModule } from "./i18n/i18n.module";
 import { HealthController } from "./health.controller";
 
 @Module({
@@ -27,6 +28,7 @@ import { HealthController } from "./health.controller";
     NotificationsModule,
     ReviewsModule,
     AdminModule,
+    I18nModule,
   ],
   controllers: [HealthController],
 })

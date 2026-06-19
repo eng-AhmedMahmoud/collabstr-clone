@@ -20,6 +20,18 @@ function setAuthCookies(res: Response, accessToken: string, refreshToken: string
   res.cookie("refresh_token", refreshToken, { ...base, maxAge: 30 * 24 * 60 * 60 * 1000 });
 }
 
+function setLocaleCookie(res: Response, locale: "en" | "ar" | null | undefined) {
+  if (locale !== "en" && locale !== "ar") return;
+  res.cookie("locale", locale, {
+    httpOnly: false, // read on the client for UI hydration
+    secure: isProd,
+    sameSite: (isProd ? "none" : "lax") as "none" | "lax",
+    domain: process.env.COOKIE_DOMAIN || undefined,
+    path: "/",
+    maxAge: 365 * 24 * 60 * 60 * 1000,
+  });
+}
+
 function clearAuthCookies(res: Response) {
   res.clearCookie("access_token", { path: "/" });
   res.clearCookie("refresh_token", { path: "/" });
@@ -34,7 +46,8 @@ export class AuthController {
   async signup(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const { user, accessToken, refreshToken } = await this.auth.signup(body);
     setAuthCookies(res, accessToken, refreshToken);
-    return { id: user.id, email: user.email, name: user.name, role: user.role };
+    setLocaleCookie(res, user.locale as any);
+    return { id: user.id, email: user.email, name: user.name, role: user.role, locale: user.locale ?? "en" };
   }
 
   @Post("login")
@@ -43,7 +56,8 @@ export class AuthController {
   async login(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const { user, accessToken, refreshToken } = await this.auth.login(body);
     setAuthCookies(res, accessToken, refreshToken);
-    return { id: user.id, email: user.email, name: user.name, role: user.role };
+    setLocaleCookie(res, user.locale as any);
+    return { id: user.id, email: user.email, name: user.name, role: user.role, locale: user.locale ?? "en" };
   }
 
   @Post("refresh")

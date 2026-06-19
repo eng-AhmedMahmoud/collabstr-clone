@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, UsePipes } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RolesGuard } from "../common/roles.guard";
 import { Roles } from "../common/roles.decorator";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
+import { ZodValidationPipe } from "../common/zod-validation.pipe";
+import { BroadcastInput } from "@collabstr/shared-types";
 import type { OrderStatus, Role } from "@prisma/client";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -98,10 +100,11 @@ export class AdminController {
   }
 
   @Post("broadcast")
+  @UsePipes(new ZodValidationPipe(BroadcastInput))
   broadcast(
     @CurrentUser() me: AuthUser,
-    @Body() body: { title: string; body: string; role?: Role }
+    @Body() body: { titleEn: string; titleAr: string; bodyEn: string; bodyAr: string; href?: string; role?: Role },
   ) {
-    return this.admin.broadcast(me.id, body.title, body.body, body.role);
+    return this.admin.broadcast(me.id, body, body.role);
   }
 }

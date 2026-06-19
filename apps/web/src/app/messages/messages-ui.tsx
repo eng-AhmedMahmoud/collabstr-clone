@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useT } from "@/components/locale-provider";
 
 type Thread = {
   id: string;
@@ -14,6 +15,7 @@ type Thread = {
 type Message = { id: string; body: string; createdAt: string; senderId: string };
 
 export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | "creator" | "admin" }; threads: Thread[] }) {
+  const i = useT();
   const [active, setActive] = useState<Thread | null>(threads[0] ?? null);
   const [msgs, setMsgs] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -51,10 +53,10 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
       <div className="grid grid-cols-12 gap-4 h-[75vh] rounded-2xl border border-border bg-elevated overflow-hidden">
         <aside className="col-span-4 border-r border-border flex flex-col">
           <div className="p-4 border-b border-border">
-            <input placeholder="Search messages" className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface" />
+            <input placeholder={i.messages.searchPh} className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface" />
           </div>
           <ul className="flex-1 overflow-y-auto">
-            {threads.length === 0 && <li className="p-8 text-center text-sm text-muted">No conversations yet.</li>}
+            {threads.length === 0 && <li className="p-8 text-center text-sm text-muted">{i.messages.none}</li>}
             {threads.map((t) => {
               const counter = me.role === "brand" ? t.creator : t.brand;
               const last = t.messages[0];
@@ -71,7 +73,7 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{counter.name}</p>
-                      <p className="text-sm truncate text-muted">{last?.body ?? "Start the conversation"}</p>
+                      <p className="text-sm truncate text-muted">{last?.body ?? i.messages.startConv}</p>
                     </div>
                   </button>
                 </li>
@@ -91,7 +93,7 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
               </header>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-surface">
-                {loading && <p className="text-center text-xs text-muted">Loading…</p>}
+                {loading && <p className="text-center text-xs text-muted">{i.common.loading}</p>}
                 {msgs.map((m) => (
                   <div key={m.id} className={`flex ${m.senderId === me.id ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-[70%] px-4 py-2.5 rounded-2xl ${
@@ -110,14 +112,14 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
                 <input
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  placeholder="Type a message"
+                  placeholder={i.messages.typePh}
                   className="flex-1 px-3.5 py-2.5 rounded-lg border border-border"
                 />
-                <button className="px-5 py-2.5 rounded-lg brand-gradient text-white font-semibold">Send</button>
+                <button className="px-5 py-2.5 rounded-lg brand-gradient text-white font-semibold">{i.messages.send}</button>
               </form>
             </>
           ) : (
-            <div className="flex-1 grid place-items-center text-muted text-sm">Select a conversation</div>
+            <div className="flex-1 grid place-items-center text-muted text-sm">{i.messages.select}</div>
           )}
         </section>
       </div>

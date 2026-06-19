@@ -4,6 +4,7 @@ import { Card, PageHeader } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
 import { fmtMoney, fmtAgo } from "@/lib/format";
+import { t as serverT } from "@/lib/i18n";
 
 type Row = {
   id: string;
@@ -20,21 +21,22 @@ export const dynamic = "force-dynamic";
 export default async function BrandsAdmin() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/brands");
+  const i = await serverT();
   const api = await serverApi();
   let rows: Row[] = [];
   try { rows = await api.get<Row[]>("/admin/brands"); } catch {}
 
   return (
     <Shell me={me}>
-      <PageHeader title="Brands" subtitle={`${rows.length} brand accounts`} />
+      <PageHeader title={i.brands.title} subtitle={`${rows.length} ${i.brands.countSuffix}`} />
       <Card padding={false}>
         <table className="w-full text-sm">
           <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
             <tr>
-              <th className="text-left px-5 py-2">Brand</th>
-              <th className="text-right px-5 py-2">Orders</th>
-              <th className="text-right px-5 py-2">Spent</th>
-              <th className="text-right px-5 py-2 pr-5">Joined</th>
+              <th className="text-left px-5 py-2">{i.brands.colBrand}</th>
+              <th className="text-right px-5 py-2">{i.brands.colOrders}</th>
+              <th className="text-right px-5 py-2">{i.brands.colSpent}</th>
+              <th className="text-right px-5 py-2 pr-5">{i.brands.colJoined}</th>
             </tr>
           </thead>
           <tbody>
@@ -49,7 +51,7 @@ export default async function BrandsAdmin() {
                 <td className="px-5 py-3 text-right text-[#8b8ba0] pr-5">{fmtAgo(b.createdAt)}</td>
               </tr>
             ))}
-            {rows.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-[#8b8ba0]">No brands yet.</td></tr>}
+            {rows.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-[#8b8ba0]">{i.brands.none}</td></tr>}
           </tbody>
         </table>
       </Card>

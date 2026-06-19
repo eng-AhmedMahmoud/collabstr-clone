@@ -5,12 +5,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { fmtMoney } from "@/lib/format";
+import { useT } from "@/components/locale-provider";
 import type { ApiCreator } from "@/lib/types";
 
 type Pkg = { id: string; title: string; price: number };
 
 export function CheckoutForm({ creator, pkg }: { creator: ApiCreator; pkg: Pkg }) {
   const router = useRouter();
+  const i = useT();
   const [step, setStep] = useState<"brief" | "payment" | "done">("brief");
   const [brief, setBrief] = useState("");
   const [orderId, setOrderId] = useState<string | null>(null);
@@ -20,6 +22,7 @@ export function CheckoutForm({ creator, pkg }: { creator: ApiCreator; pkg: Pkg }
   const fee = Math.round(pkg.price * 0.06);
   const total = pkg.price + fee;
   const avatar = creator.user.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(creator.username)}`;
+  const firstName = creator.user.name.split(" ")[0];
 
   async function createOrder() {
     setBusy(true); setError(null);
@@ -57,51 +60,51 @@ export function CheckoutForm({ creator, pkg }: { creator: ApiCreator; pkg: Pkg }
       <div className="lg:col-span-3 space-y-5">
         {step === "brief" && (
           <section className="rounded-2xl border border-border bg-elevated p-6 space-y-3">
-            <h2 className="font-bold text-lg">Tell {creator.user.name.split(" ")[0]} about the work</h2>
+            <h2 className="font-bold text-lg">{i.checkout.brief.replace("{name}", firstName)}</h2>
             <label className="block">
-              <span className="text-xs font-semibold">Brief</span>
-              <textarea value={brief} onChange={(e) => setBrief(e.target.value)} rows={6} placeholder="What should they show, say, or avoid? Include product link, key messages, deadlines." className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border" />
+              <span className="text-xs font-semibold">{i.checkout.briefLabel}</span>
+              <textarea value={brief} onChange={(e) => setBrief(e.target.value)} rows={6} placeholder={i.checkout.briefPlaceholder} className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border" />
             </label>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <button onClick={createOrder} disabled={busy || brief.length < 10} className="w-full px-4 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">
-              {busy ? "Creating…" : "Continue to payment"}
+              {busy ? i.checkout.creating : i.checkout.continuePayment}
             </button>
           </section>
         )}
 
         {step === "payment" && (
           <section className="rounded-2xl border border-border bg-elevated p-6 space-y-3">
-            <h2 className="font-bold text-lg">Payment</h2>
-            <p className="text-sm text-muted">Demo: payment is stubbed. Clicking pay moves funds into escrow on the API.</p>
+            <h2 className="font-bold text-lg">{i.checkout.payment}</h2>
+            <p className="text-sm text-muted">{i.checkout.paymentStub}</p>
             <div className="grid grid-cols-3 gap-2">
-              {["Card", "Apple Pay", "Google Pay"].map((m) => (
+              {[i.checkout.card, "Apple Pay", "Google Pay"].map((m) => (
                 <button key={m} className="rounded-xl border border-border p-3 text-sm font-semibold hover:border-fg">{m}</button>
               ))}
             </div>
-            <Field label="Card number" placeholder="•••• •••• •••• 4242" disabled />
+            <Field label={i.checkout.cardNumber} placeholder="•••• •••• •••• 4242" disabled />
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Expiry" placeholder="12 / 28" disabled />
-              <Field label="CVC" placeholder="•••" disabled />
+              <Field label={i.checkout.expiry} placeholder="12 / 28" disabled />
+              <Field label={i.checkout.cvc} placeholder="•••" disabled />
             </div>
             {error && <p className="text-sm text-red-600">{error}</p>}
             <div className="flex gap-2">
-              <button onClick={() => setStep("brief")} className="px-4 py-3 rounded-xl border border-border font-semibold">Back</button>
+              <button onClick={() => setStep("brief")} className="px-4 py-3 rounded-xl border border-border font-semibold">{i.common.back}</button>
               <button onClick={pay} disabled={busy} className="flex-1 px-4 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">
-                {busy ? "Processing…" : `Pay ${fmtMoney(total)}`}
+                {busy ? i.checkout.processing : `${i.checkout.pay} ${fmtMoney(total)}`}
               </button>
             </div>
-            <p className="text-xs text-muted">Funds held in escrow until you approve delivery.</p>
+            <p className="text-xs text-muted">{i.checkout.escrowNote}</p>
           </section>
         )}
 
         {step === "done" && orderId && (
           <section className="rounded-2xl border border-border bg-elevated p-10 text-center">
             <div className="mx-auto h-14 w-14 rounded-full bg-emerald-100 text-emerald-700 grid place-items-center text-3xl">✓</div>
-            <h2 className="font-black text-2xl mt-4">Order placed</h2>
-            <p className="text-muted mt-1">{creator.user.name} has been notified.</p>
+            <h2 className="font-black text-2xl mt-4">{i.checkout.done}</h2>
+            <p className="text-muted mt-1">{i.checkout.doneSub.replace("{name}", creator.user.name)}</p>
             <div className="flex gap-2 justify-center mt-6">
-              <Link href={`/orders/${orderId}`} className="px-5 py-3 rounded-xl brand-gradient text-white font-bold">View order</Link>
-              <Link href="/messages" className="px-5 py-3 rounded-xl border border-border font-semibold">Message creator</Link>
+              <Link href={`/orders/${orderId}`} className="px-5 py-3 rounded-xl brand-gradient text-white font-bold">{i.checkout.viewOrder}</Link>
+              <Link href="/messages" className="px-5 py-3 rounded-xl border border-border font-semibold">{i.checkout.messageCreator}</Link>
             </div>
           </section>
         )}
@@ -109,7 +112,7 @@ export function CheckoutForm({ creator, pkg }: { creator: ApiCreator; pkg: Pkg }
 
       <aside className="lg:col-span-2">
         <div className="rounded-2xl border border-border bg-elevated p-5 sticky top-24">
-          <h2 className="font-bold">Order summary</h2>
+          <h2 className="font-bold">{i.checkout.summary}</h2>
           <div className="flex items-center gap-3 mt-4">
             <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-surface">
               <Image src={avatar} alt={creator.user.name} fill className="object-cover" />
@@ -121,13 +124,13 @@ export function CheckoutForm({ creator, pkg }: { creator: ApiCreator; pkg: Pkg }
           </div>
           <ul className="mt-5 space-y-2 text-sm border-t border-border pt-4">
             <li className="flex justify-between"><span>{pkg.title}</span><span>{fmtMoney(pkg.price)}</span></li>
-            <li className="flex justify-between text-muted"><span>Service fee</span><span>{fmtMoney(fee)}</span></li>
-            <li className="flex justify-between font-bold text-base border-t border-border pt-3"><span>Total</span><span>{fmtMoney(total)}</span></li>
+            <li className="flex justify-between text-muted"><span>{i.orders.detail.serviceFee}</span><span>{fmtMoney(fee)}</span></li>
+            <li className="flex justify-between font-bold text-base border-t border-border pt-3"><span>{i.orders.detail.total}</span><span>{fmtMoney(total)}</span></li>
           </ul>
           <ul className="mt-5 space-y-2 text-xs text-muted">
-            <li>✓ Escrow protection</li>
-            <li>✓ Free revisions</li>
-            <li>✓ Money back if creator no-shows</li>
+            {i.checkout.bullets.map((b) => (
+              <li key={b}>✓ {b}</li>
+            ))}
           </ul>
         </div>
       </aside>

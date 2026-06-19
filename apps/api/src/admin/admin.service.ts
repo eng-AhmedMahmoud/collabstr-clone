@@ -239,17 +239,24 @@ export class AdminService {
       .sort((a, b) => b.amount - a.amount);
   }
 
-  async broadcast(adminUserId: string, title: string, body: string, role?: Role) {
+  async broadcast(
+    adminUserId: string,
+    payload: { titleEn: string; titleAr: string; bodyEn: string; bodyAr: string; href?: string },
+    role?: Role,
+  ) {
     const users = await this.prisma.user.findMany({
       where: role ? { role } : {},
       select: { id: true },
     });
+    const title = { en: payload.titleEn, ar: payload.titleAr };
+    const body = { en: payload.bodyEn, ar: payload.bodyAr };
     await this.prisma.notification.createMany({
       data: users.map((u) => ({
         userId: u.id,
-        kind: "system",
+        kind: "system" as const,
         title,
         body,
+        href: payload.href ?? null,
       })),
     });
     return { sent: users.length };

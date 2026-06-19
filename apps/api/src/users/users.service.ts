@@ -6,8 +6,12 @@ import { PrismaService } from "../prisma/prisma.service";
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async updateProfile(userId: string, data: { name?: string; avatarUrl?: string }) {
+  async updateProfile(userId: string, data: { name?: string; avatarUrl?: string; locale?: "en" | "ar" | null }) {
     return this.prisma.user.update({ where: { id: userId }, data });
+  }
+
+  async setLocale(userId: string, locale: "en" | "ar") {
+    return this.prisma.user.update({ where: { id: userId }, data: { locale } });
   }
 
   async changePassword(userId: string, current: string, next: string) {

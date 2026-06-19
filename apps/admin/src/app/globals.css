@@ -7,8 +7,9 @@
   --color-fg: #f5f5f7;
   --color-muted: #8b8ba0;
   --color-border: #1f1f30;
-  --color-brand: #7c3aed;
-  --color-brand-2: #ec4899;
+  --color-brand: #006C35;
+  --color-brand-2: #1a8f4f;
+  --color-accent: #c8a951;
   --color-success: #10b981;
   --color-danger: #ef4444;
   --color-warn: #f59e0b;
@@ -24,10 +25,10 @@ html, body {
 }
 
 .brand-gradient {
-  background-image: linear-gradient(135deg, #7c3aed 0%, #ec4899 50%, #f59e0b 100%);
+  background-image: linear-gradient(135deg, #006C35 0%, #1a8f4f 55%, #c8a951 100%);
 }
 .brand-text {
-  background-image: linear-gradient(135deg, #a78bfa 0%, #f472b6 60%, #fcd34d 100%);
+  background-image: linear-gradient(135deg, #3aa46c 0%, #6cbf91 55%, #d8bf6a 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;

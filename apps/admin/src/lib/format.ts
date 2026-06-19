@@ -1,6 +1,15 @@
+export const CURRENCY = "SAR" as const;
+export const CURRENCY_SYMBOL = "ر.س" as const;
+export const LOCALE = "en-SA" as const;
+
 export function fmtMoney(n?: number | null): string {
   if (n == null) return "—";
-  return n.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  return n.toLocaleString(LOCALE, {
+    style: "currency",
+    currency: CURRENCY,
+    currencyDisplay: "narrowSymbol",
+    maximumFractionDigits: 0,
+  });
 }
 export function fmtNum(n?: number | null): string {
   if (n == null) return "—";
@@ -10,7 +19,7 @@ export function fmtNum(n?: number | null): string {
 }
 export function fmtDate(s?: string | null): string {
   if (!s) return "—";
-  return new Date(s).toLocaleString();
+  return new Date(s).toLocaleString(LOCALE, { timeZone: "Asia/Riyadh" });
 }
 export function fmtAgo(s?: string | null): string {
   if (!s) return "—";

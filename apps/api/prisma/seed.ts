@@ -18,32 +18,53 @@ type Seed = {
   cover: string;
 };
 
+// KSA creator roster modeled after real, top-tier Saudi influencers.
+// Handles + niches + tiers sourced from public 2026 influencer rankings
+// (Feedspot, HypeAuditor, IstiZada). Prices SAR. Demo data — emails/profiles
+// are not real contact info.
 const SEEDS: Seed[] = [
-  { username: "ava.luxe", name: "Ava Lux", email: "ava@example.dev", headline: "Fashion & lifestyle storyteller", city: "Brooklyn, NY", country: "US", platforms: ["instagram","tiktok"], categories: ["Fashion","Lifestyle"], followers: { ig: 248000, tt: 180000 }, startingPrice: 320, badges: ["Top Creator","Responds Fast"], cover: "https://picsum.photos/seed/ava.luxe/1200/600" },
-  { username: "milo.creates", name: "Milo Park", email: "milo@example.dev", headline: "UGC for DTC brands that convert", city: "Austin, TX", country: "US", platforms: ["ugc","tiktok"], categories: ["Tech","Lifestyle"], followers: { tt: 42000 }, startingPrice: 150, badges: ["UGC","Responds Fast"], cover: "https://picsum.photos/seed/milo.creates/1200/600" },
-  { username: "sage.kim", name: "Sage Kim", email: "sage@example.dev", headline: "Beauty creator & licensed esthetician", city: "Los Angeles, CA", country: "US", platforms: ["instagram","youtube"], categories: ["Beauty","Lifestyle"], followers: { ig: 612000, yt: 84000 }, startingPrice: 850, badges: ["Top Creator"], cover: "https://picsum.photos/seed/sage.kim/1200/600" },
-  { username: "travis.roams", name: "Travis Hale", email: "travis@example.dev", headline: "Adventure travel cinematographer", city: "Denver, CO", country: "US", platforms: ["youtube","instagram"], categories: ["Travel","Lifestyle"], followers: { yt: 320000, ig: 96000 }, startingPrice: 1200, badges: ["Top Creator","Responds Fast"], cover: "https://picsum.photos/seed/travis.roams/1200/600" },
-  { username: "nora.fit", name: "Nora Ellis", email: "nora@example.dev", headline: "Strength coach & nutrition tips", city: "Toronto, ON", country: "CA", platforms: ["instagram","tiktok"], categories: ["Fitness","Lifestyle"], followers: { ig: 88000, tt: 210000 }, startingPrice: 220, badges: ["Responds Fast"], cover: "https://picsum.photos/seed/nora.fit/1200/600" },
-  { username: "kenji.eats", name: "Kenji Sato", email: "kenji@example.dev", headline: "Tokyo food explorer", city: "Tokyo", country: "JP", platforms: ["tiktok","youtube"], categories: ["Food","Travel"], followers: { tt: 1100000, yt: 240000 }, startingPrice: 1800, badges: ["Top Creator"], cover: "https://picsum.photos/seed/kenji.eats/1200/600" },
-  { username: "lulu.kids", name: "Lulu Marin", email: "lulu@example.dev", headline: "Family vlogger, mom of three", city: "Phoenix, AZ", country: "US", platforms: ["instagram","youtube"], categories: ["Family","Lifestyle"], followers: { ig: 156000, yt: 72000 }, startingPrice: 480, badges: ["Top Creator","Responds Fast"], cover: "https://picsum.photos/seed/lulu.kids/1200/600" },
-  { username: "riot.plays", name: "Rio Tanaka", email: "rio@example.dev", headline: "Gaming + tech reviews", city: "London", country: "GB", platforms: ["youtube","tiktok"], categories: ["Gaming","Tech"], followers: { yt: 410000, tt: 88000 }, startingPrice: 950, badges: [], cover: "https://picsum.photos/seed/riot.plays/1200/600" },
+  { username: "barmz.alhajjaj", name: "Ibrahim Al-Hajjaj · إبراهيم الحجاج", email: "barmz@example.dev", headline: "ممثل · ستاندآب كوميديان · House of Comedy", city: "Riyadh · الرياض", country: "SA", platforms: ["instagram","youtube"], categories: ["Comedy","Lifestyle"], followers: { ig: 6400000, yt: 1200000 }, startingPrice: 14000, badges: ["Top Creator","Verified"], cover: "https://picsum.photos/seed/barmz.alhajjaj/1200/600" },
+  { username: "misho.baeshen", name: "Hisham Baeshen · هشام باعشن", email: "misho@example.dev", headline: "Chef · شيف صانع محتوى · @bajmrah @figlbak", city: "Riyadh · الرياض", country: "SA", platforms: ["instagram","tiktok"], categories: ["Food","Lifestyle"], followers: { ig: 5000000, tt: 1800000 }, startingPrice: 12000, badges: ["Top Creator","Verified"], cover: "https://picsum.photos/seed/misho.baeshen/1200/600" },
+  { username: "nouf.fashion", name: "Nouf Alshalan · نوف الشعلان", email: "nouf@example.dev", headline: "Fashion & Beauty · صانعة محتوى أزياء", city: "Riyadh · الرياض", country: "SA", platforms: ["instagram","tiktok"], categories: ["Fashion","Beauty"], followers: { ig: 3800000, tt: 920000 }, startingPrice: 9500, badges: ["Top Creator"], cover: "https://picsum.photos/seed/nouf.fashion/1200/600" },
+  { username: "emad.anwer", name: "Emad Anwer · عماد أنور", email: "emad@example.dev", headline: "English coach · مدرّب لغة إنجليزية على أبواب", city: "Jeddah · جدة", country: "SA", platforms: ["instagram","tiktok"], categories: ["Lifestyle"], followers: { ig: 4100000, tt: 760000 }, startingPrice: 9000, badges: ["Top Creator"], cover: "https://picsum.photos/seed/emad.anwer/1200/600" },
+  { username: "bashar.arabi", name: "Bashar Arabi · بشار عربي", email: "bashar@example.dev", headline: "Football athlete · أكبر قناة رياضية في MENA", city: "Riyadh · الرياض", country: "SA", platforms: ["instagram","tiktok"], categories: ["Fitness","Lifestyle"], followers: { ig: 2300000, tt: 1500000 }, startingPrice: 7500, badges: ["Top Creator","Verified"], cover: "https://picsum.photos/seed/bashar.arabi/1200/600" },
+  { username: "opiilz", name: "Saleh Alzahrani · صالح الزهراني", email: "saleh@example.dev", headline: "Gamer · Vlogger · 10M على YouTube · @teamfalconsgg", city: "Dammam · الدمام", country: "SA", platforms: ["youtube","instagram"], categories: ["Gaming","Tech"], followers: { yt: 10000000, ig: 1100000 }, startingPrice: 6800, badges: ["Top Creator","Verified"], cover: "https://picsum.photos/seed/opiilz/1200/600" },
+  { username: "doaa.alhothefy", name: "Doaa Alhothefy · دعاء الحذيفي", email: "doaa@example.dev", headline: "Co-Founder GetSmart · Style @doaacloset", city: "Jeddah · جدة", country: "SA", platforms: ["instagram"], categories: ["Fashion","Lifestyle"], followers: { ig: 889000 }, startingPrice: 3200, badges: ["Top Creator","Responds Fast"], cover: "https://picsum.photos/seed/doaa.alhothefy/1200/600" },
+  { username: "nojoud.alrumaihi", name: "Nojoud Alrumaihi · نجود الرميحي", email: "nojoud@example.dev", headline: "Cultural fashion architect · Founder @ci.creatives", city: "Riyadh · الرياض", country: "SA", platforms: ["instagram"], categories: ["Fashion","Lifestyle"], followers: { ig: 635000 }, startingPrice: 2800, badges: ["Top Creator"], cover: "https://picsum.photos/seed/nojoud.alrumaihi/1200/600" },
+  { username: "layali.boker", name: "Layali Boker · ليالي بوكر", email: "layali@example.dev", headline: "Beauty creator · 2M على TikTok · Licensed advertiser", city: "Riyadh · الرياض", country: "SA", platforms: ["tiktok","instagram"], categories: ["Beauty","Lifestyle"], followers: { tt: 2000000, ig: 597000 }, startingPrice: 2400, badges: ["Top Creator","Responds Fast"], cover: "https://picsum.photos/seed/layali.boker/1200/600" },
+  { username: "daim.gaw", name: "Daim Gaw · ديم قاو", email: "daim@example.dev", headline: "Beauty · Lifestyle · @boldmanagement", city: "Riyadh · الرياض", country: "SA", platforms: ["instagram","tiktok"], categories: ["Beauty","Fashion"], followers: { ig: 379000, tt: 220000 }, startingPrice: 1800, badges: ["Responds Fast"], cover: "https://picsum.photos/seed/daim.gaw/1200/600" },
+  { username: "osamafilm", name: "Osama Alharbi · أسامة الحربي", email: "osama@example.dev", headline: "Drone DP · صانع أفلام · من المدينة المنورة", city: "Medina · المدينة المنورة", country: "SA", platforms: ["instagram","youtube"], categories: ["Travel","Lifestyle"], followers: { ig: 197000, yt: 84000 }, startingPrice: 1600, badges: ["Responds Fast"], cover: "https://picsum.photos/seed/osamafilm/1200/600" },
+  { username: "hattan.alsaif", name: "Hattan Alsaif · حتان السيف", email: "hattan@example.dev", headline: "IFMA World Champion · PRO fighter · @alulaclub", city: "Riyadh · الرياض", country: "SA", platforms: ["instagram","tiktok"], categories: ["Fitness","Lifestyle"], followers: { ig: 137000, tt: 95000 }, startingPrice: 1200, badges: ["Top Creator","Verified"], cover: "https://picsum.photos/seed/hattan.alsaif/1200/600" },
 ];
 
 async function main() {
   console.log("Seeding…");
 
-  const adminHash = await bcrypt.hash("Admin1234!", 11);
-  await prisma.user.upsert({
-    where: { email: "admin@nakhla.sa" },
-    update: {},
-    create: {
-      email: "admin@nakhla.sa",
-      name: "Nakhla Admin",
-      role: "admin",
-      passwordHash: adminHash,
-      emailVerifiedAt: new Date(),
-    },
-  });
+  // Demo admin user is gated behind ENABLE_DEMO_ADMIN to prevent shipping a
+  // known credential to any non-dev environment. Production bootstrap must
+  // create the first admin via a separate script with secrets.
+  if (process.env.ENABLE_DEMO_ADMIN === "1") {
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("Refusing to seed demo admin in production. Bootstrap a real admin via secrets.");
+    }
+    const adminPassword = process.env.DEMO_ADMIN_PASSWORD || "Admin1234!";
+    const adminEmail = process.env.DEMO_ADMIN_EMAIL || "admin@nakhla.sa";
+    const adminHash = await bcrypt.hash(adminPassword, 11);
+    await prisma.user.upsert({
+      where: { email: adminEmail },
+      update: {},
+      create: {
+        email: adminEmail,
+        name: "Nakhla Admin",
+        role: "admin",
+        passwordHash: adminHash,
+        emailVerifiedAt: new Date(),
+      },
+    });
+    console.log(`  Admin (dev only): ${adminEmail} / ${adminPassword}`);
+  } else {
+    console.log("  Admin user NOT seeded. Set ENABLE_DEMO_ADMIN=1 for local dev.");
+  }
 
   const brandHash = await bcrypt.hash("Password123!", 11);
   const brand = await prisma.user.upsert({
@@ -51,10 +72,10 @@ async function main() {
     update: {},
     create: {
       email: "brand@example.dev",
-      name: "Wildbloom Co.",
+      name: "Aseel KSA · أسيل",
       role: "brand",
       passwordHash: brandHash,
-      brandProfile: { create: { brandName: "Wildbloom Co." } },
+      brandProfile: { create: { brandName: "Aseel KSA · أسيل" } },
     },
   });
 
@@ -94,10 +115,12 @@ async function main() {
         portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/${s.username}-${i}/600/600`),
         audience: {
           locations: [
-            { code: "US", flag: "🇺🇸", pct: 58 },
-            { code: "GB", flag: "🇬🇧", pct: 14 },
-            { code: "CA", flag: "🇨🇦", pct: 10 },
-            { code: "AU", flag: "🇦🇺", pct: 8 },
+            { code: "SA", flag: "🇸🇦", pct: 72 },
+            { code: "AE", flag: "🇦🇪", pct: 11 },
+            { code: "KW", flag: "🇰🇼", pct: 6 },
+            { code: "QA", flag: "🇶🇦", pct: 5 },
+            { code: "BH", flag: "🇧🇭", pct: 3 },
+            { code: "OM", flag: "🇴🇲", pct: 3 },
           ],
           ages: [
             { range: "13-17", pct: 8 },
@@ -128,18 +151,18 @@ async function main() {
       data: [
         {
           brandId: brand.id,
-          title: "Spring drop — sustainable activewear",
-          description: "Looking for creators to film an honest review of our new spring activewear line. Focus on fit, fabric feel, and movement.",
-          budgetMin: 200, budgetMax: 1200,
+          title: "إطلاق مجموعة العباءات الصيفية · Summer abaya drop",
+          description: "We need KSA fashion creators in Riyadh and Jeddah to film honest try-on reviews of our new summer modest collection. Focus on fabric breathability, cut, and how it pairs with daily looks.",
+          budgetMin: 800, budgetMax: 6000,
           platforms: ["instagram", "tiktok"],
-          categories: ["Fashion", "Fitness"],
+          categories: ["Fashion", "Lifestyle"],
           creatorsNeeded: 10,
         },
         {
           brandId: brand.id,
-          title: "Cold brew launch — UGC for paid ads",
-          description: "Need 30 UGC videos in vertical format showcasing our cold brew bottles. Morning routine angle preferred.",
-          budgetMin: 150, budgetMax: 500,
+          title: "قهوة سعودية مختصة — UGC للإعلانات · Specialty coffee UGC",
+          description: "نحتاج 30 فيديو UGC عمودي يظهر علب القهوة السعودية المختصة الجديدة. زاوية الروتين الصباحي مفضّلة. سيتم بثها على ميتا وتيك توك وسناب شات في السوق السعودي.",
+          budgetMin: 500, budgetMax: 2500,
           platforms: ["ugc", "tiktok"],
           categories: ["Food", "Lifestyle"],
           creatorsNeeded: 30,
@@ -149,9 +172,9 @@ async function main() {
   }
 
   console.log("Seed done.");
-  console.log("  Admin   : admin@nakhla.sa / Admin1234!");
-  console.log("  Brand   : brand@example.dev / Password123!");
-  console.log("  Creator : ava@example.dev / Password123!");
+  console.log("  Brand   : brand@example.dev / Password123!  (Aseel KSA)");
+  console.log("  Creator : barmz@example.dev / Password123!  (Riyadh, comedy · 6.4M IG)");
+  console.log(`  Seeded ${SEEDS.length} KSA creators.`);
 }
 
 main()

@@ -7,6 +7,7 @@ import { OrderStateMachine } from "./order-state-machine";
 import { CoverageMatrix } from "./coverage-matrix";
 import { RoleFlows } from "./role-flows";
 import { Roadmap } from "./roadmap";
+import { t as serverT } from "@/lib/i18n";
 
 export const metadata = { title: "Flow map · Admin · Nakhla" };
 export const dynamic = "force-dynamic";
@@ -14,17 +15,18 @@ export const dynamic = "force-dynamic";
 export default async function FlowMapAdmin() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/flow-map");
+  const i = await serverT();
   return (
     <Shell me={me}>
-      <PageHeader title="Flow map" subtitle="System architecture, role flows, lifecycle, coverage, roadmap" />
+      <PageHeader title={i.flowMap.title} subtitle={i.flowMap.sub} />
 
       <nav className="flex flex-wrap gap-2 mb-6">
         {[
-          ["arch", "Architecture"],
-          ["flows", "Role flows"],
-          ["states", "Order lifecycle"],
-          ["coverage", "Page coverage"],
-          ["roadmap", "Roadmap"],
+          ["arch", i.flowMap.sections.arch],
+          ["flows", i.flowMap.sections.flows],
+          ["states", i.flowMap.sections.states],
+          ["coverage", i.flowMap.sections.coverage],
+          ["roadmap", i.flowMap.sections.roadmap],
         ].map(([id, label]) => (
           <a key={id} href={`#${id}`} className="px-3.5 py-1.5 rounded-full text-sm font-semibold border border-[#1f1f30] text-[#d1d1da] hover:border-[#8b8ba0]">
             {label}
@@ -32,23 +34,23 @@ export default async function FlowMapAdmin() {
         ))}
       </nav>
 
-      <Section id="arch" title="System architecture" subtitle="Request flow from browser to database">
+      <Section id="arch" title={i.flowMap.archTitle} subtitle={i.flowMap.archSub}>
         <Architecture />
       </Section>
 
-      <Section id="flows" title="Role-based flows" subtitle="What each user type can do">
+      <Section id="flows" title={i.flowMap.flowsTitle} subtitle={i.flowMap.flowsSub}>
         <RoleFlows />
       </Section>
 
-      <Section id="states" title="Order lifecycle" subtitle="Escrow state machine guarded by the API">
+      <Section id="states" title={i.flowMap.statesTitle} subtitle={i.flowMap.statesSub}>
         <OrderStateMachine />
       </Section>
 
-      <Section id="coverage" title="Page coverage" subtitle="Every web + admin route, gated by session">
+      <Section id="coverage" title={i.flowMap.coverageTitle} subtitle={i.flowMap.coverageSub}>
         <CoverageMatrix />
       </Section>
 
-      <Section id="roadmap" title="Roadmap" subtitle="Next concrete steps in priority order">
+      <Section id="roadmap" title={i.flowMap.roadmapTitle} subtitle={i.flowMap.roadmapSub}>
         <Roadmap />
       </Section>
     </Shell>

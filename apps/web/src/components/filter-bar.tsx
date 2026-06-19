@@ -3,13 +3,37 @@
 import { useState } from "react";
 
 const FILTERS = [
-  { label: "Platform", options: ["Instagram", "TikTok", "YouTube", "UGC"] },
+  { label: "Platform", options: ["Instagram", "TikTok", "Snapchat", "YouTube", "UGC"] },
   { label: "Category", options: ["Fashion","Beauty","Travel","Fitness","Food","Lifestyle","Tech","Gaming","Music","Family","Comedy","Pets"] },
   { label: "Followers", options: ["1k–10k","10k–100k","100k–1M","1M+"] },
-  { label: "Location", options: ["United States","United Kingdom","Canada","Australia","Germany","Japan"] },
-  { label: "Price", options: ["Under $100","$100–$500","$500–$1,500","$1,500+"] },
-  { label: "Gender", options: ["Female","Male","Non-binary"] },
-  { label: "Age", options: ["18–24","25–34","35–44","45+"] },
+  {
+    label: "City · المدينة",
+    options: [
+      "Riyadh · الرياض",
+      "Jeddah · جدة",
+      "Dammam · الدمام",
+      "Khobar · الخبر",
+      "Mecca · مكة المكرمة",
+      "Medina · المدينة المنورة",
+      "Taif · الطائف",
+      "Tabuk · تبوك",
+      "Abha · أبها",
+      "Buraidah · بريدة",
+      "NEOM · نيوم",
+      "AlUla · العُلا",
+    ],
+  },
+  {
+    label: "Price · السعر",
+    options: [
+      "Under 500 ر.س",
+      "500–2,000 ر.س",
+      "2,000–10,000 ر.س",
+      "10,000+ ر.س",
+    ],
+  },
+  { label: "Gender · الجنس", options: ["Female · أنثى","Male · ذكر"] },
+  { label: "Age · العمر", options: ["18–24","25–34","35–44","45+"] },
 ];
 
 export function FilterBar() {
@@ -34,7 +58,7 @@ export function FilterBar() {
               <span className="ml-1 opacity-60">▾</span>
             </button>
             {open === f.label && (
-              <div className="absolute z-30 mt-2 w-56 rounded-xl border border-border bg-elevated shadow-xl p-2">
+              <div className="absolute z-30 mt-2 w-64 rounded-xl border border-border bg-elevated shadow-xl p-2">
                 {f.options.map((o) => (
                   <button
                     key={o}
@@ -54,9 +78,9 @@ export function FilterBar() {
         {Object.keys(selected).length > 0 && (
           <button
             onClick={() => setSelected({})}
-            className="text-sm font-medium px-3.5 py-2 rounded-full text-brand hover:bg-[#f5f3ff]"
+            className="text-sm font-medium px-3.5 py-2 rounded-full text-brand hover:bg-brand-50"
           >
-            Clear all
+            Clear all · مسح
           </button>
         )}
       </div>

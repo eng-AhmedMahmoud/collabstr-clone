@@ -5,6 +5,7 @@ import { Card, PageHeader, Pill, pillKindForStatus } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
 import { fmtMoney, fmtAgo } from "@/lib/format";
+import { t as serverT } from "@/lib/i18n";
 
 type Row = {
   id: string;
@@ -25,6 +26,7 @@ export default async function OrdersAdmin({
 }: { searchParams: Promise<{ status?: string }> }) {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/orders");
+  const i = await serverT();
   const sp = await searchParams;
   const api = await serverApi();
   let rows: Row[] = [];
@@ -34,10 +36,10 @@ export default async function OrdersAdmin({
 
   return (
     <Shell me={me}>
-      <PageHeader title="Orders" subtitle={`${rows.length} orders ${sp.status ? `· filter: ${sp.status}` : ""}`} />
+      <PageHeader title={i.orders.title} subtitle={`${i.orders.countTpl.replace("{n}", String(rows.length))} ${sp.status ? `· ${i.orders.filterTpl.replace("{s}", sp.status)}` : ""}`} />
 
       <div className="flex flex-wrap gap-2 mb-5">
-        <Link href="/orders" className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${!sp.status ? "bg-white text-[#0b0b14] border-white" : "border-[#1f1f30] text-[#d1d1da] hover:border-[#8b8ba0]"}`}>All</Link>
+        <Link href="/orders" className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${!sp.status ? "bg-white text-[#0b0b14] border-white" : "border-[#1f1f30] text-[#d1d1da] hover:border-[#8b8ba0]"}`}>{i.common.all}</Link>
         {STATUS.map((s) => (
           <Link key={s} href={`/orders?status=${s}`} className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${sp.status === s ? "bg-white text-[#0b0b14] border-white" : "border-[#1f1f30] text-[#d1d1da] hover:border-[#8b8ba0]"}`}>
             {s.replace(/_/g, " ")}
@@ -49,18 +51,18 @@ export default async function OrdersAdmin({
         <table className="w-full text-sm">
           <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
             <tr>
-              <th className="text-left px-5 py-2">Order</th>
-              <th className="text-left px-5 py-2">Parties</th>
-              <th className="text-left px-5 py-2">Status</th>
-              <th className="text-right px-5 py-2">Amount</th>
-              <th className="text-right px-5 py-2 pr-5">When</th>
+              <th className="text-left px-5 py-2">{i.orders.colOrder}</th>
+              <th className="text-left px-5 py-2">{i.orders.colParties}</th>
+              <th className="text-left px-5 py-2">{i.orders.colStatus}</th>
+              <th className="text-right px-5 py-2">{i.orders.colAmount}</th>
+              <th className="text-right px-5 py-2 pr-5">{i.orders.colWhen}</th>
             </tr>
           </thead>
           <tbody>
             {rows.map((o) => (
               <tr key={o.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
                 <td className="px-5 py-3">
-                  <Link href={`/orders/${o.id}`} className="font-semibold font-mono text-xs hover:text-violet-300">#{o.id.slice(0, 8)}</Link>
+                  <Link href={`/orders/${o.id}`} className="font-semibold font-mono text-xs hover:text-emerald-300">#{o.id.slice(0, 8)}</Link>
                   <p className="text-[11px] text-[#8b8ba0] mt-0.5">{o.package.title}</p>
                 </td>
                 <td className="px-5 py-3 text-[#d1d1da]">
@@ -68,11 +70,11 @@ export default async function OrdersAdmin({
                   <p className="text-[11px] text-[#8b8ba0]">→ {o.creator.user.name}</p>
                 </td>
                 <td className="px-5 py-3"><Pill kind={pillKindForStatus(o.status)}>{o.status.replace(/_/g, " ")}</Pill></td>
-                <td className="px-5 py-3 text-right font-bold">{fmtMoney(o.amount)} <span className="text-[10px] text-[#8b8ba0] font-normal">+{fmtMoney(o.serviceFee)} fee</span></td>
+                <td className="px-5 py-3 text-right font-bold">{fmtMoney(o.amount)} <span className="text-[10px] text-[#8b8ba0] font-normal">+{fmtMoney(o.serviceFee)} {i.orders.fee}</span></td>
                 <td className="px-5 py-3 text-right text-[#8b8ba0] pr-5">{fmtAgo(o.createdAt)}</td>
               </tr>
             ))}
-            {rows.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-[#8b8ba0]">No orders match.</td></tr>}
+            {rows.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-[#8b8ba0]">{i.orders.none}</td></tr>}
           </tbody>
         </table>
       </Card>

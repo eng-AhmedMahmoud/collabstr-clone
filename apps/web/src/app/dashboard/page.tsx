@@ -4,6 +4,7 @@ import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
 import { fmtMoney } from "@/lib/format";
+import { t } from "@/lib/i18n";
 
 type OrderRow = {
   id: string;
@@ -15,10 +16,11 @@ type OrderRow = {
   package: { title: string };
 };
 
-export const metadata = { title: "Dashboard · لوحة التحكم — Nakhla · نخلة" };
+export const metadata = { title: "Dashboard — Nakhla" };
 export const dynamic = "force-dynamic";
 
 export default async function BrandDashboard() {
+  const i = await t();
   const me = await getSession();
   if (!me) redirect("/login?next=/dashboard");
   if (me.role !== "brand") redirect("/creator-dashboard");
@@ -37,24 +39,23 @@ export default async function BrandDashboard() {
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
       <header className="flex items-center justify-between flex-wrap gap-4">
         <div>
-          <p className="text-sm text-muted">أهلاً بعودتك · Welcome back</p>
+          <p className="text-sm text-muted">{i.dashboard.welcome}</p>
           <h1 className="text-3xl font-black">
-            مرحباً، <span className="brand-text">{me.name.split(" ")[0]}</span>
+            {i.dashboard.hey} <span className="brand-text">{me.name.split(" ")[0]}</span>
           </h1>
-          <p className="text-xs text-muted mt-1">🇸🇦 KSA brand dashboard · جميع المبالغ بالريال السعودي</p>
         </div>
         <div className="flex gap-2">
-          <Link href="/campaigns/new" className="px-4 py-2.5 rounded-xl border border-border font-semibold hover:bg-surface">+ حملة جديدة · New campaign</Link>
-          <Link href="/influencers" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">احجز مؤثر · Hire a creator</Link>
+          <Link href="/campaigns/new" className="px-4 py-2.5 rounded-xl border border-border font-semibold hover:bg-surface">{i.dashboard.newCampaign}</Link>
+          <Link href="/influencers" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">{i.dashboard.hireCreator}</Link>
         </div>
       </header>
 
       <div className="mt-8 grid sm:grid-cols-4 gap-4">
         {[
-          ["الحجوزات النشطة · Active bookings", String(active), `${orders.length} total · إجمالي`],
-          ["موافقات معلّقة · Pending approvals", String(pendingApprovals), "Review now · راجع الآن"],
-          ["إجمالي الإنفاق · Total spent", fmtMoney(totalSpent), "all time · بالريال"],
-          ["الحملات · Campaigns", String(campaigns.length), "open + draft · مفتوحة + مسودة"],
+          [i.dashboard.kpis.activeBookings, String(active), `${orders.length} ${i.dashboard.kpis.totalLabel}`],
+          [i.dashboard.kpis.pendingApprovals, String(pendingApprovals), i.dashboard.kpis.reviewNow],
+          [i.dashboard.kpis.totalSpent, fmtMoney(totalSpent), i.dashboard.kpis.allTime],
+          [i.dashboard.kpis.campaigns, String(campaigns.length), i.dashboard.kpis.openDraft],
         ].map(([l, v, sub]) => (
           <div key={l} className="rounded-2xl border border-border bg-elevated p-5">
             <p className="text-xs uppercase tracking-wide text-muted">{l}</p>
@@ -67,11 +68,11 @@ export default async function BrandDashboard() {
       <div className="mt-10 grid lg:grid-cols-3 gap-6">
         <section className="lg:col-span-2 rounded-2xl border border-border bg-elevated">
           <header className="flex items-center justify-between p-5 border-b border-border">
-            <h2 className="font-bold text-lg">آخر الطلبات · Recent orders</h2>
-            <Link href="/orders" className="text-sm font-semibold text-brand">عرض الكل · View all</Link>
+            <h2 className="font-bold text-lg">{i.dashboard.recentOrders}</h2>
+            <Link href="/orders" className="text-sm font-semibold text-brand">{i.common.viewAll}</Link>
           </header>
           {orders.length === 0 ? (
-            <p className="p-8 text-center text-sm text-muted">لا توجد طلبات بعد. <Link href="/influencers" className="underline">ابحث عن مؤثر</Link>.</p>
+            <p className="p-8 text-center text-sm text-muted">{i.dashboard.noOrders} <Link href="/influencers" className="underline">{i.dashboard.findCreatorCta}</Link>.</p>
           ) : (
             <ul className="divide-y divide-border">
               {orders.slice(0, 5).map((o) => {
@@ -89,7 +90,7 @@ export default async function BrandDashboard() {
                       o.status === "released" ? "bg-brand-100 text-brand-700 dark:bg-brand-900 dark:text-brand-200"
                       : o.status === "submitted" ? "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
                       : "bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200"
-                    }`}>{o.status.replace(/_/g, " ")}</span>
+                    }`}>{i.status[o.status as keyof typeof i.status] ?? o.status.replace(/_/g, " ")}</span>
                     <Link href={`/orders/${o.id}`} className="font-bold text-sm hover:underline">{fmtMoney(o.amount)}</Link>
                   </li>
                 );
@@ -100,18 +101,18 @@ export default async function BrandDashboard() {
 
         <section className="rounded-2xl border border-border bg-elevated p-5">
           <header className="flex items-center justify-between mb-3">
-            <h2 className="font-bold text-lg">حملاتي · My campaigns</h2>
-            <Link href="/campaigns/new" className="text-sm font-semibold text-brand">+ جديد · New</Link>
+            <h2 className="font-bold text-lg">{i.dashboard.myCampaigns}</h2>
+            <Link href="/campaigns/new" className="text-sm font-semibold text-brand">{i.dashboard.addNew}</Link>
           </header>
           {campaigns.length === 0 ? (
-            <p className="text-sm text-muted">لا توجد حملات. أطلق أول حملة سعودية الآن.</p>
+            <p className="text-sm text-muted">{i.dashboard.noCampaigns}</p>
           ) : (
             <ul className="space-y-3">
               {campaigns.map((c) => (
                 <li key={c.id}>
                   <Link href={`/campaigns/${c.id}`} className="block rounded-lg p-3 -mx-3 hover:bg-surface">
                     <p className="font-semibold truncate">{c.title}</p>
-                    <p className="text-xs text-muted">{c.status} · {c._count?.applications ?? 0} applicants</p>
+                    <p className="text-xs text-muted">{i.status[c.status as keyof typeof i.status] ?? c.status} · {c._count?.applications ?? 0} {i.campaigns.applicants}</p>
                   </Link>
                 </li>
               ))}

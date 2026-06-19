@@ -79,6 +79,9 @@ model User {
   updatedAt       DateTime         @updatedAt
   emailVerifiedAt DateTime?
   bannedAt        DateTime?
+  // Preferred UI locale. Drives notification copy + initial cookie on login.
+  // Null means "follow the request" (Accept-Language / cookie / default).
+  locale          String?
 
   brandProfile    BrandProfile?
   creatorProfile  CreatorProfile?
@@ -313,8 +316,11 @@ model Notification {
   user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String
   kind      NotificationKind
-  title     String
-  body      String?
+  // Bilingual payload: { en: "...", ar: "..." } for system-generated copy.
+  // Older single-language rows (legacy from before the bilingual switch) are
+  // returned as-is and the service layer picks .en as fallback.
+  title     Json
+  body      Json?
   href      String?
   readAt    DateTime?
   createdAt DateTime         @default(now())

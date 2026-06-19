@@ -4,10 +4,12 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { Me } from "@collabstr/shared-types";
+import { useT } from "@/components/locale-provider";
 
 export function UserMenu({ me }: { me: Me }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const i = useT();
 
   async function logout() {
     await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/logout`, {
@@ -36,31 +38,31 @@ export function UserMenu({ me }: { me: Me }) {
       {open && (
         <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-elevated shadow-xl p-1.5 z-50">
           <p className="px-3 py-2 text-xs text-muted border-b border-border mb-1">
-            Signed in as <span className="font-semibold text-fg block truncate">{me.email}</span>
+            {i.nav.signedInAs} <span className="font-semibold text-fg block truncate">{me.email}</span>
           </p>
-          <MenuLink href={dashHref}>Dashboard</MenuLink>
+          <MenuLink href={dashHref}>{i.nav.dashboard}</MenuLink>
           {me.role === "brand" && (
             <>
-              <MenuLink href="/orders">Orders</MenuLink>
-              <MenuLink href="/saved">Saved creators</MenuLink>
-              <MenuLink href="/campaigns/new">Post a campaign</MenuLink>
+              <MenuLink href="/orders">{i.nav.orders}</MenuLink>
+              <MenuLink href="/saved">{i.nav.saved}</MenuLink>
+              <MenuLink href="/campaigns/new">{i.nav.newCampaign}</MenuLink>
             </>
           )}
           {me.role === "creator" && me.creatorUsername && (
             <>
-              <MenuLink href={`/${me.creatorUsername}`}>View public profile</MenuLink>
-              <MenuLink href="/creator-dashboard/packages">My packages</MenuLink>
-              <MenuLink href="/creator-dashboard/orders">My orders</MenuLink>
+              <MenuLink href={`/${me.creatorUsername}`}>{i.nav.publicProfile}</MenuLink>
+              <MenuLink href="/creator-dashboard/packages">{i.nav.myPackages}</MenuLink>
+              <MenuLink href="/creator-dashboard/orders">{i.nav.myOrders}</MenuLink>
             </>
           )}
-          <MenuLink href="/messages">Inbox</MenuLink>
-          <MenuLink href="/notifications">Notifications</MenuLink>
-          <MenuLink href="/settings">Settings</MenuLink>
+          <MenuLink href="/messages">{i.nav.inbox}</MenuLink>
+          <MenuLink href="/notifications">{i.nav.notifications}</MenuLink>
+          <MenuLink href="/settings">{i.nav.settings}</MenuLink>
           <button
             onClick={logout}
             className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 mt-1 border-t border-border pt-2"
           >
-            Log out
+            {i.nav.logout}
           </button>
         </div>
       )}

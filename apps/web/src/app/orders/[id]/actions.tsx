@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useT } from "@/components/locale-provider";
 
 export function OrderActions({ order, isBrand }: { order: { id: string; status: string }; isBrand: boolean }) {
   const router = useRouter();
+  const i = useT();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deliverUrl, setDeliverUrl] = useState("");
@@ -34,51 +36,51 @@ export function OrderActions({ order, isBrand }: { order: { id: string; status: 
 
   return (
     <section className="rounded-2xl border border-border bg-elevated p-5">
-      <h2 className="font-bold">Actions</h2>
+      <h2 className="font-bold">{i.orders.detail.actions}</h2>
       <div className="mt-3 space-y-2">
         {isBrand && order.status === "pending_payment" && (
           <button onClick={() => call("pay")} disabled={busy} className="w-full px-4 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">
-            Pay now (escrow)
+            {i.orders.detail.payNow}
           </button>
         )}
         {!isBrand && order.status === "awaiting_creator" && (
           <button onClick={() => call("accept")} disabled={busy} className="w-full px-4 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">
-            Accept order
+            {i.orders.detail.accept}
           </button>
         )}
         {!isBrand && ["in_progress", "revision_requested"].includes(order.status) && (
           <div className="space-y-2">
-            <input value={deliverUrl} onChange={(e) => setDeliverUrl(e.target.value)} placeholder="Delivery URL (Drive / Dropbox)" className="w-full px-3.5 py-2.5 rounded-lg border border-border text-sm" />
+            <input value={deliverUrl} onChange={(e) => setDeliverUrl(e.target.value)} placeholder={i.orders.detail.deliveryUrl} className="w-full px-3.5 py-2.5 rounded-lg border border-border text-sm" />
             <button onClick={() => call("submit", { url: deliverUrl })} disabled={busy || !deliverUrl} className="w-full px-4 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">
-              Submit delivery
+              {i.orders.detail.submitDelivery}
             </button>
           </div>
         )}
         {isBrand && order.status === "submitted" && (
           <>
             <button onClick={() => call("approve")} disabled={busy} className="w-full px-4 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">
-              Approve
+              {i.orders.detail.approve}
             </button>
             <div className="space-y-2">
-              <input value={revisionNote} onChange={(e) => setRevisionNote(e.target.value)} placeholder="Revision note" className="w-full px-3.5 py-2.5 rounded-lg border border-border text-sm" />
+              <input value={revisionNote} onChange={(e) => setRevisionNote(e.target.value)} placeholder={i.orders.detail.revisionNote} className="w-full px-3.5 py-2.5 rounded-lg border border-border text-sm" />
               <button onClick={() => call("revision", { note: revisionNote })} disabled={busy || !revisionNote} className="w-full px-4 py-2.5 rounded-lg border border-fg text-fg font-semibold disabled:opacity-60">
-                Request revision
+                {i.orders.detail.requestRevision}
               </button>
             </div>
           </>
         )}
         {isBrand && order.status === "approved" && (
           <button onClick={() => call("release")} disabled={busy} className="w-full px-4 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">
-            Release funds to creator
+            {i.orders.detail.releaseFunds}
           </button>
         )}
         {["pending_payment", "awaiting_creator", "in_progress", "revision_requested"].includes(order.status) && (
           <button onClick={() => call("cancel")} disabled={busy} className="w-full px-4 py-2.5 rounded-lg border border-red-200 text-red-600 font-semibold text-sm disabled:opacity-60">
-            Cancel order
+            {i.orders.detail.cancelOrder}
           </button>
         )}
         {["released", "cancelled"].includes(order.status) && (
-          <p className="text-sm text-muted">No actions available — order is closed.</p>
+          <p className="text-sm text-muted">{i.orders.detail.closedNote}</p>
         )}
         {error && <p className="text-sm text-red-600">{error}</p>}
       </div>

@@ -29,6 +29,9 @@ export function LoginForm({ next, labels }: { next?: string; labels: Labels }) {
         router.push("/login?error=not_admin");
         return;
       }
+      if (me.locale === "ar" || me.locale === "en") {
+        document.cookie = `locale=${me.locale}; path=/; max-age=${365 * 24 * 60 * 60}`;
+      }
       router.refresh();
       // Defense in depth: server already sanitized `next` via safeNext().
       const safe = next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : "/";
@@ -44,11 +47,11 @@ export function LoginForm({ next, labels }: { next?: string; labels: Labels }) {
     <form onSubmit={submit} className="mt-5 space-y-3">
       <label className="block">
         <span className="text-xs font-semibold text-[#8b8ba0]">{labels.email}</span>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30] focus:border-violet-500 focus:outline-none" />
+        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30] focus:border-emerald-500 focus:outline-none" />
       </label>
       <label className="block">
         <span className="text-xs font-semibold text-[#8b8ba0]">{labels.password}</span>
-        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30] focus:border-violet-500 focus:outline-none" />
+        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30] focus:border-emerald-500 focus:outline-none" />
       </label>
       {error && <p className="text-xs text-red-300">{error}</p>}
       <button disabled={busy} className="w-full px-4 py-2.5 rounded-lg brand-gradient text-white font-bold disabled:opacity-60">

@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import { useT } from "@/components/locale-provider";
 
 export function PasswordForm() {
+  const i = useT();
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [busy, setBusy] = useState(false);
@@ -19,7 +21,7 @@ export function PasswordForm() {
         body: JSON.stringify({ current, next }),
       });
       if (!res.ok) throw new Error((await res.json())?.message ?? "Failed");
-      setMsg("Password changed.");
+      setMsg(i.settings.security.changed);
       setCurrent(""); setNext("");
     } catch (e: any) { setMsg(e.message); }
     finally { setBusy(false); }
@@ -27,17 +29,17 @@ export function PasswordForm() {
 
   return (
     <form onSubmit={submit} className="mt-6 rounded-2xl border border-border bg-elevated p-6 space-y-3">
-      <h2 className="font-bold text-lg">Change password</h2>
+      <h2 className="font-bold text-lg">{i.settings.security.changePw}</h2>
       <label className="block">
-        <span className="text-xs font-semibold">Current password</span>
+        <span className="text-xs font-semibold">{i.settings.security.current}</span>
         <input value={current} onChange={(e) => setCurrent(e.target.value)} type="password" required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border" />
       </label>
       <label className="block">
-        <span className="text-xs font-semibold">New password</span>
+        <span className="text-xs font-semibold">{i.settings.security.next}</span>
         <input value={next} onChange={(e) => setNext(e.target.value)} type="password" minLength={8} required className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border" />
       </label>
       {msg && <p className="text-sm text-muted">{msg}</p>}
-      <button disabled={busy} className="px-5 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">{busy ? "Saving…" : "Update password"}</button>
+      <button disabled={busy} className="px-5 py-3 rounded-xl brand-gradient text-white font-bold disabled:opacity-60">{busy ? i.settings.security.saving : i.settings.security.update}</button>
     </form>
   );
 }

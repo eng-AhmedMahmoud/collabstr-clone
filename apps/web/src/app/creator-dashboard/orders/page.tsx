@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { fmtMoney } from "@/lib/format";
+import { t } from "@/lib/i18n";
 
 type OrderRow = {
   id: string;
@@ -13,18 +14,10 @@ type OrderRow = {
   package: { title: string };
 };
 
-export const metadata = { title: "My orders · طلباتي — Nakhla · نخلة" };
-export const dynamic = "force-dynamic";
-
-const GROUPS: Record<string, string[]> = {
-  "جديد · New": ["awaiting_creator"],
-  "قيد العمل · In progress": ["in_progress", "revision_requested"],
-  "مُسلَّم · Submitted": ["submitted"],
-  "موافَق / مدفوع · Approved / released": ["approved", "released"],
-  "مغلق · Closed": ["cancelled", "disputed"],
-};
+export const metadata = { title: "My orders — Nakhla" };
 
 export default async function CreatorOrdersPage() {
+  const i = await t();
   const me = await getSession();
   if (!me) redirect("/login?next=/creator-dashboard/orders");
   if (me.role !== "creator") redirect("/dashboard");
@@ -32,12 +25,19 @@ export default async function CreatorOrdersPage() {
   let orders: OrderRow[] = [];
   try { orders = await api.get<OrderRow[]>("/orders?role=creator"); } catch {}
 
+  const GROUPS: { title: string; statuses: string[] }[] = [
+    { title: i.orders.group.new, statuses: ["awaiting_creator"] },
+    { title: i.orders.group.inProgress, statuses: ["in_progress", "revision_requested"] },
+    { title: i.orders.group.submitted, statuses: ["submitted"] },
+    { title: i.orders.group.approvedReleased, statuses: ["approved", "released"] },
+    { title: i.orders.group.closed, statuses: ["cancelled", "disputed"] },
+  ];
+
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
-      <h1 className="text-3xl font-black">طلباتي · My orders</h1>
-      <p className="text-muted text-sm mt-1">جميع المبالغ بالريال السعودي · All amounts in SAR (ر.س)</p>
+      <h1 className="text-3xl font-black">{i.nav.myOrders}</h1>
 
-      {Object.entries(GROUPS).map(([title, statuses]) => {
+      {GROUPS.map(({ title, statuses }) => {
         const filtered = orders.filter((o) => statuses.includes(o.status));
         if (filtered.length === 0) return null;
         return (
@@ -50,7 +50,7 @@ export default async function CreatorOrdersPage() {
                     <p className="font-semibold">{o.brand.name}</p>
                     <p className="text-xs text-muted">{o.package.title} · #{o.id.slice(0,6)}</p>
                   </div>
-                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200">{o.status.replace(/_/g, " ")}</span>
+                  <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200">{i.status[o.status as keyof typeof i.status] ?? o.status.replace(/_/g, " ")}</span>
                   <span className="font-bold">{fmtMoney(o.amount)}</span>
                 </Link>
               ))}
@@ -59,7 +59,7 @@ export default async function CreatorOrdersPage() {
         );
       })}
 
-      {orders.length === 0 && <p className="text-center text-sm text-muted mt-12">لا توجد طلبات بعد · No orders yet.</p>}
+      {orders.length === 0 && <p className="text-center text-sm text-muted mt-12">{i.creatorDashboard.noOrders}</p>}
     </div>
   );
 }
