@@ -29,10 +29,11 @@ export default async function Home() {
   return (
     <>
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 brand-gradient-soft opacity-90" />
-        <div className="absolute inset-0 -z-10">
-          <div className="absolute -top-32 -left-32 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-brand-200 via-brand-100 to-amber-100 blur-3xl opacity-70 dark:opacity-30" />
-          <div className="absolute -bottom-32 -right-32 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-brand-300 via-brand-200 to-brand-100 blur-3xl opacity-60 dark:opacity-25" />
+        <div className="absolute inset-0 -z-20 brand-gradient-soft" />
+        <div className="absolute inset-0 -z-10 brand-mesh opacity-40 dark:opacity-60 blur-3xl" />
+        <div className="absolute inset-0 -z-10 pointer-events-none">
+          <div className="absolute -top-40 -left-40 h-[640px] w-[640px] rounded-full brand-conic opacity-[0.08] dark:opacity-[0.12] blur-3xl" />
+          <div className="absolute -bottom-48 -right-32 h-[560px] w-[560px] rounded-full bg-gradient-to-tr from-brand-300 via-brand-200 to-amber-200 blur-3xl opacity-50 dark:opacity-25" />
         </div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10 text-center">
           <p className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-elevated/80 border border-border mb-5">
@@ -56,7 +57,7 @@ export default async function Home() {
                 placeholder={i.home.searchPlaceholder}
                 className="flex-1 px-4 py-3 rounded-xl border border-border bg-surface focus:bg-elevated focus:outline-none focus:ring-2 focus:ring-brand-200"
               />
-              <button type="submit" className="px-6 py-3 rounded-xl brand-gradient text-white font-semibold shadow-sm hover:opacity-95">
+              <button type="submit" className="px-6 py-3 rounded-xl brand-gradient brand-glow text-white font-semibold hover:scale-[1.02] transition-transform">
                 {i.home.searchButton}
               </button>
             </div>

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { serverApi } from "@/lib/api";
-import { t } from "@/lib/i18n";
+import { t, getLocale } from "@/lib/i18n";
 import type { ApiCampaign } from "@/lib/types";
 import { fmtMoney } from "@/lib/format";
 
@@ -9,6 +9,8 @@ export const dynamic = "force-dynamic";
 
 export default async function CampaignsPage() {
   const i = await t();
+  const locale = await getLocale();
+  const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
   const api = await serverApi();
   let campaigns: ApiCampaign[] = [];
   try { campaigns = await api.get<ApiCampaign[]>("/campaigns"); } catch {}
@@ -44,14 +46,18 @@ export default async function CampaignsPage() {
                 <p className="text-sm text-muted mt-2 line-clamp-2">{c.description}</p>
                 <div className="flex flex-wrap gap-1.5 mt-4">
                   {c.platforms.map((p) => (
-                    <span key={p} className="text-[11px] font-semibold uppercase px-2 py-1 rounded-full bg-surface text-fg/80">{p}</span>
+                    <span key={p} className="text-[11px] font-semibold uppercase px-2 py-1 rounded-full bg-surface text-fg/80">
+                      {i.platformLabels[p as keyof typeof i.platformLabels] ?? p}
+                    </span>
                   ))}
                   {c.categories.map((cat) => (
-                    <span key={cat} className="text-[11px] font-semibold px-2 py-1 rounded-full bg-brand-50 text-brand">{cat}</span>
+                    <span key={cat} className="text-[11px] font-semibold px-2 py-1 rounded-full bg-brand-50 text-brand">
+                      {i.categoryLabels[cat as keyof typeof i.categoryLabels] ?? cat}
+                    </span>
                   ))}
                 </div>
                 <div className="flex items-center justify-between mt-5">
-                  <p className="font-bold">{fmtMoney(c.budgetMin)} – {fmtMoney(c.budgetMax)}</p>
+                  <p className="font-bold">{fmtMoney(c.budgetMin, { locale: moneyLocale })} – {fmtMoney(c.budgetMax, { locale: moneyLocale })}</p>
                   <Link href={`/campaigns/${c.id}`} className="text-sm font-semibold px-4 py-2 rounded-lg bg-fg text-white">{i.campaigns.viewApply}</Link>
                 </div>
               </article>

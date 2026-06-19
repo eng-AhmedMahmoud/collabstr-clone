@@ -17,6 +17,12 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+html {
+  font-size: 18px;
+}
+html[lang="ar"] {
+  font-size: 18.5px;
+}
 html, body {
   background: var(--color-bg);
   color: var(--color-fg);

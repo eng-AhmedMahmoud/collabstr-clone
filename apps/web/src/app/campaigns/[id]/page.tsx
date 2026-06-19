@@ -3,7 +3,7 @@ import Link from "next/link";
 import { serverApi } from "@/lib/api";
 import { fmtMoney } from "@/lib/format";
 import { getSession } from "@/lib/session";
-import { t } from "@/lib/i18n";
+import { t, getLocale } from "@/lib/i18n";
 
 type CampaignDetail = {
   id: string;
@@ -34,6 +34,8 @@ export default async function CampaignDetailPage({
   params,
 }: { params: Promise<{ id: string }> }) {
   const i = await t();
+  const locale = await getLocale();
+  const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
   const { id } = await params;
   const me = await getSession();
   const api = await serverApi();
@@ -50,10 +52,10 @@ export default async function CampaignDetailPage({
       <header className="mt-4">
         <div className="text-xs text-muted">{c.brand.name} · {days}d {i.campaigns.postedSuffix} · {c.applications.length} {i.campaigns.applicants}</div>
         <h1 className="text-3xl font-black mt-1">{c.title}</h1>
-        <p className="mt-2 font-bold">{fmtMoney(c.budgetMin)} – {fmtMoney(c.budgetMax)}</p>
+        <p className="mt-2 font-bold">{fmtMoney(c.budgetMin, { locale: moneyLocale })} – {fmtMoney(c.budgetMax, { locale: moneyLocale })}</p>
         <div className="flex gap-1.5 mt-3 flex-wrap">
-          {c.platforms.map((p) => <span key={p} className="text-[11px] uppercase font-semibold px-2 py-1 rounded-full bg-surface">{p}</span>)}
-          {c.categories.map((cat) => <span key={cat} className="text-[11px] font-semibold px-2 py-1 rounded-full bg-brand-50 text-brand">{cat}</span>)}
+          {c.platforms.map((p) => <span key={p} className="text-[11px] uppercase font-semibold px-2 py-1 rounded-full bg-surface">{i.platformLabels[p as keyof typeof i.platformLabels] ?? p}</span>)}
+          {c.categories.map((cat) => <span key={cat} className="text-[11px] font-semibold px-2 py-1 rounded-full bg-brand-50 text-brand">{i.categoryLabels[cat as keyof typeof i.categoryLabels] ?? cat}</span>)}
         </div>
       </header>
 
@@ -94,7 +96,7 @@ export default async function CampaignDetailPage({
                   <p className="mt-2 text-sm text-fg/80 line-clamp-3">{a.pitch}</p>
                 </div>
                 <div className="flex items-center gap-3 ml-auto">
-                  <span className="font-bold">{fmtMoney(a.price)}</span>
+                  <span className="font-bold">{fmtMoney(a.price, { locale: moneyLocale })}</span>
                   <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${a.status === "accepted" ? "bg-emerald-50 text-emerald-700" : a.status === "rejected" ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"}`}>{i.status[a.status as keyof typeof i.status] ?? a.status}</span>
                 </div>
               </li>
@@ -105,9 +107,24 @@ export default async function CampaignDetailPage({
       )}
 
       {!me && (
-        <p className="mt-6 text-sm text-muted text-center">
-          <Link href={`/login?next=/campaigns/${c.id}`} className="font-semibold underline">{i.nav.login}</Link> {i.campaigns.detail.loginToApply}
-        </p>
+        <div className="mt-8 rounded-2xl border border-brand-200 bg-brand-50/60 dark:bg-brand-900/20 p-5 sm:p-6 text-center">
+          <p className="text-sm sm:text-base text-fg/80">{i.campaigns.detail.loginToApply}</p>
+          <div className="mt-4 flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href={`/login?next=/campaigns/${c.id}`}
+              className="brand-gradient brand-glow text-white font-bold px-6 py-3 rounded-xl text-base inline-flex items-center justify-center gap-2 hover:opacity-95 transition"
+            >
+              {i.nav.login}
+              <span aria-hidden>→</span>
+            </Link>
+            <Link
+              href={`/signup?next=/campaigns/${c.id}`}
+              className="font-semibold px-6 py-3 rounded-xl text-base border border-brand-300 text-brand-700 dark:text-brand-300 hover:bg-brand-100/60 dark:hover:bg-brand-800/30 transition inline-flex items-center justify-center"
+            >
+              {i.nav.signup}
+            </Link>
+          </div>
+        </div>
       )}
     </div>
   );

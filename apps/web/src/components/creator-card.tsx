@@ -2,10 +2,17 @@ import Link from "next/link";
 import Image from "next/image";
 import type { ApiCreator } from "@/lib/types";
 import { fmtFollowers, fmtMoney } from "@/lib/format";
+import { t, getLocale } from "@/lib/i18n";
 
-export function CreatorCard({ c }: { c: ApiCreator }) {
+export async function CreatorCard({ c }: { c: ApiCreator }) {
+  const i = await t();
+  const locale = await getLocale();
+  const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
   const followCount = c.followersIg ?? c.followersTt ?? c.followersYt ?? 0;
   const cover = c.coverUrl || `https://picsum.photos/seed/${c.username}/600/750`;
+  const labelBadge = (b: string) =>
+    i.badgeLabels[b as keyof typeof i.badgeLabels] ?? b;
+  const fromLabel = locale === "ar" ? "من" : "from";
   return (
     <Link
       href={`/${c.username}`}
@@ -25,7 +32,7 @@ export function CreatorCard({ c }: { c: ApiCreator }) {
               key={b}
               className="text-[11px] font-semibold px-2 py-1 rounded-full bg-white/95 text-fg shadow-sm"
             >
-              {b}
+              {labelBadge(b)}
             </span>
           ))}
           {followCount >= 1000 && (
@@ -41,8 +48,8 @@ export function CreatorCard({ c }: { c: ApiCreator }) {
               <p className="text-[11px] text-white/80 line-clamp-1">{c.headline}</p>
             </div>
             <div className="text-right">
-              <p className="text-[11px] text-white/80">from · من</p>
-              <p className="text-sm font-extrabold">{fmtMoney(c.startingPrice)}</p>
+              <p className="text-[11px] text-white/80">{fromLabel}</p>
+              <p className="text-sm font-extrabold">{fmtMoney(c.startingPrice, { locale: moneyLocale })}</p>
             </div>
           </div>
         </div>

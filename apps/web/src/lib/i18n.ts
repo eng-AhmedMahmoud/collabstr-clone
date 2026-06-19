@@ -423,6 +423,17 @@ export const messages = {
       draft: "draft",
       closed: "closed",
     },
+    categoryLabels: {
+      Fashion: "Fashion", Beauty: "Beauty", Travel: "Travel", Fitness: "Fitness",
+      Food: "Food", Lifestyle: "Lifestyle", Tech: "Tech", Gaming: "Gaming",
+      Music: "Music", Family: "Family", Comedy: "Comedy", Pets: "Pets",
+    },
+    platformLabels: {
+      instagram: "Instagram", tiktok: "TikTok", youtube: "YouTube", ugc: "UGC",
+    },
+    badgeLabels: {
+      "Top Creator": "Top Creator", "Responds Fast": "Responds Fast", UGC: "UGC",
+    },
     locale: { en: "EN", ar: "AR", switchTo: "العربية" },
   },
   ar: {
@@ -833,6 +844,17 @@ export const messages = {
       open: "مفتوح",
       draft: "مسودة",
       closed: "مغلق",
+    },
+    categoryLabels: {
+      Fashion: "أزياء", Beauty: "جمال", Travel: "سفر", Fitness: "لياقة",
+      Food: "طعام", Lifestyle: "أسلوب حياة", Tech: "تقنية", Gaming: "ألعاب",
+      Music: "موسيقى", Family: "عائلة", Comedy: "كوميديا", Pets: "حيوانات أليفة",
+    },
+    platformLabels: {
+      instagram: "إنستغرام", tiktok: "تيك توك", youtube: "يوتيوب", ugc: "UGC",
+    },
+    badgeLabels: {
+      "Top Creator": "مؤثر مميز", "Responds Fast": "يرد بسرعة", UGC: "UGC",
     },
     locale: { en: "EN", ar: "AR", switchTo: "English" },
   },

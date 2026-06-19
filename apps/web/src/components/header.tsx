@@ -12,7 +12,7 @@ export async function Header() {
     <header className="sticky top-0 z-50 border-b border-border glass">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
-          <span className="h-8 w-8 rounded-lg brand-gradient grid place-items-center text-white font-black">ن</span>
+          <span className="h-9 w-9 rounded-xl brand-gradient brand-glow grid place-items-center text-white font-black text-lg">ن</span>
           <span className="font-black tracking-tight text-lg text-fg">{i.brand.name}</span>
         </Link>
 
@@ -30,8 +30,8 @@ export async function Header() {
             <UserMenu me={me} />
           ) : (
             <>
-              <Link href="/login" className="hidden sm:inline-flex px-3 py-2 text-sm font-semibold text-fg/80 hover:text-fg">{i.nav.login}</Link>
-              <Link href="/signup" className="inline-flex items-center px-4 py-2 rounded-full brand-gradient text-white text-sm font-semibold shadow-sm hover:opacity-95">{i.nav.signup}</Link>
+              <Link href="/login" className="hidden sm:inline-flex items-center px-4 py-2 rounded-full border border-brand-300 text-brand-700 dark:text-brand-300 text-sm font-bold hover:bg-brand-50 dark:hover:bg-brand-900/30 transition">{i.nav.login}</Link>
+              <Link href="/signup" className="inline-flex items-center px-5 py-2 rounded-full brand-gradient brand-glow text-white text-sm font-bold hover:opacity-95 transition">{i.nav.signup}</Link>
             </>
           )}
         </div>
