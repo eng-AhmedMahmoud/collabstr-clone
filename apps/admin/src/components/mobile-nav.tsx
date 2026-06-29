@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { LocaleSwitcher } from "./locale-switcher";
+import { BrandMark } from "./brand-mark";
 
 type NavGroup = { group: string; items: { href: string; label: string; icon: string }[] };
 
@@ -40,7 +41,7 @@ export function MobileNav({
     <>
       <div className="md:hidden sticky top-0 z-30 h-14 border-b border-border bg-bg/85 backdrop-blur-md flex items-center justify-between px-4">
         <div className="flex items-center gap-2.5">
-          <span className="h-8 w-8 rounded-lg brand-gradient grid place-items-center text-white font-black">ن</span>
+          <span className="h-8 w-8 rounded-lg brand-gradient grid place-items-center text-white p-1"><BrandMark className="h-full w-full" title="Nakhla" /></span>
           <p className="font-black">
             <span className="brand-text">{brand}</span>
             <span className="text-muted font-bold ms-1 text-xs">{brandAr}</span>

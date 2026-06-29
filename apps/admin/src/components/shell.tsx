@@ -2,6 +2,7 @@ import Link from "next/link";
 import { LogoutButton } from "./logout-button";
 import { LocaleSwitcher } from "./locale-switcher";
 import { MobileNav } from "./mobile-nav";
+import { BrandMark } from "./brand-mark";
 import type { Me } from "@collabstr/shared-types";
 import { t } from "@/lib/i18n";
 
@@ -61,7 +62,7 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
 
       <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 border-e border-border bg-bg/80 backdrop-blur-md flex-col sticky top-0 h-screen z-10">
         <div className="px-4 lg:px-5 h-16 flex items-center gap-3 border-b border-border min-w-0">
-          <span className="h-9 w-9 rounded-xl brand-gradient brand-glow grid place-items-center text-white font-black text-lg shrink-0">ن</span>
+          <span className="h-9 w-9 rounded-xl brand-gradient brand-glow grid place-items-center text-white p-1.5 shrink-0"><BrandMark className="h-full w-full" title="Nakhla" /></span>
           <div className="leading-tight min-w-0">
             <p className="font-black tracking-tight truncate">
               <span className="brand-text">Nakhla</span>

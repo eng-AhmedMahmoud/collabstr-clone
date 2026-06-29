@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { LocaleSwitcher } from "./locale-switcher";
+import { BrandMark } from "./brand-mark";
 
 export function DashboardBrandBar({
   role,
@@ -16,8 +17,8 @@ export function DashboardBrandBar({
   return (
     <div className="rounded-2xl border border-brand-200 dark:border-brand-800/60 bg-elevated/80 backdrop-blur-md p-4 sm:p-5 flex items-center gap-4 flex-wrap shadow-lg shadow-brand-100/40 dark:shadow-brand-900/30">
       <Link href="/" className="flex items-center gap-3 group">
-        <span className="h-11 w-11 rounded-xl brand-gradient brand-glow grid place-items-center text-white font-black text-xl group-hover:scale-105 transition-transform">
-          ن
+        <span className="h-11 w-11 rounded-xl brand-gradient brand-glow grid place-items-center text-white p-1.5 group-hover:scale-105 transition-transform">
+          <BrandMark className="h-full w-full" title="Nakhla" />
         </span>
         <div className="leading-tight">
           <p className="font-black text-lg text-fg">

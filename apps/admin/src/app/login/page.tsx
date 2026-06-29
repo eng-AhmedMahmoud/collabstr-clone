@@ -1,4 +1,5 @@
 import { LoginForm } from "./login-form";
+import { BrandMark } from "@/components/brand-mark";
 import { t as serverT } from "@/lib/i18n";
 import { safeNext } from "@/lib/safe-next";
 
@@ -17,7 +18,7 @@ export default async function AdminLoginPage({
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2">
-            <span className="h-8 w-8 rounded-lg brand-gradient grid place-items-center text-white font-black">ن</span>
+            <span className="h-8 w-8 rounded-lg brand-gradient grid place-items-center text-white p-1"><BrandMark className="h-full w-full" title="Nakhla" /></span>
             <span className="font-black text-lg">{t.brand.name}</span>
           </div>
           <p className="text-xs uppercase tracking-widest text-muted mt-2">{t.brand.sub}</p>

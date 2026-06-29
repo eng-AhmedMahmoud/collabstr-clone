@@ -4,6 +4,7 @@ import { UserMenu } from "./user-menu";
 import { ThemeToggle } from "./theme-toggle";
 import { LocaleSwitcher } from "./locale-switcher";
 import { MobileNav } from "./mobile-nav";
+import { BrandMark } from "./brand-mark";
 import { t } from "@/lib/i18n";
 
 export async function Header() {
@@ -19,7 +20,7 @@ export async function Header() {
     <header className="sticky top-0 z-50 border-b border-border glass">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-2">
-          <span className="h-9 w-9 rounded-xl brand-gradient brand-glow grid place-items-center text-white font-black text-lg">ن</span>
+          <span className="h-9 w-9 rounded-xl brand-gradient brand-glow grid place-items-center text-white p-1.5"><BrandMark className="h-full w-full" title="Nakhla" /></span>
           <span className="font-black tracking-tight text-lg text-fg">{i.brand.name}</span>
         </Link>
 
