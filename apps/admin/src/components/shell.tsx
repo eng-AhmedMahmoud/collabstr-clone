@@ -43,10 +43,12 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
   ];
 
   return (
-    <div className="min-h-screen md:flex relative overflow-x-clip">
-      <div aria-hidden className="absolute inset-0 -z-10 brand-gradient-soft pointer-events-none" />
-      <div aria-hidden className="absolute -top-32 -end-32 h-[520px] w-[520px] -z-10 brand-mesh opacity-50 blur-3xl pointer-events-none" />
-      <div aria-hidden className="absolute -bottom-40 -start-20 h-[420px] w-[420px] -z-10 brand-conic opacity-[0.06] blur-3xl pointer-events-none" />
+    <div className="min-h-screen md:flex relative overflow-clip">
+      <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute inset-0 brand-gradient-soft" />
+        <div className="absolute -top-32 -end-32 h-[520px] w-[520px] brand-mesh opacity-50 blur-3xl" />
+        <div className="absolute -bottom-40 -start-20 h-[420px] w-[420px] brand-conic opacity-[0.06] blur-3xl" />
+      </div>
 
       <MobileNav
         nav={NAV}
@@ -57,7 +59,7 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
         marketplaceHref={MARKETPLACE_URL}
       />
 
-      <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 border-e border-border bg-bg/80 backdrop-blur-md flex-col relative z-10">
+      <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 border-e border-border bg-bg/80 backdrop-blur-md flex-col sticky top-0 h-screen z-10">
         <div className="px-4 lg:px-5 h-16 flex items-center gap-3 border-b border-border min-w-0">
           <span className="h-9 w-9 rounded-xl brand-gradient brand-glow grid place-items-center text-white font-black text-lg shrink-0">ن</span>
           <div className="leading-tight min-w-0">
