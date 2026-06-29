@@ -4,6 +4,12 @@ import type { ApiCreator } from "@/lib/types";
 import { fmtFollowers, fmtMoney } from "@/lib/format";
 import { t, getLocale } from "@/lib/i18n";
 
+function hashHue(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
+  return Math.abs(h) % 360;
+}
+
 export async function CreatorCard({ c }: { c: ApiCreator }) {
   const i = await t();
   const locale = await getLocale();
@@ -18,25 +24,34 @@ export async function CreatorCard({ c }: { c: ApiCreator }) {
       href={`/${c.username}`}
       className="group block rounded-2xl overflow-hidden bg-elevated border border-border hover:shadow-lg hover:-translate-y-0.5 transition"
     >
-      <div className="relative aspect-[4/5] overflow-hidden bg-surface">
+      <div
+        className="relative aspect-[4/5] overflow-hidden brand-mesh"
+        style={{
+          // Deterministic per-creator gradient — renders even if cover image
+          // 404s or the CDN is slow. Uses a stable hash of the username so
+          // each creator has a consistent identity colour.
+          backgroundImage: `linear-gradient(135deg, hsl(${hashHue(c.username)} 70% 38%) 0%, hsl(${(hashHue(c.username) + 60) % 360} 70% 55%) 100%)`,
+        }}
+      >
         <Image
           src={cover}
           alt={c.user.name}
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
           className="object-cover group-hover:scale-[1.03] transition duration-500"
+          unoptimized
         />
         <div className="absolute inset-x-0 top-0 p-3 flex gap-1.5 flex-wrap">
           {c.badges.map((b) => (
             <span
               key={b}
-              className="text-[11px] font-semibold px-2 py-1 rounded-full bg-white/95 text-fg shadow-sm"
+              className="text-[11px] font-semibold px-2 py-1 rounded-full bg-white/95 text-zinc-900 shadow-sm"
             >
               {labelBadge(b)}
             </span>
           ))}
           {followCount >= 1000 && (
-            <span className="ml-auto text-[11px] font-bold px-2 py-1 rounded-full bg-black/70 text-white">
+            <span className="ms-auto text-[11px] font-bold px-2 py-1 rounded-full bg-black/70 text-white">
               {fmtFollowers(followCount)}
             </span>
           )}

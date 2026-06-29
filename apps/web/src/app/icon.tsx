@@ -1,9 +1,9 @@
 import { ImageResponse } from "next/og";
 
-export const size = { width: 180, height: 180 };
+export const size = { width: 64, height: 64 };
 export const contentType = "image/png";
 
-export default function AppleIcon() {
+export default function Icon() {
   return new ImageResponse(
     (
       <div
@@ -12,7 +12,7 @@ export default function AppleIcon() {
           height: "100%",
           display: "flex",
           background: "linear-gradient(135deg, #047857 0%, #10b981 55%, #fbe27a 100%)",
-          borderRadius: 40,
+          borderRadius: 14,
         }}
       >
         <svg width="100%" height="100%" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
