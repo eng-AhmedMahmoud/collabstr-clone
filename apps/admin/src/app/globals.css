@@ -37,6 +37,12 @@
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
+/* Admin font scale — bump base so dense KPI labels + table cells stay
+   readable on big monitors. AR gets a touch more breathing room because
+   Arabic glyph aperture skews smaller at the same px size. */
+html { font-size: 17px; }
+html[lang="ar"] { font-size: 18px; }
+
 html, body {
   background: var(--color-bg);
   color: var(--color-fg);
