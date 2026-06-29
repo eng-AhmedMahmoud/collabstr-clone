@@ -122,6 +122,19 @@ export const messages = {
         forceDispute: "Mark disputed",
       },
     },
+    statuses: {
+      orders: {
+        pending_payment: "Awaiting payment",
+        awaiting_creator: "Awaiting creator",
+        in_progress: "In progress",
+        submitted: "Submitted",
+        revision_requested: "Revision requested",
+        approved: "Approved",
+        released: "Released",
+        cancelled: "Cancelled",
+        disputed: "Disputed",
+      } as Record<string, string>,
+    },
     disputes: {
       title: "Disputes",
       countTpl: "{n} open · resolve from order detail",
@@ -296,6 +309,19 @@ export const messages = {
         forceCancel: "إلغاء قسري + استرداد",
         forceDispute: "وسم كنزاع",
       },
+    },
+    statuses: {
+      orders: {
+        pending_payment: "بانتظار الدفع",
+        awaiting_creator: "بانتظار المؤثر",
+        in_progress: "قيد التنفيذ",
+        submitted: "مُسلَّم",
+        revision_requested: "طُلِبت مراجعة",
+        approved: "موافق عليه",
+        released: "صُرف",
+        cancelled: "ملغي",
+        disputed: "متنازع عليه",
+      } as Record<string, string>,
     },
     disputes: {
       title: "النزاعات",
