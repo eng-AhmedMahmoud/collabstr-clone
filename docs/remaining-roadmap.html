@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Roadmap · Nakhla (KSA) + Diwaniya (Kuwait)</title>
+<style>
+  :root {
+    --bg: #0c0f1f; --fg: #fefaf2; --muted: #b3afc7; --border: #232c69;
+    --surface: #131a3c; --elevated: #1a234f;
+    --nakhla: #34d399; --diwaniya: #f59e0b; --brand: #5b67c4;
+    --crit: #f87171; --pages: #5b67c4; --comp: #34d399;
+    --schema: #ffc454; --integ: #c084fc; --polish: #94a3b8;
+    --shipped: #34d399;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55; min-height: 100vh;
+    background-image:
+      radial-gradient(at 12% 8%, rgba(91,103,196,0.20) 0%, transparent 40%),
+      radial-gradient(at 88% 6%, rgba(245,158,11,0.14) 0%, transparent 38%),
+      radial-gradient(at 50% 92%, rgba(46,58,135,0.22) 0%, transparent 45%);
+  }
+  .wrap { max-width: 1280px; margin: 0 auto; padding: 48px 24px 80px; }
+  header.hero { text-align: center; margin-bottom: 40px; }
+  header.hero h1 {
+    font-size: clamp(28px, 4vw, 48px); margin: 0 0 8px;
+    background: linear-gradient(110deg, #5b67c4, #aebae8, #ffc454, #f59e0b);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    font-weight: 800; letter-spacing: -0.02em;
+  }
+  header.hero p { color: var(--muted); margin: 0 auto; max-width: 720px; font-size: 15px; }
+  .legend {
+    display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+    margin: 24px 0; font-size: 12px;
+  }
+  .legend span {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--border);
+  }
+  .dot { display: inline-block; width: 8px; height: 8px; border-radius: 999px; }
+  .stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px; margin-bottom: 32px;
+  }
+  .stat {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 18px 16px; text-align: center;
+  }
+  .stat .n { font-size: 28px; font-weight: 800; }
+  .stat .l { font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted); margin-top: 4px; }
+  section.bucket {
+    background: rgba(19, 26, 60, 0.6); border: 1px solid var(--border);
+    border-radius: 22px; padding: 24px; margin-bottom: 24px;
+    backdrop-filter: blur(8px);
+  }
+  section.bucket h2 {
+    margin: 0 0 4px; font-size: 22px; display: flex; align-items: center; gap: 10px;
+  }
+  section.bucket .sub { color: var(--muted); font-size: 13px; margin-bottom: 18px; }
+  .badge {
+    display: inline-block; padding: 2px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+  }
+  .items { display: grid; gap: 12px; }
+  .item {
+    background: var(--elevated); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 18px;
+    display: grid; grid-template-columns: auto 1fr; gap: 16px;
+    align-items: start;
+  }
+  .item.shipped { opacity: 0.55; border-color: var(--shipped); }
+  .item .id {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-weight: 700; font-size: 13px; color: var(--brand);
+    background: var(--surface); padding: 4px 10px; border-radius: 8px;
+    white-space: nowrap;
+  }
+  .item.shipped .id { color: var(--shipped); }
+  .item .body { font-size: 14px; }
+  .item .body .where {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: #aebae8; font-size: 12px; margin-bottom: 4px; word-break: break-word;
+  }
+  .item .body .desc { color: var(--fg); }
+  .item .body .why { color: var(--muted); margin-top: 6px; font-size: 13px; font-style: italic; }
+  .item .status-tag {
+    display: inline-block; margin-top: 6px; font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1px; padding: 2px 8px;
+    border-radius: 6px; background: var(--shipped); color: #04140d;
+  }
+  .footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 40px; }
+  .footer a { color: var(--brand); }
+  .product-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+    margin-bottom: 32px;
+  }
+  .product-card {
+    border-radius: 18px; padding: 20px; border: 1px solid var(--border);
+    background: linear-gradient(135deg, rgba(91,103,196,0.10), rgba(46,58,135,0.20));
+  }
+  .product-card.diwaniya {
+    background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(46,58,135,0.20));
+    border-color: rgba(245,158,11,0.4);
+  }
+  .product-card h3 { margin: 0 0 4px; font-size: 18px; }
+  .product-card .pill { font-size: 11px; padding: 2px 8px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); }
+  .product-card a { color: #aebae8; text-decoration: none; display: block; margin-top: 4px; font-family: ui-monospace, monospace; font-size: 12px; }
+  .product-card a:hover { color: var(--accent); }
+  @media (max-width: 768px) {
+    .product-row { grid-template-columns: 1fr; }
+    .item { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero">
+    <h1>Production Roadmap</h1>
+    <p>Shared roadmap for <strong>Nakhla</strong> (KSA market) and <strong>Diwaniya</strong> (Kuwait market). Both stacks run on the same monorepo shape; items apply to both unless noted. Items marked <em>shipped</em> are committed to both repos.</p>
+  </header>
+
+  <div class="product-row">
+    <div class="product-card">
+      <h3>Nakhla · نخلة <span class="pill">🇸🇦 KSA</span></h3>
+      <a href="https://collabstr-clone.vercel.app/" target="_blank">collabstr-clone.vercel.app</a>
+      <a href="https://nakhla-admin.vercel.app/" target="_blank">nakhla-admin.vercel.app</a>
+      <a href="https://github.com/eng-AhmedMahmoud/collabstr-clone" target="_blank">github.com/eng-AhmedMahmoud/collabstr-clone</a>
+    </div>
+    <div class="product-card diwaniya">
+      <h3>Diwaniya · ديوانية <span class="pill">🇰🇼 Kuwait</span></h3>
+      <a href="https://diwaniya-web-sigma.vercel.app/" target="_blank">diwaniya-web-sigma.vercel.app</a>
+      <a href="https://diwaniya-admin.vercel.app/" target="_blank">diwaniya-admin.vercel.app</a>
+      <a href="https://github.com/eng-AhmedMahmoud/diwaniya-app" target="_blank">github.com/eng-AhmedMahmoud/diwaniya-app</a>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--shipped)"></span>shipped (both repos)</span>
+    <span><span class="dot" style="background:var(--crit)"></span>critical fix</span>
+    <span><span class="dot" style="background:var(--pages)"></span>new page</span>
+    <span><span class="dot" style="background:var(--comp)"></span>component</span>
+    <span><span class="dot" style="background:var(--schema)"></span>schema</span>
+    <span><span class="dot" style="background:var(--integ)"></span>integration</span>
+    <span><span class="dot" style="background:var(--polish)"></span>polish</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="n" style="color: var(--crit)">11<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 17</span></div>
+      <div class="l">Critical fixes remaining</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--pages)">13<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 13</span></div>
+      <div class="l">New pages remaining</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--comp)">11<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 13</span></div>
+      <div class="l">Missing components remaining</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--schema)">12<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 12</span></div>
+      <div class="l">Schema additions remaining</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--integ)">14<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 14</span></div>
+      <div class="l">Integrations remaining</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--polish)">16<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 16</span></div>
+      <div class="l">Polish remaining</div>
+    </div>
+  </div>
+
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--crit)"></span> Critical fixes <span class="badge" style="background:var(--surface); color:var(--muted);">17 total</span></h2>
+    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <div class="items">
+      <div class="item shipped">
+        <div class="id">CF01</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/filter-bar.tsx</div>
+          <div class="desc">Move all FILTERS labels and options into i.filters.* (label + options map) keyed by locale. Render single-locale labels only (drop 'City · المدينة' concat). Replace text-left/ml-1 with text-start/ms-1. Add hidden form inputs for each selected value so the parent /influencers form actually serializes them, OR push to router.push('/influencers?platform=…') on change. Make panel responsive: w-[calc(100vw-2rem)] sm:w-64 anchored start-0.</div>
+          <div class="why">Critical i18n + RTL + broken state: filter pills currently do nothing (only `q` is submitted), are English-only, and overflow on mobile/RTL. This is the most-used component on home + influencers.</div>
+          
+          <div class="status-tag">shipped</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF02</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/messages/messages-ui.tsx</div>
+          <div class="desc">Replace grid-cols-12 with grid-cols-1 md:grid-cols-12; add mobile toggle showing thread list OR chat pane with a back button. Swap rounded-br-md/bl-md for logical rounded-ee-md/es-md so RTL bubble tails point correctly.</div>
+          <div class="why">On mobile the forced 4/8 split squeezes chat to ~240px (unusable). Critical responsive failure on the primary communication surface.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF03</div>
+        <div class="body">
+          <div class="where">apps/admin/src/components/shell.tsx</div>
+          <div class="desc">Wrap sidebar in `hidden md:flex`; add a hamburger + Sheet drawer for mobile. Remove `overflow-hidden` on root container so popovers/tooltips can escape. Add aria-label to &lt;aside> and inner &lt;nav>. Read Marketplace open-link from process.env.NEXT_PUBLIC_WEB_URL (fallback to localhost only when undefined). Replace unicode glyph icons with SVG (aria-hidden) and flip directional ones via CSS.</div>
+          <div class="why">Admin is unusable on mobile (256px sidebar consumes entire width). Production link is hardcoded to collabstr-web.localhost — broken in prod.</div>
+          
+          <div class="status-tag">shipped</div>
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF04</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/orders/page.tsx</div>
+          <div class="desc">Wrap &lt;table> in &lt;div className='overflow-x-auto'> with min-w-[760px]. Map filter chip status enums through new statusLabel(s, locale) helper from i18n.ts. Add role='group' with aria-label, aria-current='page' on active chip. Wrap #id slice in &lt;bdi>; wrap each fmtMoney call in &lt;bdi> so amount + fee don't reorder in RTL.</div>
+          <div class="why">Critical responsive overflow + critical i18n: AR users see English status enums (pending_payment, awaiting_creator) across every order screen and table breaks layout under ~1024px.</div>
+          
+          <div class="status-tag">shipped</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF05</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/campaigns/page.tsx + apps/admin/src/app/creators/page.tsx + apps/admin/src/app/disputes/page.tsx + apps/admin/src/app/payouts/page.tsx + apps/admin/src/app/audit/page.tsx + apps/admin/src/app/users/page.tsx + apps/admin/src/app/brands/page.tsx + apps/admin/src/app/page.tsx</div>
+          <div class="desc">Add a single shared &lt;ResponsiveTable> wrapper component (overflow-x-auto + min-w + tokenized styles) and replace every raw &lt;table> in admin. Replace all `Brand → Creator` literal arrows with a &lt;DirArrow /> helper that flips by locale.</div>
+          <div class="why">Every admin table breaks on tablet/mobile. Five separate findings collapsed into one shared fix.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF06</div>
+        <div class="body">
+          <div class="where">apps/admin/src/lib/format.ts</div>
+          <div class="desc">Replace hardcoded LOCALE='en-SA' with a getLocale() helper that reads cookies on server and useLocale() in client. fmtMoney/fmtDate/fmtAgo all accept locale. Implement Arabic fmtAgo strings (الآن / قبل ٥د) via Intl.RelativeTimeFormat.</div>
+          <div class="why">Every admin currency/date/relative-time string is English regardless of user locale — undermines the entire bilingual layer.</div>
+          
+          <div class="status-tag">shipped</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF07</div>
+        <div class="body">
+          <div class="where">apps/api/prisma/schema.prisma + apps/api/src/payments/ (new module)</div>
+          <div class="desc">Add PaymentIntent, EscrowHold, LedgerEntry, Payout, PayoutAccount models. Wire /orders/:id/pay to a SAMA-licensed PSP adapter (HyperPay/Moyasar/Tap) with webhook + IdempotencyKey table. Implement double-entry ledger entries for charge→escrow→release→payout. Store amounts as integer halalas with currency='SAR'.</div>
+          <div class="why">Today /orders/:id/pay is a stub; no real money flow; no escrow ledger; no payouts. Cannot launch a marketplace without this.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF08</div>
+        <div class="body">
+          <div class="where">apps/api/src/auth/ (verify-email + password-reset + 2fa)</div>
+          <div class="desc">Add EmailVerificationToken + PasswordResetToken models + endpoints (POST /auth/verify-email/request, /verify-email/confirm, /password/forgot, /password/reset). Add TOTP 2FA module (speakeasy) with backup codes. Gate /orders/:id/pay and payout enrollment behind verifiedAt AND (for payouts) mfaEnabled.</div>
+          <div class="why">emailVerifiedAt column exists but nothing fills it; unverified users can transact; no password reset endpoint at all; KSA payout compliance requires MFA before money movement.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF09</div>
+        <div class="body">
+          <div class="where">apps/api/prisma/schema.prisma + apps/api/src/kyc/ (new) + apps/api/src/tax/ (new)</div>
+          <div class="desc">Add KycCase (provider, status, documents[], expiry, nationalId, iqama, wathqRef), TaxProfile (vatNumber, zatcaRef, isVatRegistered, withholdingRate). Block payouts until kycStatus=approved. For non-resident creators, apply 5% WHT on payouts; for resident brands/creators above SAR 375k, surface VAT collection toggle.</div>
+          <div class="why">Mandatory for KSA AML + ZATCA + non-resident WHT compliance. Without this, payouts can't legally flow.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF10</div>
+        <div class="body">
+          <div class="where">apps/api/src/invoices/ + ZATCA Phase 2 adapter</div>
+          <div class="desc">Add Invoice model + generate ZATCA-compliant XML e-invoices (bilingual EN/AR, QR code, supplier CR, sequential numbering, cryptographic signature) on every order release. Use a ZATCA Fatoora SDK (e.g. zatca-sdk-php or build a TS adapter). Real-time clearance via ZATCA API.</div>
+          <div class="why">ZATCA Phase 2 e-invoicing is mandatory for VAT-registered KSA entities (Wave 24 onboarding by 30 June 2026). Non-compliance fines up to SAR 50k per violation.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF11</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/[username]/page.tsx</div>
+          <div class="desc">Wire Share button (navigator.share with clipboard fallback). Convert Save form to client component POSTing to ${NEXT_PUBLIC_API_URL}/api/v1/creators/${id}/save with credentials. Replace ring-white with ring-bg. Swap ml-auto→ms-auto, text-right→text-end. Add mobile sticky bottom CTA bar with price + Add-to-cart. Localize toLocaleDateString for reviews. Fix portfolio alt text. Render counterparty `href:'#'` as &lt;span> instead of &lt;Link>.</div>
+          <div class="why">The most-trafficked public page (creator profile) has 6 separate findings: dead Share button, dead Save, broken RTL, ugly dark mode, no mobile CTA, broken i18n.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF12</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/creator-dashboard/packages/page.tsx</div>
+          <div class="desc">Convert delete and create forms from `/api/packages/*` native form posts (which 404) to a client component that fetches ${NEXT_PUBLIC_API_URL}/api/v1/me/packages with credentials and router.refresh() on success.</div>
+          <div class="why">Both forms silently 404 — creators cannot create or delete packages. Core feature broken.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF13</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/globals.css + apps/admin/src/app/globals.css</div>
+          <div class="desc">Remove the `.text-xs { font-size: 0.9rem }` / `.text-[10px|11px|9px]` !important overrides. Remove `html { font-size: 19px }`. Introduce a `.badge` utility (or extend Tailwind theme `--text-xs` token) for places that genuinely need a larger min-size. Re-audit text-xs callsites after revert.</div>
+          <div class="why">Global overrides silently break every Tailwind size in both apps, causing oversized labels in tight pills/tables and a ~19% layout-wide scale inflation.</div>
+          
+          <div class="status-tag">shipped</div>
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF14</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/header.tsx + apps/admin/src/components/shell.tsx</div>
+          <div class="desc">Add a mobile hamburger menu (Sheet/Drawer) with full nav links. Currently `hidden md:flex` with no fallback — mobile users see no navigation at all.</div>
+          <div class="why">Critical responsive: the entire primary nav is invisible on phones. This is a launch-blocker for any marketplace whose buyers are mobile-first (KSA is ~85% mobile).</div>
+          
+          <div class="status-tag">shipped</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF15</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/user-menu.tsx</div>
+          <div class="desc">Replace `absolute right-0` with `end-0`. Add aria-haspopup='menu', aria-expanded={open}, role='menu' / role='menuitem'. Add Esc-to-close keydown handler and outside-click listener. Add dark variants to logout (text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20).</div>
+          <div class="why">Dropdown pops off-screen in RTL; not keyboard-accessible; broken in dark mode.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF16</div>
+        <div class="body">
+          <div class="where">apps/api/src/auth/auth.service.ts + apps/api/src/common/guards/throttler.guard.ts (new)</div>
+          <div class="desc">Set refresh token via httpOnly Secure SameSite=Lax cookie (not JSON body). Add @nestjs/throttler global throttling (login: 5/min, signup: 3/min, contact: 5/hour). Add hCaptcha/Turnstile gate on signup/login/contact. Add CSRF double-submit token for state-changing routes. Store userAgent/ip/lastUsedAt/deviceLabel on RefreshToken; expose GET /auth/sessions and DELETE /auth/sessions/:id.</div>
+          <div class="why">Open to credential stuffing today; tokens in JSON body are XSS-stealable; no per-device revocation UI possible.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF17</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/pricing/page.tsx</div>
+          <div class="desc">Convert tier.price from a localized string in the dictionary to numeric values + period suffix. Render via fmtMoney(tier.price, { locale: moneyLocale }) so AR users see ر.س / Arabic numerals consistently and the SAR symbol stays on the left per SAMA rules.</div>
+          <div class="why">Pricing page currently bypasses the formatter — any AR user sees raw English/dollar literals from the dict.</div>
+          
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--pages)"></span> New pages <span class="badge" style="background:var(--surface); color:var(--muted);">13 total</span></h2>
+    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">NP01</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/(legal)/regulations/mawthooq/page.tsx</div>
+          <div class="desc">Mawthooq compliance hub explaining GAMR permit, fee (SAR 15,000 / 3 years), requirements, and a 'Submit your permit' form for creators.</div>
+          
+          <div class="why">Sections: What is Mawthooq · Who needs it · How to apply · Fee + validity · Upload permit number + expiry · FAQ</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP02</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/(legal)/zatca/page.tsx</div>
+          <div class="desc">ZATCA Phase 2 e-invoicing FAQ + VAT registration prompt for brands/creators above the SAR 375k threshold.</div>
+          
+          <div class="why">Sections: VAT in KSA · When you need to register · What we invoice automatically · Download past invoices · ZATCA QR code explained</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP03</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/checkout/success/page.tsx + apps/web/src/app/checkout/cancel/page.tsx</div>
+          <div class="desc">PSP return URLs for HyperPay/Tap/Moyasar 3DS redirect flow with order summary, downloadable VAT invoice, next-steps to /orders/[id].</div>
+          
+          <div class="why">Sections: Confirmation · Order summary · Download invoice (PDF + XML) · What happens next · Contact support</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP04</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/creator-dashboard/payouts/page.tsx</div>
+          <div class="desc">Creator payout onboarding (KYC + bank/STC Pay/IBAN + tax form) and payout history.</div>
+          
+          <div class="why">Sections: KYC status · Add payout method (IBAN/STC Pay/PayPal) · Tax profile (VAT, WHT) · Available balance · Payout history · Schedule (auto/manual)</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP05</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/dashboard/billing/page.tsx</div>
+          <div class="desc">Brand billing center with saved payment methods (Mada/Apple Pay/Tabby/Tamara), VAT profile, and downloadable ZATCA invoices.</div>
+          
+          <div class="why">Sections: Payment methods · VAT profile (CR + VAT number) · Invoices (ZATCA XML + PDF) · Spend by month · Auto-recharge wallet</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP06</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/influencers/[city]/page.tsx (programmatic) + apps/web/src/app/influencers/[platform]/page.tsx</div>
+          <div class="desc">Programmatic SEO for /influencers/riyadh, /jeddah, /khobar, /dammam, /makkah, /madinah, /alkhobar + /instagram, /tiktok, /snapchat, /youtube — matches Collabstr's location/platform landing-page strategy in bilingual EN/AR.</div>
+          
+          <div class="why">Sections: Hero (city + platform) · Top 12 creators · Avg pricing by tier · Local categories · Local case studies · CTA</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP07</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/auth/verify-email/page.tsx + apps/web/src/app/auth/reset-password/page.tsx</div>
+          <div class="desc">Email verification confirmation + password reset request/confirm flows tied to CF08 backend.</div>
+          
+          <div class="why">Sections: Token confirmation · Resend link · New password form · Success state</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP08</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/auth/2fa/page.tsx</div>
+          <div class="desc">Two-factor authentication setup (TOTP QR + backup codes) — required before enabling payouts.</div>
+          
+          <div class="why">Sections: Scan QR with Authenticator · Enter 6-digit code · Backup codes (download) · Disable 2FA</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP09</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/disputes/[id]/page.tsx</div>
+          <div class="desc">Dispute resolution workspace with evidence files, SLA timer, refund/release/split actions, arbitrator notes.</div>
+          
+          <div class="why">Sections: Parties + amounts · Evidence (both sides) · SLA countdown · Decision (refund/release/split) · Notes · Audit trail</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP10</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/finance/ledger/page.tsx + apps/admin/src/app/finance/reconciliation/page.tsx</div>
+          <div class="desc">Finance ops: ledger view (double-entry), PSP reconciliation (HyperPay/Tap settlements vs internal ledger), VAT report by month, WHT report.</div>
+          
+          <div class="why">Sections: Today's settlement · Open escrow holds · VAT collected (15%) · WHT remittance · Export to ZATCA</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP11</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/compliance/mawthooq/page.tsx</div>
+          <div class="desc">Compliance queue listing creators by permit status (active / expired / missing), bulk re-verify, block contracting if expired.</div>
+          
+          <div class="why">Sections: Active permits · Expiring in 30 days · Missing/expired (blocked) · Permit upload review · Audit log</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP12</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/inbox/offers/page.tsx (in-thread Offer model)</div>
+          <div class="desc">Custom Offer cards inside DMs (Collabstr/Aspire pattern) that convert to Orders with one click.</div>
+          
+          <div class="why">Sections: Offer cards in thread · Accept → checkout · Counter-offer · Decline + reason</div>
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP13</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/about/trust-safety/page.tsx</div>
+          <div class="desc">Trust & safety hub: escrow explanation (SAMA-licensed PSP), KYC, dispute process, refund policy, content moderation, report flows — required for KSA brand trust.</div>
+          
+          <div class="why">Sections: Escrow guarantee · Verified creators · Dispute resolution · Reporting + moderation · Refund policy</div>
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--comp)"></span> Missing components <span class="badge" style="background:var(--surface); color:var(--muted);">13 total</span></h2>
+    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">MC01</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/sar-amount.tsx + apps/admin/src/components/sar-amount.tsx</div>
+          <div class="desc">Bidi-isolated SAR amount renderer using &lt;bdi>, the new U+20C1 symbol with saudi-riyal-font fallback, and Intl.NumberFormat('ar-SA'|'en-SA', { currency: 'SAR' }). Use everywhere instead of fmtMoney string interpolation.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC02</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/dir-arrow.tsx + apps/admin/src/components/dir-arrow.tsx</div>
+          <div class="desc">Locale-aware arrow icon (→ in LTR, ← in RTL) as flippable SVG; replaces every hardcoded → / ↗ / ↩ / ⟿ / ↳ literal in both apps.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">MC03</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/mobile-nav.tsx + apps/admin/src/components/mobile-nav.tsx</div>
+          <div class="desc">Mobile hamburger + Sheet drawer with full nav, locale switcher, and user menu — fixes both header.tsx and admin shell mobile gaps.</div>
+          
+          
+          <div class="status-tag">shipped</div>
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">MC04</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/responsive-table.tsx + apps/admin/src/components/responsive-table.tsx</div>
+          <div class="desc">Shared wrapper: overflow-x-auto + min-w-* + dark-token rows + sticky header on long lists. Replaces 8 separate raw &lt;table>s in admin.</div>
+          
+          
+          <div class="status-tag">shipped</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC05</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/status-pill.tsx</div>
+          <div class="desc">Translated, theme-tokenized status pill that takes (status, locale) and returns localized label + dark-aware bg. Removes every raw `o.status.replace(/_/g,' ')` callsite.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC06</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/mobile-sticky-cta.tsx</div>
+          <div class="desc">Bottom-fixed mobile CTA bar (price + primary action) used on creator profile, package detail, campaign detail. lg:hidden.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC07</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/live-region.tsx + apps/admin/src/components/live-region.tsx</div>
+          <div class="desc">aria-live='polite' / 'assertive' announcer for locale switch, form errors, save success — replaces native alert() in admin actions and silent inline &lt;p> error messages.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC08</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/toast.tsx</div>
+          <div class="desc">Toast/notification system to replace alert() in orders/[id]/actions, users/row-actions, broadcast/form, dead Save/Share buttons.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC09</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/payment-method-badge.tsx</div>
+          <div class="desc">Renders Mada/Apple Pay/STC Pay/Tabby/Tamara/Visa logos with proper sizing and a11y alt text — needed across checkout, billing, brand profile.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC10</div>
+        <div class="body">
+          <div class="where">apps/web/src/lib/format.ts (rewrite)</div>
+          <div class="desc">Single fmtMoney/fmtDate/fmtAgo accepting locale + currency; uses Intl with bidi isolation; renders U+20C1 with webfont fallback; respects KSA's symbol-on-left rule.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC11</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/seasonal-banner.tsx</div>
+          <div class="desc">Cultural calendar banner (Ramadan, Saudi National Day 23 Sep, Founding Day 22 Feb, Eid) that auto-activates and themes the homepage hero.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC12</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/offer-card.tsx</div>
+          <div class="desc">In-thread custom offer card (price + deliverables + deadline + accept/decline). Required for NP12 and is a Collabstr/Aspire feature parity gap.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC13</div>
+        <div class="body">
+          <div class="where">apps/api/src/common/idempotency.middleware.ts + apps/api/src/payments/webhook.controller.ts</div>
+          <div class="desc">Idempotency-Key middleware backed by IdempotencyKey table; webhook signature verification + dedupe for HyperPay/Tap/Moyasar.</div>
+          
+          
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--schema)"></span> Schema additions <span class="badge" style="background:var(--surface); color:var(--muted);">12 total</span></h2>
+    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">SA01</div>
+        <div class="body">
+          <div class="where">PaymentIntent</div>
+          <div class="desc">Fields: id, orderId, provider(hyperpay|tap|moyasar|stripe), providerRef, amount(Int halalas), currency, status(requires_action|processing|succeeded|failed|refunded), method(mada|apple_pay|visa|stc_pay|tabby|tamara), threeDsRef, createdAt</div>
+          <div class="why">Today /orders/:id/pay is a stub. Required to track a real charge against a SAMA-licensed PSP.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA02</div>
+        <div class="body">
+          <div class="where">EscrowHold + LedgerEntry</div>
+          <div class="desc">Fields: EscrowHold: id, orderId, amount, status(held|released|refunded|split), LedgerEntry: id, accountType(escrow|platform_revenue|creator_payable|psp_fee|vat|wht), debit, credit, currency, refType, refId, createdAt</div>
+          <div class="why">Double-entry ledger required for reconciliation, VAT report, WHT report, payout calc.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA03</div>
+        <div class="body">
+          <div class="where">PayoutAccount + Payout</div>
+          <div class="desc">Fields: PayoutAccount: id, userId, type(iban|stc_pay|paypal|wise), holderName, iban/accountRef, country, currency, verifiedAt, Payout: id, userId, accountId, amount, currency, status(pending|sent|paid|failed), providerRef, createdAt</div>
+          <div class="why">Creators must be able to withdraw escrowed funds. /admin/payouts page exists but no underlying model.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA04</div>
+        <div class="body">
+          <div class="where">KycCase</div>
+          <div class="desc">Fields: id, userId(unique), provider, status(pending|approved|rejected|expired), nationalIdOrIqama, documents(Json), wathqRef, expiresAt, rejectionReason</div>
+          <div class="why">Mandatory KSA AML check before payouts/transactions.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA05</div>
+        <div class="body">
+          <div class="where">TaxProfile + Invoice</div>
+          <div class="desc">Fields: TaxProfile: id, userId(unique), country, vatNumber, crNumber, isVatRegistered, withholdingRate, taxFormType(w9|w8ben|none), Invoice: id, orderId, sellerUserId, buyerUserId, totalAmount, vatAmount, whtAmount, currency, zatcaXml, zatcaQrPng, status(draft|cleared|cancelled), sequentialNo</div>
+          <div class="why">ZATCA Phase 2 e-invoicing + non-resident WHT both legally required in KSA.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA06</div>
+        <div class="body">
+          <div class="where">Dispute</div>
+          <div class="desc">Fields: id, orderId(unique), openedById, reason, evidence(Json[]), status(open|in_review|resolved_refund|resolved_release|resolved_split|cancelled), arbitratorId, arbitratorNotes, resolution(Json), slaDueAt</div>
+          <div class="why">OrderStatus has 'disputed' but no entity to drive the dispute workflow.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA07</div>
+        <div class="body">
+          <div class="where">SocialAccount + ProfileVerification</div>
+          <div class="desc">Fields: SocialAccount: id, userId, platform, handle, externalId, accessToken(encrypted), refreshToken(encrypted), followers, engagement, lastSyncedAt, ProfileVerification: id, userId, type(social|mawthooq|email|phone), status, evidence, verifiedAt, expiresAt, permitNumber</div>
+          <div class="why">followersIg/Tt/Yt are manual ints today; verified badges are freeform strings. Need OAuth-linked accounts + Mawthooq permit storage with expiry to enforce CF11 compliance.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA08</div>
+        <div class="body">
+          <div class="where">Offer + MessageAttachment</div>
+          <div class="desc">Fields: Offer: id, threadId, fromUserId, price, currency, deliverables(Json), deadline, status(pending|accepted|declined|expired|countered), orderId?, MessageAttachment: id, messageId, fileAssetId, kind(image|video|file|voice|offer)</div>
+          <div class="why">In-thread offer→order conversion is a core competitor feature (Collabstr, Aspire). Threads today are body-only.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA09</div>
+        <div class="body">
+          <div class="where">FileAsset</div>
+          <div class="desc">Fields: id, ownerId, bucket, key, mimeType, sizeBytes, scanStatus(pending|clean|infected), signedUrlExpiresAt, createdAt</div>
+          <div class="why">Avatar, cover, portfolio, delivery URLs are bare strings with no storage abstraction, scanning, or ownership.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA10</div>
+        <div class="body">
+          <div class="where">AuditLog</div>
+          <div class="desc">Fields: id, actorId, actorRole, action, targetType, targetId, diff(Json), ip, userAgent, createdAt</div>
+          <div class="why">/admin/audit page exists with no underlying model. Required for SOC2-style trail + admin accountability.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA11</div>
+        <div class="body">
+          <div class="where">IdempotencyKey + Webhook + WebhookDelivery</div>
+          <div class="desc">Fields: IdempotencyKey: key(PK), endpoint, userId, requestHash, responseJson, expiresAt, Webhook: id, brandId, url, secret, events[], WebhookDelivery: id, webhookId, eventType, payload, status, attempts, nextRetryAt</div>
+          <div class="why">POST /orders, /pay, /release are not idempotent → double-charge risk. No record of inbound PSP webhooks → no replay protection.</div>
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA12</div>
+        <div class="body">
+          <div class="where">Report + Block + NotificationPreference + PushSubscription</div>
+          <div class="desc">Fields: Report: id, reporterId, targetType, targetId, reason, status, Block: id, blockerId, blockedId, @@unique, NotificationPreference: id, userId, channel(email|push|sms|in_app), kind, enabled, PushSubscription: id, userId, endpoint, keysP256dh, keysAuth, userAgent</div>
+          <div class="why">Trust & safety basics + per-channel notification prefs + Web Push are missing.</div>
+          
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--integ)"></span> Integrations <span class="badge" style="background:var(--surface); color:var(--muted);">14 total</span></h2>
+    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">IN01</div>
+        <div class="body">
+          <div class="where">HyperPay (SAMA-licensed PSP)</div>
+          <div class="desc">HyperPay (SAMA-licensed PSP)</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN02</div>
+        <div class="body">
+          <div class="where">Tap Payments</div>
+          <div class="desc">Tap Payments</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN03</div>
+        <div class="body">
+          <div class="where">Moyasar</div>
+          <div class="desc">Moyasar</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN04</div>
+        <div class="body">
+          <div class="where">Tabby + Tamara (BNPL)</div>
+          <div class="desc">Tabby + Tamara (BNPL)</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN05</div>
+        <div class="body">
+          <div class="where">ZATCA Fatoora Phase 2</div>
+          <div class="desc">ZATCA Fatoora Phase 2</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN06</div>
+        <div class="body">
+          <div class="where">Unifonic / Taqnyat SMS OTP</div>
+          <div class="desc">Unifonic / Taqnyat SMS OTP</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN07</div>
+        <div class="body">
+          <div class="where">SDAIA PDPL compliance</div>
+          <div class="desc">SDAIA PDPL compliance</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN08</div>
+        <div class="body">
+          <div class="where">Instagram + TikTok + YouTube + Snapchat OAuth</div>
+          <div class="desc">Instagram + TikTok + YouTube + Snapchat OAuth</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN09</div>
+        <div class="body">
+          <div class="where">Meilisearch (Arabic + English full-text)</div>
+          <div class="desc">Meilisearch (Arabic + English full-text)</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN10</div>
+        <div class="body">
+          <div class="where">S3-compatible storage (Cloudflare R2 or AWS S3 Riyadh region)</div>
+          <div class="desc">S3-compatible storage (Cloudflare R2 or AWS S3 Riyadh region)</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN11</div>
+        <div class="body">
+          <div class="where">Sentry + PostHog</div>
+          <div class="desc">Sentry + PostHog</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN12</div>
+        <div class="body">
+          <div class="where">WhatsApp Business Cloud API</div>
+          <div class="desc">WhatsApp Business Cloud API</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN13</div>
+        <div class="body">
+          <div class="where">Hijri calendar (Umm al-Qura)</div>
+          <div class="desc">Hijri calendar (Umm al-Qura)</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN14</div>
+        <div class="body">
+          <div class="where">hCaptcha / Cloudflare Turnstile</div>
+          <div class="desc">hCaptcha / Cloudflare Turnstile</div>
+          
+          
+          
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--polish)"></span> Polish <span class="badge" style="background:var(--surface); color:var(--muted);">16 total</span></h2>
+    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">PL01</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/footer.tsx</div>
+          <div class="desc">Localize hardcoded 'Help' label and KSA/SAR pills via i.footer.* (region + currency).</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL02</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/dashboard-brand-bar.tsx</div>
+          <div class="desc">Take a single consoleLabel string from t(); drop the EN+AR concat pattern; localize KSA/SAR pill.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL03</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/dashboard/page.tsx + creator-dashboard/page.tsx + creator-dashboard/orders/page.tsx</div>
+          <div class="desc">Change KPI grid sm:grid-cols-4 → grid-cols-2 lg:grid-cols-4. Wrap recent-orders rows with flex-col sm:flex-row + min-w-0 truncate so AR statuses + SAR amounts don't overflow.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL04</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/orders/[id]/page.tsx</div>
+          <div class="desc">Use locale-aware fmtDate() at every toLocale* call with timeZone Asia/Riyadh. Add rel='noopener noreferrer' + sr-only 'opens in new tab' to delivery &lt;a>.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL05</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/campaigns/new/page.tsx</div>
+          <div class="desc">Move all input placeholders into i.campaigns.new.placeholders.*; add per-step client-side validation; add aria-current='step' on active step and role='progressbar' on container.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL06</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/campaigns/[id]/apply (new file)</div>
+          <div class="desc">Replace native form POST to non-existent /campaigns/{id}/apply with a client component POSTing to ${NEXT_PUBLIC_API_URL}/api/v1/campaigns/${id}/applications with credentials.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL07</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/forgot-password/page.tsx + apps/web/src/app/contact/page.tsx + apps/web/src/app/settings/notifications/page.tsx + apps/web/src/app/settings/billing/page.tsx</div>
+          <div class="desc">Wire all dead forms/buttons to real backend endpoints OR disable + show 'coming soon' badge — no more dead controls that look live.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL08</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/page.tsx</div>
+          <div class="desc">Replace mr-1.5 with me-1.5 on category chips; replace hardcoded → with &lt;DirArrow /> on 'See all' rows.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL09</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/notifications/page.tsx</div>
+          <div class="desc">Locale-aware date formatter; convert 'Mark all read' to client component with credentials + router.refresh(); add 'New' dot + sr-only 'unread' to unread highlight.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL10</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/checkout/checkout-form.tsx</div>
+          <div class="desc">Force dir='ltr' on card number / expiry inputs. Change grid lg:grid-cols-5 → md:grid-cols-5 so summary sits side-by-side on tablets. Add Mada / Apple Pay / Tabby / Tamara payment buttons via MC09.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL11</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/messages/messages-ui.tsx</div>
+          <div class="desc">Use rounded-ee-md / rounded-es-md instead of rounded-br-md/bl-md so bubble tails flip correctly in RTL.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL12</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/influencers/page.tsx</div>
+          <div class="desc">Use data.total.toLocaleString(locale === 'ar' ? 'ar-SA' : 'en-SA'); add Prev/Next pagination when data.total > data.pageSize.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL13</div>
+        <div class="body">
+          <div class="where">apps/admin/src/components/locale-switcher.tsx + apps/admin/src/app/login/login-form.tsx</div>
+          <div class="desc">Extract a shared setLocaleCookie() helper with SameSite=Lax + Secure (prod) attrs. Use translated labels.signingIn instead of '…'. Add role='alert' on login error.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL14</div>
+        <div class="body">
+          <div class="where">apps/admin/src/components/ui.tsx</div>
+          <div class="desc">Add flex-wrap + gap-y-3 to PageHeader; wrap action in shrink-0. Translate Pill children via statusLabel(status, locale) at every callsite.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL15</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/flow-map/*.tsx</div>
+          <div class="desc">Either localize role-flows.tsx + order-state-machine.tsx + coverage-matrix.tsx + roadmap.tsx + architecture.tsx via i.flowMap.* OR mark each section with a clear 'Reference (English-only)' header. Replace localhost hostnames with NEXT_PUBLIC_WEB_URL/NEXT_PUBLIC_ADMIN_URL/NEXT_PUBLIC_API_URL.</div>
+          
+          
+          
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL16</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/orders/[id]/actions.tsx + users/row-actions.tsx + broadcast/form.tsx</div>
+          <div class="desc">Replace alert() with MC07 LiveRegion / MC08 Toast; add role='alert' on inline error &lt;p>; add bilingual Link (optional) label + helper text in broadcast form.</div>
+          
+          
+          
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Generated from <code>docs/production-roadmap.json</code> · 85 items total · 8 shipped this session
+    <br>Synthesized by multi-agent workflow run wf_37b748d5-729 (2026-06-29)
+  </div>
+</div>
+</body>
+</html>
