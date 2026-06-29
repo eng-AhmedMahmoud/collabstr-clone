@@ -59,23 +59,24 @@ const IMPACT_LABEL = { high: "high impact", med: "med impact", low: "low impact"
 
 export function Roadmap() {
   return (
-    <div className="space-y-8">
+    // Lock LTR — content is English route paths + technical jargon.
+    <div dir="ltr" className="space-y-8">
       {PHASES.map((p) => (
         <section key={p.name}>
-          <header className="flex items-baseline gap-3">
+          <header className="flex items-baseline flex-wrap gap-x-3 gap-y-1">
             <h3 className="text-xl font-black">{p.name}</h3>
             <p className="text-sm text-muted">{p.tagline}</p>
           </header>
-          <div className="grid md:grid-cols-2 gap-3 mt-3">
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-3 mt-3">
             {p.items.map((it) => (
-              <article key={it.title} className="card p-5">
-                <div className="flex items-center gap-2 mb-2">
+              <article key={it.title} className="card p-5 min-w-0">
+                <div className="flex items-center flex-wrap gap-2 mb-2">
                   <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full" style={{ background: `${AREA_COLOR[it.area]}22`, color: AREA_COLOR[it.area] }}>{it.area}</span>
                   <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-surface-2 text-fg/85">effort {it.effort}</span>
                   <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-surface-2 text-fg/85">{IMPACT_LABEL[it.impact]}</span>
                 </div>
-                <h4 className="font-bold text-[#f5f5f7]">{it.title}</h4>
-                <p className="text-sm text-muted mt-1.5">{it.body}</p>
+                <h4 className="font-bold text-[#f5f5f7] break-words">{it.title}</h4>
+                <p className="text-sm text-muted mt-1.5 leading-snug break-words">{it.body}</p>
               </article>
             ))}
           </div>

@@ -2,12 +2,12 @@ import Link from "next/link";
 
 export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: React.ReactNode }) {
   return (
-    <header className="flex items-end justify-between gap-4 mb-6">
-      <div>
-        <h1 className="text-2xl font-black">{title}</h1>
-        {subtitle && <p className="text-sm text-muted mt-1">{subtitle}</p>}
+    <header className="flex items-end justify-between flex-wrap gap-y-3 gap-x-4 mb-5 sm:mb-6">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-xl sm:text-2xl font-black truncate">{title}</h1>
+        {subtitle && <p className="text-xs sm:text-sm text-muted mt-1 truncate">{subtitle}</p>}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </header>
   );
 }
@@ -15,20 +15,20 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
 export function StatGrid({ stats }: { stats: { label: string; value: string; sub?: string; tone?: "success" | "danger" | "warn" }[] }) {
   const tone = { success: "#34d399", danger: "#f87171", warn: "#fbbf24" } as const;
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
       {stats.map((s) => (
         <div
           key={s.label}
-          className="card p-4 hover:card-glow hover:-translate-y-0.5 transition-all duration-200"
+          className="card p-3 sm:p-4 hover:card-glow hover:-translate-y-0.5 transition-all duration-200 min-w-0"
         >
-          <p className="text-[10px] uppercase tracking-wider text-muted">{s.label}</p>
+          <p className="text-[10px] uppercase tracking-wider text-muted truncate">{s.label}</p>
           <p
-            className={`text-2xl font-black mt-1 ${!s.tone ? "brand-text" : ""}`}
+            className={`text-lg sm:text-2xl font-black mt-1 truncate ${!s.tone ? "brand-text" : ""}`}
             style={s.tone ? { color: tone[s.tone] } : undefined}
           >
             {s.value}
           </p>
-          {s.sub && <p className="text-xs text-muted mt-1">{s.sub}</p>}
+          {s.sub && <p className="text-[11px] sm:text-xs text-muted mt-1 truncate">{s.sub}</p>}
         </div>
       ))}
     </div>
@@ -37,14 +37,14 @@ export function StatGrid({ stats }: { stats: { label: string; value: string; sub
 
 export function Card({ title, action, children, padding = true }: { title?: string; action?: React.ReactNode; children: React.ReactNode; padding?: boolean }) {
   return (
-    <section className="card">
+    <section className="card min-w-0 overflow-hidden">
       {title && (
-        <header className="flex items-center justify-between px-5 py-4 border-b border-border">
-          <h2 className="font-bold">{title}</h2>
-          {action}
+        <header className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 sm:py-4 border-b border-border">
+          <h2 className="font-bold text-sm sm:text-base truncate min-w-0">{title}</h2>
+          {action && <div className="shrink-0">{action}</div>}
         </header>
       )}
-      <div className={padding ? "p-5" : ""}>{children}</div>
+      <div className={padding ? "p-4 sm:p-5" : ""}>{children}</div>
     </section>
   );
 }

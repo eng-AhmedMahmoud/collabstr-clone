@@ -37,30 +37,31 @@ function Cell({ on }: { on: boolean }) {
 
 export function CoverageMatrix() {
   return (
-    <div className="card overflow-hidden">
+    // dir="ltr" locks technical paths + check-marks even in AR mode.
+    <div dir="ltr" className="card overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-full text-sm min-w-[820px]">
           <thead>
             <tr className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
-              <th className="text-left p-3">App</th>
+              <th className="text-left p-3 sticky start-0 bg-surface/80 backdrop-blur z-10">App</th>
               <th className="text-left p-3">Route</th>
-              <th className="p-3">Logout</th>
-              <th className="p-3">Brand</th>
-              <th className="p-3">Creator</th>
-              <th className="p-3">Admin</th>
-              <th className="text-left p-3">Notes</th>
+              <th className="p-3 w-16">Logout</th>
+              <th className="p-3 w-16">Brand</th>
+              <th className="p-3 w-16">Creator</th>
+              <th className="p-3 w-16">Admin</th>
+              <th className="text-left p-3 min-w-[180px]">Notes</th>
             </tr>
           </thead>
           <tbody>
             {ROUTES.map((r) => (
-              <tr key={`${r.app}:${r.route}`} className="border-t border-border">
-                <td className="p-3"><span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${r.app === "admin" ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}`}>{r.app}</span></td>
-                <td className="p-3 font-mono text-xs">{r.route}</td>
+              <tr key={`${r.app}:${r.route}`} className="border-t border-border hover:bg-surface-2/40">
+                <td className="p-3 sticky start-0 bg-surface/60 backdrop-blur"><span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${r.app === "admin" ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}`}>{r.app}</span></td>
+                <td className="p-3 font-mono text-xs leading-snug break-all">{r.route}</td>
                 <td className="p-3 text-center"><Cell on={r.logout} /></td>
                 <td className="p-3 text-center"><Cell on={r.brand} /></td>
                 <td className="p-3 text-center"><Cell on={r.creator} /></td>
                 <td className="p-3 text-center"><Cell on={r.admin} /></td>
-                <td className="p-3 text-xs text-muted">{r.notes ?? ""}</td>
+                <td className="p-3 text-xs text-muted leading-snug">{r.notes ?? ""}</td>
               </tr>
             ))}
           </tbody>
