@@ -96,10 +96,10 @@ export function OrderStateMachine() {
         {(["start", "live", "terminal", "bad"] as const).map((k) => (
           <span key={k} className="inline-flex items-center gap-2">
             <span className="h-3 w-3 rounded" style={{ background: COLORS[k] }} />
-            <span className="font-semibold capitalize text-[#d1d1da]">{k}</span>
+            <span className="font-semibold capitalize text-fg/85">{k}</span>
           </span>
         ))}
-        <span className="ml-auto flex items-center gap-3 text-[#d1d1da]">
+        <span className="ml-auto flex items-center gap-3 text-fg/85">
           {(["brand", "creator", "admin", "system"] as const).map((a) => (
             <span key={a} className="inline-flex items-center gap-1.5">
               <span className="h-3 w-3 rounded" style={{ background: COLORS[a] }} />
@@ -109,8 +109,8 @@ export function OrderStateMachine() {
         </span>
       </div>
 
-      <p className="text-xs text-[#8b8ba0] mt-4">
-        Transitions guarded server-side by <code className="bg-[#0b0b14] px-1.5 py-0.5 rounded">orders.service.ts</code> for users and <code className="bg-[#0b0b14] px-1.5 py-0.5 rounded">admin.service.ts</code> for force overrides.
+      <p className="text-xs text-muted mt-4">
+        Transitions guarded server-side by <code className="bg-bg px-1.5 py-0.5 rounded">orders.service.ts</code> for users and <code className="bg-bg px-1.5 py-0.5 rounded">admin.service.ts</code> for force overrides.
       </p>
     </div>
   );

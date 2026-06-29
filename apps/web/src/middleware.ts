@@ -13,8 +13,20 @@ const PROTECTED = [
   "/campaigns/new",
 ];
 
+const LANGS = new Set(["en", "ar"]);
+
 export function middleware(req: NextRequest) {
-  const { pathname } = req.nextUrl;
+  const { pathname, searchParams } = req.nextUrl;
+
+  const lang = searchParams.get("lang");
+  if (lang && LANGS.has(lang)) {
+    const url = req.nextUrl.clone();
+    url.searchParams.delete("lang");
+    const res = NextResponse.redirect(url);
+    res.cookies.set("locale", lang, { path: "/", maxAge: 60 * 60 * 24 * 365 });
+    return res;
+  }
+
   if (!PROTECTED.some((p) => pathname === p || pathname.startsWith(`${p}/`))) {
     return NextResponse.next();
   }

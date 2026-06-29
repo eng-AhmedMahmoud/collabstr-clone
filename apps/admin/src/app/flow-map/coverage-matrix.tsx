@@ -41,7 +41,7 @@ export function CoverageMatrix() {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
+            <tr className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
               <th className="text-left p-3">App</th>
               <th className="text-left p-3">Route</th>
               <th className="p-3">Logout</th>
@@ -53,14 +53,14 @@ export function CoverageMatrix() {
           </thead>
           <tbody>
             {ROUTES.map((r) => (
-              <tr key={`${r.app}:${r.route}`} className="border-t border-[#1f1f30]">
+              <tr key={`${r.app}:${r.route}`} className="border-t border-border">
                 <td className="p-3"><span className={`text-[10px] uppercase font-bold px-2 py-0.5 rounded-full ${r.app === "admin" ? "bg-amber-500/15 text-amber-300" : "bg-emerald-500/15 text-emerald-300"}`}>{r.app}</span></td>
                 <td className="p-3 font-mono text-xs">{r.route}</td>
                 <td className="p-3 text-center"><Cell on={r.logout} /></td>
                 <td className="p-3 text-center"><Cell on={r.brand} /></td>
                 <td className="p-3 text-center"><Cell on={r.creator} /></td>
                 <td className="p-3 text-center"><Cell on={r.admin} /></td>
-                <td className="p-3 text-xs text-[#8b8ba0]">{r.notes ?? ""}</td>
+                <td className="p-3 text-xs text-muted">{r.notes ?? ""}</td>
               </tr>
             ))}
           </tbody>

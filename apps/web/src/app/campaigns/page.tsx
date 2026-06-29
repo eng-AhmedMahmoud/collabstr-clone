@@ -37,7 +37,7 @@ export default async function CampaignsPage() {
               <article key={c.id} className="rounded-2xl border border-border bg-elevated p-6 hover:shadow-md transition">
                 <div className="flex items-center justify-between text-xs text-muted">
                   <span className="inline-flex items-center gap-2">
-                    <span className="h-7 w-7 rounded-lg bg-fg text-white grid place-items-center font-black">{c.brand.name[0]}</span>
+                    <span className="h-7 w-7 rounded-lg bg-fg text-bg grid place-items-center font-black">{c.brand.name[0]}</span>
                     <span className="font-semibold text-fg">{c.brand.name}</span>
                   </span>
                   <span>{days}d {i.campaigns.postedSuffix} · {c._count?.applications ?? 0} {i.campaigns.applicants}</span>
@@ -58,7 +58,7 @@ export default async function CampaignsPage() {
                 </div>
                 <div className="flex items-center justify-between mt-5">
                   <p className="font-bold">{fmtMoney(c.budgetMin, { locale: moneyLocale })} – {fmtMoney(c.budgetMax, { locale: moneyLocale })}</p>
-                  <Link href={`/campaigns/${c.id}`} className="text-sm font-semibold px-4 py-2 rounded-lg bg-fg text-white">{i.campaigns.viewApply}</Link>
+                  <Link href={`/campaigns/${c.id}`} className="text-sm font-bold px-4 py-2 rounded-lg brand-gradient text-white hover:opacity-95 transition">{i.campaigns.viewApply}</Link>
                 </div>
               </article>
             );

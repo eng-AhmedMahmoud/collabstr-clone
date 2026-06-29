@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { LogoutButton } from "./logout-button";
+import { LocaleSwitcher } from "./locale-switcher";
+import { MobileNav } from "./mobile-nav";
 import type { Me } from "@collabstr/shared-types";
 import { t } from "@/lib/i18n";
+
+const MARKETPLACE_URL =
+  process.env.NEXT_PUBLIC_WEB_URL ??
+  (process.env.NODE_ENV === "production" ? "https://collabstr-clone.vercel.app" : "https://collabstr-web.localhost");
 
 export async function Shell({ me, children }: { me: Me; children: React.ReactNode }) {
   const i = await t();
@@ -37,27 +43,43 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
   ];
 
   return (
-    <div className="min-h-screen flex">
-      <aside className="w-64 shrink-0 border-r border-[#1f1f30] bg-[#0b0b14] flex flex-col">
-        <div className="px-5 h-16 flex items-center gap-2 border-b border-[#1f1f30]">
-          <span className="h-7 w-7 rounded-lg brand-gradient grid place-items-center text-white font-black text-sm">ن</span>
-          <div>
-            <p className="font-black tracking-tight leading-none">Nakhla <span className="text-[#8b8ba0] font-bold">نخلة</span></p>
-            <p className="text-[10px] uppercase tracking-wider text-[#8b8ba0] mt-0.5">{i.brand.sub}</p>
+    <div className="min-h-screen md:flex relative">
+      <div aria-hidden className="absolute inset-0 -z-10 brand-gradient-soft pointer-events-none" />
+      <div aria-hidden className="absolute -top-32 -right-32 h-[520px] w-[520px] -z-10 brand-mesh opacity-50 blur-3xl pointer-events-none" />
+      <div aria-hidden className="absolute -bottom-40 -left-20 h-[420px] w-[420px] -z-10 brand-conic opacity-[0.06] blur-3xl pointer-events-none" />
+
+      <MobileNav
+        nav={NAV}
+        brand="Nakhla"
+        brandAr="نخلة"
+        sub={i.brand.sub}
+        marketplaceLabel={i.nav.marketplace}
+        marketplaceHref={MARKETPLACE_URL}
+      />
+
+      <aside className="hidden md:flex w-64 shrink-0 border-r border-border bg-bg/80 backdrop-blur-md flex-col relative z-10">
+        <div className="px-5 h-16 flex items-center gap-3 border-b border-border">
+          <span className="h-9 w-9 rounded-xl brand-gradient brand-glow grid place-items-center text-white font-black text-lg">ن</span>
+          <div className="leading-tight">
+            <p className="font-black tracking-tight">
+              <span className="brand-text">Nakhla</span>
+              <span className="text-muted font-bold ms-1">نخلة</span>
+            </p>
+            <p className="text-[10px] uppercase tracking-wider text-brand-300 mt-0.5">{i.brand.sub}</p>
           </div>
         </div>
         <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-6">
           {NAV.map((g) => (
             <div key={g.group}>
-              <p className="text-[10px] uppercase tracking-wider text-[#8b8ba0] px-2 mb-1.5">{g.group}</p>
+              <p className="text-[10px] uppercase tracking-wider text-muted px-2 mb-1.5">{g.group}</p>
               <ul className="space-y-0.5">
                 {g.items.map((it) => (
                   <li key={it.href}>
                     <Link
                       href={it.href}
-                      className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm text-[#d1d1da] hover:bg-[#161624] hover:text-white"
+                      className="flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-sm text-fg/85 hover:bg-surface-2 hover:text-white transition-colors"
                     >
-                      <span className="w-4 text-[#8b8ba0] text-center">{it.icon}</span>
+                      <span className="w-4 text-brand-400/80 text-center">{it.icon}</span>
                       <span>{it.label}</span>
                     </Link>
                   </li>
@@ -66,34 +88,44 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
             </div>
           ))}
         </nav>
-        <div className="px-3 py-3 border-t border-[#1f1f30] flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full brand-gradient grid place-items-center text-white text-xs font-bold">
+        <div className="px-3 py-3 border-t border-border flex items-center gap-2 bg-surface/40">
+          <div className="h-8 w-8 rounded-full brand-gradient brand-glow grid place-items-center text-white text-xs font-bold">
             {me.name.split(" ").map((p) => p[0]).slice(0, 2).join("").toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold truncate">{me.name}</p>
-            <p className="text-[11px] text-[#8b8ba0] truncate">{me.email}</p>
+            <p className="text-[11px] text-muted truncate">{me.email}</p>
           </div>
           <LogoutButton />
         </div>
       </aside>
-      <main className="flex-1 min-w-0">
-        <div className="h-16 border-b border-[#1f1f30] flex items-center justify-between px-6">
-          <div className="flex items-center gap-3 text-sm text-[#8b8ba0]">
+
+      <main className="flex-1 min-w-0 relative z-10">
+        <div className="hidden md:flex sticky top-0 z-20 h-16 border-b border-border glass items-center justify-between px-6">
+          <div className="flex items-center gap-3 text-sm text-muted flex-wrap">
             <span className="inline-flex items-center gap-1.5">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              <span className="h-1.5 w-1.5 rounded-full bg-brand-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
               {process.env.NODE_ENV === "production" ? i.nav.production : i.nav.development}
             </span>
             <span>·</span>
             <span>{i.nav.roleAdmin}</span>
+            <span className="ms-2 inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-brand-900/50 border border-brand-800 text-brand-300">
+              🇸🇦 KSA · SAR ر.س
+            </span>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="https://collabstr-web.localhost" target="_blank" className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-[#1f1f30] text-[#d1d1da] hover:border-[#8b8ba0]">
+            <LocaleSwitcher />
+            <Link
+              href={MARKETPLACE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-brand-800 bg-brand-900/40 text-brand-200 hover:border-brand-500 hover:text-white transition"
+            >
               {i.nav.marketplace}
             </Link>
           </div>
         </div>
-        <div className="p-6">{children}</div>
+        <div className="p-4 md:p-6">{children}</div>
       </main>
     </div>
   );

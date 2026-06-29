@@ -28,19 +28,19 @@ export default async function DisputesAdmin() {
       ) : (
         <Card padding={false}>
           <table className="w-full text-sm">
-            <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
+            <thead className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
               <tr><th className="text-left px-5 py-2">{i.disputes.colOrder}</th><th className="text-left px-5 py-2">{i.disputes.colParties}</th><th className="text-right px-5 py-2">{i.disputes.colAmount}</th><th className="text-right px-5 py-2 pr-5">{i.disputes.colOpened}</th></tr>
             </thead>
             <tbody>
               {rows.map((o) => (
-                <tr key={o.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
+                <tr key={o.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
                   <td className="px-5 py-3">
                     <Link href={`/orders/${o.id}`} className="font-mono text-xs font-semibold hover:text-emerald-300">#{o.id.slice(0, 8)}</Link>
                     <div className="mt-1"><Pill kind="bad">{o.status.replace(/_/g, " ")}</Pill></div>
                   </td>
-                  <td className="px-5 py-3"><p>{o.brand.name}</p><p className="text-[11px] text-[#8b8ba0]">→ {o.creator.user.name}</p></td>
+                  <td className="px-5 py-3"><p>{o.brand.name}</p><p className="text-[11px] text-muted">→ {o.creator.user.name}</p></td>
                   <td className="px-5 py-3 text-right font-bold">{fmtMoney(o.amount)}</td>
-                  <td className="px-5 py-3 text-right text-[#8b8ba0] pr-5">{fmtAgo(o.createdAt)}</td>
+                  <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(o.createdAt)}</td>
                 </tr>
               ))}
             </tbody>

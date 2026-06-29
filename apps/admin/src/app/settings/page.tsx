@@ -17,14 +17,14 @@ export default async function AdminSettings() {
       <div className="grid lg:grid-cols-2 gap-5">
         <Card title={i.settings.account}>
           <div className="space-y-2 text-sm">
-            <p><span className="text-[#8b8ba0]">{i.settings.name}</span> <span className="font-semibold">{me.name}</span></p>
-            <p><span className="text-[#8b8ba0]">{i.settings.email}</span> {me.email}</p>
-            <p><span className="text-[#8b8ba0]">{i.settings.role}</span> <span className="font-semibold">{i.settings.admin}</span></p>
+            <p><span className="text-muted">{i.settings.name}</span> <span className="font-semibold">{me.name}</span></p>
+            <p><span className="text-muted">{i.settings.email}</span> {me.email}</p>
+            <p><span className="text-muted">{i.settings.role}</span> <span className="font-semibold">{i.settings.admin}</span></p>
           </div>
-          <p className="text-xs text-[#8b8ba0] mt-3">{i.settings.editNote}</p>
+          <p className="text-xs text-muted mt-3">{i.settings.editNote}</p>
         </Card>
         <Card title={i.settings.roadmap}>
-          <ul className="text-sm text-[#d1d1da] space-y-2">
+          <ul className="text-sm text-fg/85 space-y-2">
             {i.settings.roadmapItems.map((item) => (
               <li key={item}>· {item}</li>
             ))}

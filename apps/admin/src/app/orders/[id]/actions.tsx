@@ -27,12 +27,12 @@ export function OrderAdminActions({ order }: { order: { id: string; status: stri
   return (
     <div className="card p-5">
       <h2 className="font-bold mb-3">{i.orders.detail.actions}</h2>
-      <p className="text-xs text-[#8b8ba0] mb-3">{i.orders.detail.actionsSub}</p>
+      <p className="text-xs text-muted mb-3">{i.orders.detail.actionsSub}</p>
       <div className="space-y-2">
         <button disabled={busy} onClick={() => call("force-release")} className="w-full px-3 py-2 rounded-lg border border-emerald-500/40 text-emerald-300 text-sm font-semibold hover:bg-emerald-500/10">
           {i.orders.detail.forceRelease}
         </button>
-        <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder={i.orders.detail.reasonNote} className="w-full px-3 py-2 rounded-lg bg-[#0b0b14] border border-[#1f1f30] text-sm" />
+        <input value={reason} onChange={(e) => setReason(e.target.value)} placeholder={i.orders.detail.reasonNote} className="w-full px-3 py-2 rounded-lg bg-bg border border-border text-sm" />
         <button disabled={busy || !reason} onClick={() => call("force-cancel", { reason })} className="w-full px-3 py-2 rounded-lg border border-red-500/40 text-red-300 text-sm font-semibold hover:bg-red-500/10 disabled:opacity-50">
           {i.orders.detail.forceCancel}
         </button>

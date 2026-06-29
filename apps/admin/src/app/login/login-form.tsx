@@ -46,12 +46,12 @@ export function LoginForm({ next, labels }: { next?: string; labels: Labels }) {
   return (
     <form onSubmit={submit} className="mt-5 space-y-3">
       <label className="block">
-        <span className="text-xs font-semibold text-[#8b8ba0]">{labels.email}</span>
-        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30] focus:border-emerald-500 focus:outline-none" />
+        <span className="text-xs font-semibold text-muted">{labels.email}</span>
+        <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-bg border border-border focus:border-emerald-500 focus:outline-none" />
       </label>
       <label className="block">
-        <span className="text-xs font-semibold text-[#8b8ba0]">{labels.password}</span>
-        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30] focus:border-emerald-500 focus:outline-none" />
+        <span className="text-xs font-semibold text-muted">{labels.password}</span>
+        <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-bg border border-border focus:border-emerald-500 focus:outline-none" />
       </label>
       {error && <p className="text-xs text-red-300">{error}</p>}
       <button disabled={busy} className="w-full px-4 py-2.5 rounded-lg brand-gradient text-white font-bold disabled:opacity-60">

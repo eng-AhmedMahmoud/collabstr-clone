@@ -13,7 +13,7 @@ export function LogoutButton() {
     router.push("/login");
   }
   return (
-    <button onClick={logout} title="Log out" className="text-[#8b8ba0] hover:text-white text-sm">
+    <button onClick={logout} title="Log out" className="text-muted hover:text-white text-sm">
       ↩
     </button>
   );

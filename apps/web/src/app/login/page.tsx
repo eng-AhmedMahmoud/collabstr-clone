@@ -29,9 +29,6 @@ export default async function LoginPage({
             {i.login.newHere}{" "}
             <Link href="/signup" className="font-semibold text-fg underline">{i.login.createOne}</Link>
           </p>
-          <p className="mt-2 text-xs text-muted text-center">
-            {i.login.demoLine}
-          </p>
         </div>
       </section>
     </div>

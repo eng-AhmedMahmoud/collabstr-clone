@@ -34,7 +34,7 @@ export default async function AuditPage() {
       ) : (
         <Card padding={false}>
           <table className="w-full text-sm">
-            <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
+            <thead className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
               <tr>
                 <th className="text-left px-5 py-2">{i.audit.colWhen}</th>
                 <th className="text-left px-5 py-2">{i.audit.colOrder}</th>
@@ -44,14 +44,14 @@ export default async function AuditPage() {
             </thead>
             <tbody>
               {rows.map((r) => (
-                <tr key={r.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
-                  <td className="px-5 py-3 text-[#8b8ba0] whitespace-nowrap">{fmtDate(r.createdAt)}</td>
+                <tr key={r.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
+                  <td className="px-5 py-3 text-muted whitespace-nowrap">{fmtDate(r.createdAt)}</td>
                   <td className="px-5 py-3">
                     <Link href={`/orders/${r.order.id}`} className="font-mono text-xs font-semibold hover:text-emerald-300">#{r.order.id.slice(0, 8)}</Link>
-                    <p className="text-[11px] text-[#8b8ba0]">{r.order.brand.name}</p>
+                    <p className="text-[11px] text-muted">{r.order.brand.name}</p>
                   </td>
                   <td className="px-5 py-3 font-semibold">{r.status.replace(/_/g, " ")}</td>
-                  <td className="px-5 py-3 text-[#d1d1da] pr-5">{r.note}</td>
+                  <td className="px-5 py-3 text-fg/85 pr-5">{r.note}</td>
                 </tr>
               ))}
             </tbody>

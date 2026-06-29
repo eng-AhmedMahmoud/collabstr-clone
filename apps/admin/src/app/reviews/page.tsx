@@ -31,23 +31,23 @@ export default async function ReviewsPage() {
     <Shell me={me}>
       <PageHeader title={i.reviews.title} subtitle={i.reviews.countTpl.replace("{n}", String(rows.length))} />
       <Card padding={false}>
-        <ul className="divide-y divide-[#1f1f30]">
+        <ul className="divide-y divide-border">
           {rows.map((r) => (
             <li key={r.id} className="px-5 py-4 flex gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 text-sm">
                   <span className="font-bold">{r.author.name}</span>
-                  <span className="text-[#8b8ba0]">→</span>
+                  <span className="text-muted">→</span>
                   <span className="font-bold">{r.creator.user.name}</span>
                   <span className="text-amber-400 ml-2">{"★".repeat(r.rating)}</span>
                 </div>
-                <p className="text-sm text-[#d1d1da] mt-1">{r.text}</p>
-                <p className="text-[11px] text-[#8b8ba0] mt-1">{fmtAgo(r.createdAt)}</p>
+                <p className="text-sm text-fg/85 mt-1">{r.text}</p>
+                <p className="text-[11px] text-muted mt-1">{fmtAgo(r.createdAt)}</p>
               </div>
               <DeleteReviewButton id={r.id} />
             </li>
           ))}
-          {rows.length === 0 && <li className="px-5 py-12 text-center text-[#8b8ba0]">{i.reviews.none}</li>}
+          {rows.length === 0 && <li className="px-5 py-12 text-center text-muted">{i.reviews.none}</li>}
         </ul>
       </Card>
     </Shell>

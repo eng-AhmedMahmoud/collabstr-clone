@@ -5,6 +5,7 @@ import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { fmtMoney } from "@/lib/format";
 import { t } from "@/lib/i18n";
+import { DashboardBrandBar } from "@/components/dashboard-brand-bar";
 
 type OrderRow = {
   id: string;
@@ -35,8 +36,21 @@ export default async function CreatorDashboard() {
   const inEscrow = orders.filter((o) => ["in_progress", "submitted", "approved"].includes(o.status)).reduce((s, o) => s + o.amount, 0);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-      <header className="flex items-center justify-between flex-wrap gap-4">
+    <div className="relative">
+      <div
+        aria-hidden
+        className="absolute inset-x-0 top-0 h-[460px] -z-10 brand-gradient-soft opacity-70 dark:opacity-50"
+        style={{ maskImage: "linear-gradient(180deg, #000 0%, #000 55%, transparent 100%)", WebkitMaskImage: "linear-gradient(180deg, #000 0%, #000 55%, transparent 100%)" }}
+      />
+      <div aria-hidden className="absolute -top-24 left-0 h-[420px] w-[420px] -z-10 brand-mesh opacity-30 dark:opacity-40 blur-3xl pointer-events-none" />
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+      <DashboardBrandBar
+        role="creator"
+        brandName={i.brand.name}
+        consoleLabelEn="Creator console"
+        consoleLabelAr="منصة المؤثر"
+      />
+      <header className="mt-6 flex items-center justify-between flex-wrap gap-4">
         <div>
           <p className="text-sm text-muted">{i.dashboard.welcome}</p>
           <h1 className="text-3xl font-black">
@@ -58,7 +72,7 @@ export default async function CreatorDashboard() {
           [i.creatorDashboard.totalEarned, fmtMoney(released), i.dashboard.kpis.allTime],
           [i.creatorDashboard.openApps, String(applications.filter((a) => a.status === "pending").length), `${applications.length} ${i.dashboard.kpis.totalLabel}`],
         ].map(([l, v, sub]) => (
-          <div key={l} className="rounded-2xl border border-border bg-elevated p-5">
+          <div key={l} className="rounded-2xl border border-brand-100 dark:border-brand-900/60 bg-elevated/90 backdrop-blur-sm p-5 hover:border-brand-300 hover:shadow-lg hover:shadow-brand-100/50 dark:hover:shadow-brand-900/30 transition">
             <p className="text-xs uppercase tracking-wide text-muted">{l}</p>
             <p className="text-3xl font-black mt-1">{v}</p>
             <p className="text-xs text-muted mt-1">{sub}</p>
@@ -113,6 +127,7 @@ export default async function CreatorDashboard() {
             </ul>
           )}
         </section>
+      </div>
       </div>
     </div>
   );

@@ -50,12 +50,6 @@
   --color-accent: #fbe27a;
 }
 
-html {
-  font-size: 18px;
-}
-html[dir="rtl"] {
-  font-size: 18.5px;
-}
 html, body {
   background: var(--color-bg);
   color: var(--color-fg);
@@ -65,6 +59,25 @@ html, body {
 
 html[dir="rtl"] body {
   font-family: var(--font-arabic);
+  line-height: 1.7;
+}
+/* Arabic glyphs carry dots above and below — large display headings
+   collide vertically at default tight leading. Loosen line-height
+   across the board in RTL, with extra room for hero headlines. */
+html[dir="rtl"] h1,
+html[dir="rtl"] h2,
+html[dir="rtl"] h3,
+html[dir="rtl"] .text-4xl,
+html[dir="rtl"] .text-5xl,
+html[dir="rtl"] .text-6xl,
+html[dir="rtl"] .text-7xl {
+  line-height: 1.5;
+  padding-block: 0.05em;
+}
+html[dir="rtl"] p,
+html[dir="rtl"] li,
+html[dir="rtl"] span {
+  line-height: 1.75;
 }
 
 /* ───────────────────────── Brand gradients ───────────────────────── */

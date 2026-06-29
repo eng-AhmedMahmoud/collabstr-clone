@@ -31,10 +31,10 @@ export default async function UsersPage({
       <PageHeader title={i.users.title} subtitle={`${users.length} ${i.users.countSuffix}`} />
 
       <Card padding={false}>
-        <div className="flex items-center gap-2 px-5 py-3 border-b border-[#1f1f30]">
+        <div className="flex items-center gap-2 px-5 py-3 border-b border-border">
           <form className="flex-1 flex gap-2">
-            <input name="q" defaultValue={sp.q} placeholder={i.users.searchPh} className="flex-1 px-3 py-2 rounded-lg bg-[#0b0b14] border border-[#1f1f30] text-sm" />
-            <select name="role" defaultValue={sp.role ?? ""} className="px-3 py-2 rounded-lg bg-[#0b0b14] border border-[#1f1f30] text-sm">
+            <input name="q" defaultValue={sp.q} placeholder={i.users.searchPh} className="flex-1 px-3 py-2 rounded-lg bg-bg border border-border text-sm" />
+            <select name="role" defaultValue={sp.role ?? ""} className="px-3 py-2 rounded-lg bg-bg border border-border text-sm">
               <option value="">{i.users.allRoles}</option>
               <option value="brand">{i.users.role.brand}</option>
               <option value="creator">{i.users.role.creator}</option>
@@ -44,7 +44,7 @@ export default async function UsersPage({
           </form>
         </div>
         <table className="w-full text-sm">
-          <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
+          <thead className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
             <tr>
               <th className="text-left px-5 py-2">{i.users.colUser}</th>
               <th className="text-left px-5 py-2">{i.users.colRole}</th>
@@ -55,22 +55,22 @@ export default async function UsersPage({
           </thead>
           <tbody>
             {users.map((u) => (
-              <tr key={u.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
+              <tr key={u.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
                 <td className="px-5 py-3">
                   <p className="font-semibold">{u.name}</p>
-                  <p className="text-[11px] text-[#8b8ba0]">{u.email}</p>
+                  <p className="text-[11px] text-muted">{u.email}</p>
                 </td>
                 <td className="px-5 py-3"><Pill kind={u.role === "admin" ? "brand" : u.role === "creator" ? "warn" : "muted"}>{u.role}</Pill></td>
                 <td className="px-5 py-3">
                   {u.bannedAt ? <Pill kind="bad">{i.users.pillBanned}</Pill> : u.emailVerifiedAt ? <Pill kind="ok">{i.users.pillVerified}</Pill> : <Pill kind="muted">{i.users.pillUnverified}</Pill>}
                 </td>
-                <td className="px-5 py-3 text-[#8b8ba0]">{fmtAgo(u.createdAt)}</td>
+                <td className="px-5 py-3 text-muted">{fmtAgo(u.createdAt)}</td>
                 <td className="px-5 py-3 text-right pr-5">
                   <UserRowActions user={u} />
                 </td>
               </tr>
             ))}
-            {users.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-[#8b8ba0]">{i.users.noMatch}</td></tr>}
+            {users.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-muted">{i.users.noMatch}</td></tr>}
           </tbody>
         </table>
       </Card>

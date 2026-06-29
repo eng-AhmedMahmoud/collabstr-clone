@@ -64,18 +64,18 @@ export function Roadmap() {
         <section key={p.name}>
           <header className="flex items-baseline gap-3">
             <h3 className="text-xl font-black">{p.name}</h3>
-            <p className="text-sm text-[#8b8ba0]">{p.tagline}</p>
+            <p className="text-sm text-muted">{p.tagline}</p>
           </header>
           <div className="grid md:grid-cols-2 gap-3 mt-3">
             {p.items.map((it) => (
               <article key={it.title} className="card p-5">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full" style={{ background: `${AREA_COLOR[it.area]}22`, color: AREA_COLOR[it.area] }}>{it.area}</span>
-                  <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-[#161624] text-[#d1d1da]">effort {it.effort}</span>
-                  <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-[#161624] text-[#d1d1da]">{IMPACT_LABEL[it.impact]}</span>
+                  <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-surface-2 text-fg/85">effort {it.effort}</span>
+                  <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-surface-2 text-fg/85">{IMPACT_LABEL[it.impact]}</span>
                 </div>
                 <h4 className="font-bold text-[#f5f5f7]">{it.title}</h4>
-                <p className="text-sm text-[#8b8ba0] mt-1.5">{it.body}</p>
+                <p className="text-sm text-muted mt-1.5">{it.body}</p>
               </article>
             ))}
           </div>

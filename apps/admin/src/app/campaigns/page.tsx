@@ -33,7 +33,7 @@ export default async function CampaignsAdmin() {
       <PageHeader title={i.campaigns.title} subtitle={`${rows.length} ${i.campaigns.countSuffix}`} />
       <Card padding={false}>
         <table className="w-full text-sm">
-          <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
+          <thead className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
             <tr>
               <th className="text-left px-5 py-2">{i.campaigns.colTitle}</th>
               <th className="text-left px-5 py-2">{i.campaigns.colBrand}</th>
@@ -45,16 +45,16 @@ export default async function CampaignsAdmin() {
           </thead>
           <tbody>
             {rows.map((c) => (
-              <tr key={c.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
+              <tr key={c.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
                 <td className="px-5 py-3 font-semibold">{c.title}</td>
-                <td className="px-5 py-3 text-[#d1d1da]">{c.brand.name}</td>
+                <td className="px-5 py-3 text-fg/85">{c.brand.name}</td>
                 <td className="px-5 py-3"><Pill kind={pillKindForStatus(c.status)}>{c.status}</Pill></td>
                 <td className="px-5 py-3 text-right">{c._count.applications}</td>
                 <td className="px-5 py-3 text-right">{fmtMoney(c.budgetMin)} – {fmtMoney(c.budgetMax)}</td>
-                <td className="px-5 py-3 text-right text-[#8b8ba0] pr-5">{fmtAgo(c.createdAt)}</td>
+                <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(c.createdAt)}</td>
               </tr>
             ))}
-            {rows.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-[#8b8ba0]">{i.campaigns.none}</td></tr>}
+            {rows.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-muted">{i.campaigns.none}</td></tr>}
           </tbody>
         </table>
       </Card>

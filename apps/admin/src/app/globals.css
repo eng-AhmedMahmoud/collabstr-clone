@@ -1,28 +1,42 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0b0b14;
-  --color-surface: #11111c;
-  --color-surface-2: #161624;
-  --color-fg: #f5f5f7;
-  --color-muted: #8b8ba0;
-  --color-border: #1f1f30;
-  --color-brand: #006C35;
-  --color-brand-2: #1a8f4f;
-  --color-accent: #c8a951;
-  --color-success: #10b981;
-  --color-danger: #ef4444;
-  --color-warn: #f59e0b;
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Rich obsidian-jade canvas — matches web dark mode */
+  --color-bg: #04140d;
+  --color-surface: #0a1f17;
+  --color-surface-2: #0e2b1f;
+  --color-fg: #e9fbf1;
+  --color-muted: #8fb6a4;
+  --color-border: #133a2a;
+
+  /* Modern jade-mint anchor (luminous, not flat flag green) */
+  --color-brand: #34d399;
+  --color-brand-2: #6ee7b7;
+  --color-accent: #fbe27a;
+
+  /* Tonal ramp tuned for dark canvas */
+  --color-brand-50: #ecfdf5;
+  --color-brand-100: #d1fae5;
+  --color-brand-200: #a7f3d0;
+  --color-brand-300: #6ee7b7;
+  --color-brand-400: #34d399;
+  --color-brand-500: #10b981;
+  --color-brand-600: #0fb27a;
+  --color-brand-700: #047857;
+  --color-brand-800: #065f46;
+  --color-brand-900: #052e1f;
+
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-warn: #fbbf24;
+
+  /* KSA flag — kept as semantic accent */
+  --color-ksa: #006C35;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "IBM Plex Sans Arabic", "Tajawal", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-html {
-  font-size: 18px;
-}
-html[lang="ar"] {
-  font-size: 18.5px;
-}
 html, body {
   background: var(--color-bg);
   color: var(--color-fg);
@@ -30,23 +44,141 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
 
-.brand-gradient {
-  background-image: linear-gradient(135deg, #006C35 0%, #1a8f4f 55%, #c8a951 100%);
+html[lang="ar"] body { line-height: 1.7; }
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] .text-3xl,
+html[lang="ar"] .text-4xl,
+html[lang="ar"] .text-5xl {
+  line-height: 1.5;
+  padding-block: 0.05em;
 }
+html[lang="ar"] p,
+html[lang="ar"] li,
+html[lang="ar"] span {
+  line-height: 1.75;
+}
+
+/* ───────────────────────── Brand gradients ───────────────────────── */
+
+.brand-gradient {
+  background-image:
+    linear-gradient(135deg,
+      #065f46 0%,
+      #10b981 28%,
+      #34d399 52%,
+      #a7f3d0 78%,
+      #fbe27a 100%);
+  background-size: 180% 180%;
+  background-position: 0% 50%;
+  transition: background-position 600ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.brand-gradient:hover {
+  background-position: 100% 50%;
+}
+
+.brand-gradient-soft {
+  background-image:
+    radial-gradient(at 20% 10%, rgba(52, 211, 153, 0.18) 0%, transparent 55%),
+    radial-gradient(at 80% 0%,  rgba(245, 196, 81, 0.10) 0%, transparent 45%),
+    radial-gradient(at 50% 100%, rgba(110, 231, 183, 0.14) 0%, transparent 60%),
+    linear-gradient(180deg, #04140d 0%, #0a1f17 100%);
+}
+
+.brand-mesh {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(at 12% 18%, rgba(52, 211, 153, 0.22) 0%, transparent 40%),
+    radial-gradient(at 88% 22%, rgba(245, 196, 81, 0.14) 0%, transparent 38%),
+    radial-gradient(at 70% 85%, rgba(16, 185, 129, 0.20) 0%, transparent 45%),
+    radial-gradient(at 25% 78%, rgba(110, 231, 183, 0.18) 0%, transparent 42%);
+}
+
+.brand-conic {
+  background-image: conic-gradient(
+    from 210deg at 50% 50%,
+    #0fb27a 0deg,
+    #34d399 90deg,
+    #f5c451 180deg,
+    #10b981 270deg,
+    #0fb27a 360deg
+  );
+}
+
 .brand-text {
-  background-image: linear-gradient(135deg, #3aa46c 0%, #6cbf91 55%, #d8bf6a 100%);
+  background-image: linear-gradient(110deg,
+    #10b981 0%,
+    #34d399 30%,
+    #6ee7b7 55%,
+    #a7f3d0 78%,
+    #fbe27a 100%);
+  background-size: 200% 100%;
+  background-position: 0% 50%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  animation: brand-text-pan 8s ease-in-out infinite alternate;
 }
+@keyframes brand-text-pan {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.brand-glow {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 10px 28px -6px rgba(52, 211, 153, 0.40),
+    0 4px 14px -4px rgba(245, 196, 81, 0.20);
+}
+
+.brand-ring {
+  box-shadow: 0 0 0 1px var(--color-brand-300), 0 0 0 4px rgba(52, 211, 153, 0.18);
+}
+
+.glass {
+  background: color-mix(in oklab, var(--color-bg) 65%, transparent);
+  backdrop-filter: saturate(150%) blur(14px);
+  -webkit-backdrop-filter: saturate(150%) blur(14px);
+}
+
 .card {
-  background: var(--color-surface);
+  background: color-mix(in oklab, var(--color-surface) 92%, transparent);
   border: 1px solid var(--color-border);
   border-radius: 16px;
+  backdrop-filter: blur(6px);
 }
+.card-glow {
+  border-color: color-mix(in oklab, var(--color-brand-700) 70%, var(--color-border));
+  box-shadow: 0 8px 24px -12px rgba(52, 211, 153, 0.25);
+}
+
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
 
 input, select, textarea {
   color: var(--color-fg);
+}
+
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg,
+    var(--color-surface) 0%,
+    rgba(52, 211, 153, 0.12) 50%,
+    var(--color-surface) 100%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+.sar-symbol::before {
+  content: "ر.س ";
+  font-weight: 600;
+  margin-inline-end: 2px;
+  background-image: linear-gradient(135deg, #34d399, #fbe27a);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }

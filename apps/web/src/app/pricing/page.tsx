@@ -28,7 +28,7 @@ export default async function PricingPage() {
                 {tier.features.map((f) => (<li key={f}>✓ {f}</li>))}
               </ul>
               <Link href={href} className={`mt-6 inline-flex w-full justify-center px-4 py-3 rounded-xl font-bold ${
-                highlight ? "bg-elevated text-fg" : "bg-fg text-white"
+                highlight ? "bg-elevated text-fg border border-border" : "brand-gradient text-white"
               }`}>{tier.cta}</Link>
             </div>
           );

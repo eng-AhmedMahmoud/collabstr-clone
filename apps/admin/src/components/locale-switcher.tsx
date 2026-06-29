@@ -17,7 +17,7 @@ export function LocaleSwitcher() {
   }
 
   return (
-    <button onClick={flip} disabled={pending} className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-[#1f1f30] text-[#d1d1da] hover:border-[#8b8ba0] disabled:opacity-60">
+    <button onClick={flip} disabled={pending} className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-border text-fg/85 hover:border-muted disabled:opacity-60">
       {locale.toUpperCase()} → {t.locale.switchTo}
     </button>
   );

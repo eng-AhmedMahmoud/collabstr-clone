@@ -37,7 +37,7 @@ export default async function CreatorsAdmin() {
       <PageHeader title={i.creators.title} subtitle={`${rows.length} ${i.creators.countSuffix}`} />
       <Card padding={false}>
         <table className="w-full text-sm">
-          <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
+          <thead className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
             <tr>
               <th className="text-left px-5 py-2">{i.creators.colCreator}</th>
               <th className="text-left px-5 py-2">{i.creators.colFollowers}</th>
@@ -51,20 +51,20 @@ export default async function CreatorsAdmin() {
             {rows.map((c) => {
               const total = (c.followersIg ?? 0) + (c.followersTt ?? 0) + (c.followersYt ?? 0);
               return (
-                <tr key={c.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
+                <tr key={c.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
                   <td className="px-5 py-3">
                     <Link href={`https://collabstr-web.localhost/${c.username}`} target="_blank" className="font-semibold hover:text-emerald-300">{c.user.name}</Link>
-                    <p className="text-[11px] text-[#8b8ba0]">@{c.username} · {c.user.email}</p>
+                    <p className="text-[11px] text-muted">@{c.username} · {c.user.email}</p>
                   </td>
-                  <td className="px-5 py-3 text-[#d1d1da]">{fmtNum(total)}</td>
-                  <td className="px-5 py-3">★ {c.rating.toFixed(1)} <span className="text-[#8b8ba0]">({c.reviewsCount})</span></td>
+                  <td className="px-5 py-3 text-fg/85">{fmtNum(total)}</td>
+                  <td className="px-5 py-3">★ {c.rating.toFixed(1)} <span className="text-muted">({c.reviewsCount})</span></td>
                   <td className="px-5 py-3 text-right font-bold">{fmtMoney(c.startingPrice)}</td>
                   <td className="px-5 py-3"><div className="flex gap-1 flex-wrap">{c.badges.map((b) => <Pill key={b} kind="brand">{b}</Pill>)}</div></td>
-                  <td className="px-5 py-3 text-right text-[#8b8ba0] pr-5">{fmtAgo(c.createdAt)}</td>
+                  <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(c.createdAt)}</td>
                 </tr>
               );
             })}
-            {rows.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-[#8b8ba0]">{i.creators.none}</td></tr>}
+            {rows.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-muted">{i.creators.none}</td></tr>}
           </tbody>
         </table>
       </Card>

@@ -69,7 +69,7 @@ export function RoleFlows() {
             <span className="h-10 w-10 grid place-items-center rounded-xl text-xl" style={{ background: `${f.color}22`, color: f.color }}>{f.emoji}</span>
             <div>
               <h3 className="font-black text-lg">{f.role}</h3>
-              <p className="text-xs text-[#8b8ba0]">{f.steps.length} key journeys</p>
+              <p className="text-xs text-muted">{f.steps.length} key journeys</p>
             </div>
           </header>
           <ol className="mt-4 space-y-3">
@@ -78,7 +78,7 @@ export function RoleFlows() {
                 <span className="h-6 w-6 rounded-full text-xs font-bold grid place-items-center shrink-0" style={{ background: `${f.color}22`, color: f.color }}>{i + 1}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold leading-tight text-[#f5f5f7]">{s.from}</p>
-                  <p className="text-xs text-[#8b8ba0] mt-0.5">↳ {s.to}</p>
+                  <p className="text-xs text-muted mt-0.5">↳ {s.to}</p>
                 </div>
               </li>
             ))}

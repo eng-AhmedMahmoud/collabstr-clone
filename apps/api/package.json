@@ -11,7 +11,9 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
-    "seed": "node --env-file=.env --import=tsx prisma/seed.ts"
+    "vercel-build": "prisma generate && prisma migrate deploy && nest build",
+    "seed": "node --env-file=.env --import=tsx prisma/seed.ts",
+    "seed:prod": "node --import=tsx prisma/seed.ts"
   },
   "dependencies": {
     "@collabstr/shared-types": "workspace:*",

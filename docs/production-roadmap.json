@@ -1,0 +1,952 @@
+{
+  "enhancement_plan": {
+    "critical_fixes": [
+      {
+        "id": "CF01",
+        "file": "apps/web/src/components/filter-bar.tsx",
+        "change": "Move all FILTERS labels and options into i.filters.* (label + options map) keyed by locale. Render single-locale labels only (drop 'City · المدينة' concat). Replace text-left/ml-1 with text-start/ms-1. Add hidden form inputs for each selected value so the parent /influencers form actually serializes them, OR push to router.push('/influencers?platform=…') on change. Make panel responsive: w-[calc(100vw-2rem)] sm:w-64 anchored start-0.",
+        "why": "Critical i18n + RTL + broken state: filter pills currently do nothing (only `q` is submitted), are English-only, and overflow on mobile/RTL. This is the most-used component on home + influencers."
+      },
+      {
+        "id": "CF02",
+        "file": "apps/web/src/app/messages/messages-ui.tsx",
+        "change": "Replace grid-cols-12 with grid-cols-1 md:grid-cols-12; add mobile toggle showing thread list OR chat pane with a back button. Swap rounded-br-md/bl-md for logical rounded-ee-md/es-md so RTL bubble tails point correctly.",
+        "why": "On mobile the forced 4/8 split squeezes chat to ~240px (unusable). Critical responsive failure on the primary communication surface."
+      },
+      {
+        "id": "CF03",
+        "file": "apps/admin/src/components/shell.tsx",
+        "change": "Wrap sidebar in `hidden md:flex`; add a hamburger + Sheet drawer for mobile. Remove `overflow-hidden` on root container so popovers/tooltips can escape. Add aria-label to <aside> and inner <nav>. Read Marketplace open-link from process.env.NEXT_PUBLIC_WEB_URL (fallback to localhost only when undefined). Replace unicode glyph icons with SVG (aria-hidden) and flip directional ones via CSS.",
+        "why": "Admin is unusable on mobile (256px sidebar consumes entire width). Production link is hardcoded to collabstr-web.localhost — broken in prod."
+      },
+      {
+        "id": "CF04",
+        "file": "apps/admin/src/app/orders/page.tsx",
+        "change": "Wrap <table> in <div className='overflow-x-auto'> with min-w-[760px]. Map filter chip status enums through new statusLabel(s, locale) helper from i18n.ts. Add role='group' with aria-label, aria-current='page' on active chip. Wrap #id slice in <bdi>; wrap each fmtMoney call in <bdi> so amount + fee don't reorder in RTL.",
+        "why": "Critical responsive overflow + critical i18n: AR users see English status enums (pending_payment, awaiting_creator) across every order screen and table breaks layout under ~1024px."
+      },
+      {
+        "id": "CF05",
+        "file": "apps/admin/src/app/campaigns/page.tsx + apps/admin/src/app/creators/page.tsx + apps/admin/src/app/disputes/page.tsx + apps/admin/src/app/payouts/page.tsx + apps/admin/src/app/audit/page.tsx + apps/admin/src/app/users/page.tsx + apps/admin/src/app/brands/page.tsx + apps/admin/src/app/page.tsx",
+        "change": "Add a single shared <ResponsiveTable> wrapper component (overflow-x-auto + min-w + tokenized styles) and replace every raw <table> in admin. Replace all `Brand → Creator` literal arrows with a <DirArrow /> helper that flips by locale.",
+        "why": "Every admin table breaks on tablet/mobile. Five separate findings collapsed into one shared fix."
+      },
+      {
+        "id": "CF06",
+        "file": "apps/admin/src/lib/format.ts",
+        "change": "Replace hardcoded LOCALE='en-SA' with a getLocale() helper that reads cookies on server and useLocale() in client. fmtMoney/fmtDate/fmtAgo all accept locale. Implement Arabic fmtAgo strings (الآن / قبل ٥د) via Intl.RelativeTimeFormat.",
+        "why": "Every admin currency/date/relative-time string is English regardless of user locale — undermines the entire bilingual layer."
+      },
+      {
+        "id": "CF07",
+        "file": "apps/api/prisma/schema.prisma + apps/api/src/payments/ (new module)",
+        "change": "Add PaymentIntent, EscrowHold, LedgerEntry, Payout, PayoutAccount models. Wire /orders/:id/pay to a SAMA-licensed PSP adapter (HyperPay/Moyasar/Tap) with webhook + IdempotencyKey table. Implement double-entry ledger entries for charge→escrow→release→payout. Store amounts as integer halalas with currency='SAR'.",
+        "why": "Today /orders/:id/pay is a stub; no real money flow; no escrow ledger; no payouts. Cannot launch a marketplace without this."
+      },
+      {
+        "id": "CF08",
+        "file": "apps/api/src/auth/ (verify-email + password-reset + 2fa)",
+        "change": "Add EmailVerificationToken + PasswordResetToken models + endpoints (POST /auth/verify-email/request, /verify-email/confirm, /password/forgot, /password/reset). Add TOTP 2FA module (speakeasy) with backup codes. Gate /orders/:id/pay and payout enrollment behind verifiedAt AND (for payouts) mfaEnabled.",
+        "why": "emailVerifiedAt column exists but nothing fills it; unverified users can transact; no password reset endpoint at all; KSA payout compliance requires MFA before money movement."
+      },
+      {
+        "id": "CF09",
+        "file": "apps/api/prisma/schema.prisma + apps/api/src/kyc/ (new) + apps/api/src/tax/ (new)",
+        "change": "Add KycCase (provider, status, documents[], expiry, nationalId, iqama, wathqRef), TaxProfile (vatNumber, zatcaRef, isVatRegistered, withholdingRate). Block payouts until kycStatus=approved. For non-resident creators, apply 5% WHT on payouts; for resident brands/creators above SAR 375k, surface VAT collection toggle.",
+        "why": "Mandatory for KSA AML + ZATCA + non-resident WHT compliance. Without this, payouts can't legally flow."
+      },
+      {
+        "id": "CF10",
+        "file": "apps/api/src/invoices/ + ZATCA Phase 2 adapter",
+        "change": "Add Invoice model + generate ZATCA-compliant XML e-invoices (bilingual EN/AR, QR code, supplier CR, sequential numbering, cryptographic signature) on every order release. Use a ZATCA Fatoora SDK (e.g. zatca-sdk-php or build a TS adapter). Real-time clearance via ZATCA API.",
+        "why": "ZATCA Phase 2 e-invoicing is mandatory for VAT-registered KSA entities (Wave 24 onboarding by 30 June 2026). Non-compliance fines up to SAR 50k per violation."
+      },
+      {
+        "id": "CF11",
+        "file": "apps/web/src/app/[username]/page.tsx",
+        "change": "Wire Share button (navigator.share with clipboard fallback). Convert Save form to client component POSTing to ${NEXT_PUBLIC_API_URL}/api/v1/creators/${id}/save with credentials. Replace ring-white with ring-bg. Swap ml-auto→ms-auto, text-right→text-end. Add mobile sticky bottom CTA bar with price + Add-to-cart. Localize toLocaleDateString for reviews. Fix portfolio alt text. Render counterparty `href:'#'` as <span> instead of <Link>.",
+        "why": "The most-trafficked public page (creator profile) has 6 separate findings: dead Share button, dead Save, broken RTL, ugly dark mode, no mobile CTA, broken i18n."
+      },
+      {
+        "id": "CF12",
+        "file": "apps/web/src/app/creator-dashboard/packages/page.tsx",
+        "change": "Convert delete and create forms from `/api/packages/*` native form posts (which 404) to a client component that fetches ${NEXT_PUBLIC_API_URL}/api/v1/me/packages with credentials and router.refresh() on success.",
+        "why": "Both forms silently 404 — creators cannot create or delete packages. Core feature broken."
+      },
+      {
+        "id": "CF13",
+        "file": "apps/web/src/app/globals.css + apps/admin/src/app/globals.css",
+        "change": "Remove the `.text-xs { font-size: 0.9rem }` / `.text-[10px|11px|9px]` !important overrides. Remove `html { font-size: 19px }`. Introduce a `.badge` utility (or extend Tailwind theme `--text-xs` token) for places that genuinely need a larger min-size. Re-audit text-xs callsites after revert.",
+        "why": "Global overrides silently break every Tailwind size in both apps, causing oversized labels in tight pills/tables and a ~19% layout-wide scale inflation."
+      },
+      {
+        "id": "CF14",
+        "file": "apps/web/src/components/header.tsx + apps/admin/src/components/shell.tsx",
+        "change": "Add a mobile hamburger menu (Sheet/Drawer) with full nav links. Currently `hidden md:flex` with no fallback — mobile users see no navigation at all.",
+        "why": "Critical responsive: the entire primary nav is invisible on phones. This is a launch-blocker for any marketplace whose buyers are mobile-first (KSA is ~85% mobile)."
+      },
+      {
+        "id": "CF15",
+        "file": "apps/web/src/components/user-menu.tsx",
+        "change": "Replace `absolute right-0` with `end-0`. Add aria-haspopup='menu', aria-expanded={open}, role='menu' / role='menuitem'. Add Esc-to-close keydown handler and outside-click listener. Add dark variants to logout (text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20).",
+        "why": "Dropdown pops off-screen in RTL; not keyboard-accessible; broken in dark mode."
+      },
+      {
+        "id": "CF16",
+        "file": "apps/api/src/auth/auth.service.ts + apps/api/src/common/guards/throttler.guard.ts (new)",
+        "change": "Set refresh token via httpOnly Secure SameSite=Lax cookie (not JSON body). Add @nestjs/throttler global throttling (login: 5/min, signup: 3/min, contact: 5/hour). Add hCaptcha/Turnstile gate on signup/login/contact. Add CSRF double-submit token for state-changing routes. Store userAgent/ip/lastUsedAt/deviceLabel on RefreshToken; expose GET /auth/sessions and DELETE /auth/sessions/:id.",
+        "why": "Open to credential stuffing today; tokens in JSON body are XSS-stealable; no per-device revocation UI possible."
+      },
+      {
+        "id": "CF17",
+        "file": "apps/web/src/app/pricing/page.tsx",
+        "change": "Convert tier.price from a localized string in the dictionary to numeric values + period suffix. Render via fmtMoney(tier.price, { locale: moneyLocale }) so AR users see ر.س / Arabic numerals consistently and the SAR symbol stays on the left per SAMA rules.",
+        "why": "Pricing page currently bypasses the formatter — any AR user sees raw English/dollar literals from the dict."
+      }
+    ],
+    "new_pages": [
+      {
+        "id": "NP01",
+        "path": "apps/web/src/app/(legal)/regulations/mawthooq/page.tsx",
+        "purpose": "Mawthooq compliance hub explaining GAMR permit, fee (SAR 15,000 / 3 years), requirements, and a 'Submit your permit' form for creators.",
+        "sections": [
+          "What is Mawthooq",
+          "Who needs it",
+          "How to apply",
+          "Fee + validity",
+          "Upload permit number + expiry",
+          "FAQ"
+        ]
+      },
+      {
+        "id": "NP02",
+        "path": "apps/web/src/app/(legal)/zatca/page.tsx",
+        "purpose": "ZATCA Phase 2 e-invoicing FAQ + VAT registration prompt for brands/creators above the SAR 375k threshold.",
+        "sections": [
+          "VAT in KSA",
+          "When you need to register",
+          "What we invoice automatically",
+          "Download past invoices",
+          "ZATCA QR code explained"
+        ]
+      },
+      {
+        "id": "NP03",
+        "path": "apps/web/src/app/checkout/success/page.tsx + apps/web/src/app/checkout/cancel/page.tsx",
+        "purpose": "PSP return URLs for HyperPay/Tap/Moyasar 3DS redirect flow with order summary, downloadable VAT invoice, next-steps to /orders/[id].",
+        "sections": [
+          "Confirmation",
+          "Order summary",
+          "Download invoice (PDF + XML)",
+          "What happens next",
+          "Contact support"
+        ]
+      },
+      {
+        "id": "NP04",
+        "path": "apps/web/src/app/creator-dashboard/payouts/page.tsx",
+        "purpose": "Creator payout onboarding (KYC + bank/STC Pay/IBAN + tax form) and payout history.",
+        "sections": [
+          "KYC status",
+          "Add payout method (IBAN/STC Pay/PayPal)",
+          "Tax profile (VAT, WHT)",
+          "Available balance",
+          "Payout history",
+          "Schedule (auto/manual)"
+        ]
+      },
+      {
+        "id": "NP05",
+        "path": "apps/web/src/app/dashboard/billing/page.tsx",
+        "purpose": "Brand billing center with saved payment methods (Mada/Apple Pay/Tabby/Tamara), VAT profile, and downloadable ZATCA invoices.",
+        "sections": [
+          "Payment methods",
+          "VAT profile (CR + VAT number)",
+          "Invoices (ZATCA XML + PDF)",
+          "Spend by month",
+          "Auto-recharge wallet"
+        ]
+      },
+      {
+        "id": "NP06",
+        "path": "apps/web/src/app/influencers/[city]/page.tsx (programmatic) + apps/web/src/app/influencers/[platform]/page.tsx",
+        "purpose": "Programmatic SEO for /influencers/riyadh, /jeddah, /khobar, /dammam, /makkah, /madinah, /alkhobar + /instagram, /tiktok, /snapchat, /youtube — matches Collabstr's location/platform landing-page strategy in bilingual EN/AR.",
+        "sections": [
+          "Hero (city + platform)",
+          "Top 12 creators",
+          "Avg pricing by tier",
+          "Local categories",
+          "Local case studies",
+          "CTA"
+        ]
+      },
+      {
+        "id": "NP07",
+        "path": "apps/web/src/app/auth/verify-email/page.tsx + apps/web/src/app/auth/reset-password/page.tsx",
+        "purpose": "Email verification confirmation + password reset request/confirm flows tied to CF08 backend.",
+        "sections": [
+          "Token confirmation",
+          "Resend link",
+          "New password form",
+          "Success state"
+        ]
+      },
+      {
+        "id": "NP08",
+        "path": "apps/web/src/app/auth/2fa/page.tsx",
+        "purpose": "Two-factor authentication setup (TOTP QR + backup codes) — required before enabling payouts.",
+        "sections": [
+          "Scan QR with Authenticator",
+          "Enter 6-digit code",
+          "Backup codes (download)",
+          "Disable 2FA"
+        ]
+      },
+      {
+        "id": "NP09",
+        "path": "apps/admin/src/app/disputes/[id]/page.tsx",
+        "purpose": "Dispute resolution workspace with evidence files, SLA timer, refund/release/split actions, arbitrator notes.",
+        "sections": [
+          "Parties + amounts",
+          "Evidence (both sides)",
+          "SLA countdown",
+          "Decision (refund/release/split)",
+          "Notes",
+          "Audit trail"
+        ]
+      },
+      {
+        "id": "NP10",
+        "path": "apps/admin/src/app/finance/ledger/page.tsx + apps/admin/src/app/finance/reconciliation/page.tsx",
+        "purpose": "Finance ops: ledger view (double-entry), PSP reconciliation (HyperPay/Tap settlements vs internal ledger), VAT report by month, WHT report.",
+        "sections": [
+          "Today's settlement",
+          "Open escrow holds",
+          "VAT collected (15%)",
+          "WHT remittance",
+          "Export to ZATCA"
+        ]
+      },
+      {
+        "id": "NP11",
+        "path": "apps/admin/src/app/compliance/mawthooq/page.tsx",
+        "purpose": "Compliance queue listing creators by permit status (active / expired / missing), bulk re-verify, block contracting if expired.",
+        "sections": [
+          "Active permits",
+          "Expiring in 30 days",
+          "Missing/expired (blocked)",
+          "Permit upload review",
+          "Audit log"
+        ]
+      },
+      {
+        "id": "NP12",
+        "path": "apps/web/src/app/inbox/offers/page.tsx (in-thread Offer model)",
+        "purpose": "Custom Offer cards inside DMs (Collabstr/Aspire pattern) that convert to Orders with one click.",
+        "sections": [
+          "Offer cards in thread",
+          "Accept → checkout",
+          "Counter-offer",
+          "Decline + reason"
+        ]
+      },
+      {
+        "id": "NP13",
+        "path": "apps/web/src/app/about/trust-safety/page.tsx",
+        "purpose": "Trust & safety hub: escrow explanation (SAMA-licensed PSP), KYC, dispute process, refund policy, content moderation, report flows — required for KSA brand trust.",
+        "sections": [
+          "Escrow guarantee",
+          "Verified creators",
+          "Dispute resolution",
+          "Reporting + moderation",
+          "Refund policy"
+        ]
+      }
+    ],
+    "missing_components": [
+      {
+        "id": "MC01",
+        "path": "apps/web/src/components/sar-amount.tsx + apps/admin/src/components/sar-amount.tsx",
+        "purpose": "Bidi-isolated SAR amount renderer using <bdi>, the new U+20C1 symbol with saudi-riyal-font fallback, and Intl.NumberFormat('ar-SA'|'en-SA', { currency: 'SAR' }). Use everywhere instead of fmtMoney string interpolation."
+      },
+      {
+        "id": "MC02",
+        "path": "apps/web/src/components/dir-arrow.tsx + apps/admin/src/components/dir-arrow.tsx",
+        "purpose": "Locale-aware arrow icon (→ in LTR, ← in RTL) as flippable SVG; replaces every hardcoded → / ↗ / ↩ / ⟿ / ↳ literal in both apps."
+      },
+      {
+        "id": "MC03",
+        "path": "apps/web/src/components/mobile-nav.tsx + apps/admin/src/components/mobile-nav.tsx",
+        "purpose": "Mobile hamburger + Sheet drawer with full nav, locale switcher, and user menu — fixes both header.tsx and admin shell mobile gaps."
+      },
+      {
+        "id": "MC04",
+        "path": "apps/web/src/components/responsive-table.tsx + apps/admin/src/components/responsive-table.tsx",
+        "purpose": "Shared wrapper: overflow-x-auto + min-w-* + dark-token rows + sticky header on long lists. Replaces 8 separate raw <table>s in admin."
+      },
+      {
+        "id": "MC05",
+        "path": "apps/web/src/components/status-pill.tsx",
+        "purpose": "Translated, theme-tokenized status pill that takes (status, locale) and returns localized label + dark-aware bg. Removes every raw `o.status.replace(/_/g,' ')` callsite."
+      },
+      {
+        "id": "MC06",
+        "path": "apps/web/src/components/mobile-sticky-cta.tsx",
+        "purpose": "Bottom-fixed mobile CTA bar (price + primary action) used on creator profile, package detail, campaign detail. lg:hidden."
+      },
+      {
+        "id": "MC07",
+        "path": "apps/web/src/components/live-region.tsx + apps/admin/src/components/live-region.tsx",
+        "purpose": "aria-live='polite' / 'assertive' announcer for locale switch, form errors, save success — replaces native alert() in admin actions and silent inline <p> error messages."
+      },
+      {
+        "id": "MC08",
+        "path": "apps/web/src/components/toast.tsx",
+        "purpose": "Toast/notification system to replace alert() in orders/[id]/actions, users/row-actions, broadcast/form, dead Save/Share buttons."
+      },
+      {
+        "id": "MC09",
+        "path": "apps/web/src/components/payment-method-badge.tsx",
+        "purpose": "Renders Mada/Apple Pay/STC Pay/Tabby/Tamara/Visa logos with proper sizing and a11y alt text — needed across checkout, billing, brand profile."
+      },
+      {
+        "id": "MC10",
+        "path": "apps/web/src/lib/format.ts (rewrite)",
+        "purpose": "Single fmtMoney/fmtDate/fmtAgo accepting locale + currency; uses Intl with bidi isolation; renders U+20C1 with webfont fallback; respects KSA's symbol-on-left rule."
+      },
+      {
+        "id": "MC11",
+        "path": "apps/web/src/components/seasonal-banner.tsx",
+        "purpose": "Cultural calendar banner (Ramadan, Saudi National Day 23 Sep, Founding Day 22 Feb, Eid) that auto-activates and themes the homepage hero."
+      },
+      {
+        "id": "MC12",
+        "path": "apps/web/src/components/offer-card.tsx",
+        "purpose": "In-thread custom offer card (price + deliverables + deadline + accept/decline). Required for NP12 and is a Collabstr/Aspire feature parity gap."
+      },
+      {
+        "id": "MC13",
+        "path": "apps/api/src/common/idempotency.middleware.ts + apps/api/src/payments/webhook.controller.ts",
+        "purpose": "Idempotency-Key middleware backed by IdempotencyKey table; webhook signature verification + dedupe for HyperPay/Tap/Moyasar."
+      }
+    ],
+    "schema_additions": [
+      {
+        "id": "SA01",
+        "model": "PaymentIntent",
+        "fields": [
+          "id",
+          "orderId",
+          "provider(hyperpay|tap|moyasar|stripe)",
+          "providerRef",
+          "amount(Int halalas)",
+          "currency",
+          "status(requires_action|processing|succeeded|failed|refunded)",
+          "method(mada|apple_pay|visa|stc_pay|tabby|tamara)",
+          "threeDsRef",
+          "createdAt"
+        ],
+        "why": "Today /orders/:id/pay is a stub. Required to track a real charge against a SAMA-licensed PSP."
+      },
+      {
+        "id": "SA02",
+        "model": "EscrowHold + LedgerEntry",
+        "fields": [
+          "EscrowHold: id, orderId, amount, status(held|released|refunded|split)",
+          "LedgerEntry: id, accountType(escrow|platform_revenue|creator_payable|psp_fee|vat|wht), debit, credit, currency, refType, refId, createdAt"
+        ],
+        "why": "Double-entry ledger required for reconciliation, VAT report, WHT report, payout calc."
+      },
+      {
+        "id": "SA03",
+        "model": "PayoutAccount + Payout",
+        "fields": [
+          "PayoutAccount: id, userId, type(iban|stc_pay|paypal|wise), holderName, iban/accountRef, country, currency, verifiedAt",
+          "Payout: id, userId, accountId, amount, currency, status(pending|sent|paid|failed), providerRef, createdAt"
+        ],
+        "why": "Creators must be able to withdraw escrowed funds. /admin/payouts page exists but no underlying model."
+      },
+      {
+        "id": "SA04",
+        "model": "KycCase",
+        "fields": [
+          "id",
+          "userId(unique)",
+          "provider",
+          "status(pending|approved|rejected|expired)",
+          "nationalIdOrIqama",
+          "documents(Json)",
+          "wathqRef",
+          "expiresAt",
+          "rejectionReason"
+        ],
+        "why": "Mandatory KSA AML check before payouts/transactions."
+      },
+      {
+        "id": "SA05",
+        "model": "TaxProfile + Invoice",
+        "fields": [
+          "TaxProfile: id, userId(unique), country, vatNumber, crNumber, isVatRegistered, withholdingRate, taxFormType(w9|w8ben|none)",
+          "Invoice: id, orderId, sellerUserId, buyerUserId, totalAmount, vatAmount, whtAmount, currency, zatcaXml, zatcaQrPng, status(draft|cleared|cancelled), sequentialNo"
+        ],
+        "why": "ZATCA Phase 2 e-invoicing + non-resident WHT both legally required in KSA."
+      },
+      {
+        "id": "SA06",
+        "model": "Dispute",
+        "fields": [
+          "id",
+          "orderId(unique)",
+          "openedById",
+          "reason",
+          "evidence(Json[])",
+          "status(open|in_review|resolved_refund|resolved_release|resolved_split|cancelled)",
+          "arbitratorId",
+          "arbitratorNotes",
+          "resolution(Json)",
+          "slaDueAt"
+        ],
+        "why": "OrderStatus has 'disputed' but no entity to drive the dispute workflow."
+      },
+      {
+        "id": "SA07",
+        "model": "SocialAccount + ProfileVerification",
+        "fields": [
+          "SocialAccount: id, userId, platform, handle, externalId, accessToken(encrypted), refreshToken(encrypted), followers, engagement, lastSyncedAt",
+          "ProfileVerification: id, userId, type(social|mawthooq|email|phone), status, evidence, verifiedAt, expiresAt, permitNumber"
+        ],
+        "why": "followersIg/Tt/Yt are manual ints today; verified badges are freeform strings. Need OAuth-linked accounts + Mawthooq permit storage with expiry to enforce CF11 compliance."
+      },
+      {
+        "id": "SA08",
+        "model": "Offer + MessageAttachment",
+        "fields": [
+          "Offer: id, threadId, fromUserId, price, currency, deliverables(Json), deadline, status(pending|accepted|declined|expired|countered), orderId?",
+          "MessageAttachment: id, messageId, fileAssetId, kind(image|video|file|voice|offer)"
+        ],
+        "why": "In-thread offer→order conversion is a core competitor feature (Collabstr, Aspire). Threads today are body-only."
+      },
+      {
+        "id": "SA09",
+        "model": "FileAsset",
+        "fields": [
+          "id",
+          "ownerId",
+          "bucket",
+          "key",
+          "mimeType",
+          "sizeBytes",
+          "scanStatus(pending|clean|infected)",
+          "signedUrlExpiresAt",
+          "createdAt"
+        ],
+        "why": "Avatar, cover, portfolio, delivery URLs are bare strings with no storage abstraction, scanning, or ownership."
+      },
+      {
+        "id": "SA10",
+        "model": "AuditLog",
+        "fields": [
+          "id",
+          "actorId",
+          "actorRole",
+          "action",
+          "targetType",
+          "targetId",
+          "diff(Json)",
+          "ip",
+          "userAgent",
+          "createdAt"
+        ],
+        "why": "/admin/audit page exists with no underlying model. Required for SOC2-style trail + admin accountability."
+      },
+      {
+        "id": "SA11",
+        "model": "IdempotencyKey + Webhook + WebhookDelivery",
+        "fields": [
+          "IdempotencyKey: key(PK), endpoint, userId, requestHash, responseJson, expiresAt",
+          "Webhook: id, brandId, url, secret, events[]",
+          "WebhookDelivery: id, webhookId, eventType, payload, status, attempts, nextRetryAt"
+        ],
+        "why": "POST /orders, /pay, /release are not idempotent → double-charge risk. No record of inbound PSP webhooks → no replay protection."
+      },
+      {
+        "id": "SA12",
+        "model": "Report + Block + NotificationPreference + PushSubscription",
+        "fields": [
+          "Report: id, reporterId, targetType, targetId, reason, status",
+          "Block: id, blockerId, blockedId, @@unique",
+          "NotificationPreference: id, userId, channel(email|push|sms|in_app), kind, enabled",
+          "PushSubscription: id, userId, endpoint, keysP256dh, keysAuth, userAgent"
+        ],
+        "why": "Trust & safety basics + per-channel notification prefs + Web Push are missing."
+      }
+    ],
+    "integrations": [
+      {
+        "id": "IN01",
+        "integration": "HyperPay (SAMA-licensed PSP)",
+        "surface": "apps/api/src/payments/providers/hyperpay.ts — primary gateway. Mada + Apple Pay + STC Pay + Visa/MC + 3DS2. Webhook signature verification via shared secret."
+      },
+      {
+        "id": "IN02",
+        "integration": "Tap Payments",
+        "surface": "apps/api/src/payments/providers/tap.ts — secondary gateway for redundancy + GCC coverage. Tap Link for invoicing creators."
+      },
+      {
+        "id": "IN03",
+        "integration": "Moyasar",
+        "surface": "apps/api/src/payments/providers/moyasar.ts — Saudi-built fallback for SMB-friendly checkout."
+      },
+      {
+        "id": "IN04",
+        "integration": "Tabby + Tamara (BNPL)",
+        "surface": "apps/web/src/app/checkout/checkout-form.tsx — split-in-4 / pay-in-30 options surfaced at checkout for orders ≥ SAR 200. Backend webhook into PaymentIntent."
+      },
+      {
+        "id": "IN05",
+        "integration": "ZATCA Fatoora Phase 2",
+        "surface": "apps/api/src/invoices/zatca.adapter.ts — XML invoice generation, QR code, cryptographic signature, real-time clearance API."
+      },
+      {
+        "id": "IN06",
+        "integration": "Unifonic / Taqnyat SMS OTP",
+        "surface": "apps/api/src/auth/sms-otp.service.ts — KSA-local SMS provider for 2FA, phone verification, transactional alerts."
+      },
+      {
+        "id": "IN07",
+        "integration": "SDAIA PDPL compliance",
+        "surface": "apps/web/src/app/(legal)/privacy/page.tsx + apps/api/src/users/data-export.controller.ts — DPO contact, consent management, data export, breach notification scaffolding."
+      },
+      {
+        "id": "IN08",
+        "integration": "Instagram + TikTok + YouTube + Snapchat OAuth",
+        "surface": "apps/api/src/social/ — OAuth links for verified follower count + ownership proof; Snapchat is critical in KSA (top-3 global market)."
+      },
+      {
+        "id": "IN09",
+        "integration": "Meilisearch (Arabic + English full-text)",
+        "surface": "apps/api/src/search/ — replace pure-Postgres creator filter with Meili index with AR + EN facets, typo tolerance, fast follower/price range filters."
+      },
+      {
+        "id": "IN10",
+        "integration": "S3-compatible storage (Cloudflare R2 or AWS S3 Riyadh region)",
+        "surface": "apps/api/src/files/ — signed upload URLs, virus scan via ClamAV Lambda, lifecycle rules for portfolio/delivery uploads. Use Riyadh region for PDPL data localization."
+      },
+      {
+        "id": "IN11",
+        "integration": "Sentry + PostHog",
+        "surface": "apps/web + apps/admin + apps/api — error monitoring + product analytics with PDPL-compliant config (EU/Riyadh region, IP anonymization)."
+      },
+      {
+        "id": "IN12",
+        "integration": "WhatsApp Business Cloud API",
+        "surface": "apps/api/src/messaging/whatsapp.ts — surface 'Open in WhatsApp' deep-link on accepted offers + optional WhatsApp delivery for order updates (Kuwaitis and Saudis close deals on WA)."
+      },
+      {
+        "id": "IN13",
+        "integration": "Hijri calendar (Umm al-Qura)",
+        "surface": "apps/web/src/lib/format.ts — Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura') for Ramadan campaign windows + payout dates."
+      },
+      {
+        "id": "IN14",
+        "integration": "hCaptcha / Cloudflare Turnstile",
+        "surface": "apps/web/src/app/(auth)/signup + login + contact — bot protection on all auth + form endpoints."
+      }
+    ],
+    "polish": [
+      {
+        "id": "PL01",
+        "file": "apps/web/src/components/footer.tsx",
+        "change": "Localize hardcoded 'Help' label and KSA/SAR pills via i.footer.* (region + currency)."
+      },
+      {
+        "id": "PL02",
+        "file": "apps/web/src/components/dashboard-brand-bar.tsx",
+        "change": "Take a single consoleLabel string from t(); drop the EN+AR concat pattern; localize KSA/SAR pill."
+      },
+      {
+        "id": "PL03",
+        "file": "apps/web/src/app/dashboard/page.tsx + creator-dashboard/page.tsx + creator-dashboard/orders/page.tsx",
+        "change": "Change KPI grid sm:grid-cols-4 → grid-cols-2 lg:grid-cols-4. Wrap recent-orders rows with flex-col sm:flex-row + min-w-0 truncate so AR statuses + SAR amounts don't overflow."
+      },
+      {
+        "id": "PL04",
+        "file": "apps/web/src/app/orders/[id]/page.tsx",
+        "change": "Use locale-aware fmtDate() at every toLocale* call with timeZone Asia/Riyadh. Add rel='noopener noreferrer' + sr-only 'opens in new tab' to delivery <a>."
+      },
+      {
+        "id": "PL05",
+        "file": "apps/web/src/app/campaigns/new/page.tsx",
+        "change": "Move all input placeholders into i.campaigns.new.placeholders.*; add per-step client-side validation; add aria-current='step' on active step and role='progressbar' on container."
+      },
+      {
+        "id": "PL06",
+        "file": "apps/web/src/app/campaigns/[id]/apply (new file)",
+        "change": "Replace native form POST to non-existent /campaigns/{id}/apply with a client component POSTing to ${NEXT_PUBLIC_API_URL}/api/v1/campaigns/${id}/applications with credentials."
+      },
+      {
+        "id": "PL07",
+        "file": "apps/web/src/app/forgot-password/page.tsx + apps/web/src/app/contact/page.tsx + apps/web/src/app/settings/notifications/page.tsx + apps/web/src/app/settings/billing/page.tsx",
+        "change": "Wire all dead forms/buttons to real backend endpoints OR disable + show 'coming soon' badge — no more dead controls that look live."
+      },
+      {
+        "id": "PL08",
+        "file": "apps/web/src/app/page.tsx",
+        "change": "Replace mr-1.5 with me-1.5 on category chips; replace hardcoded → with <DirArrow /> on 'See all' rows."
+      },
+      {
+        "id": "PL09",
+        "file": "apps/web/src/app/notifications/page.tsx",
+        "change": "Locale-aware date formatter; convert 'Mark all read' to client component with credentials + router.refresh(); add 'New' dot + sr-only 'unread' to unread highlight."
+      },
+      {
+        "id": "PL10",
+        "file": "apps/web/src/app/checkout/checkout-form.tsx",
+        "change": "Force dir='ltr' on card number / expiry inputs. Change grid lg:grid-cols-5 → md:grid-cols-5 so summary sits side-by-side on tablets. Add Mada / Apple Pay / Tabby / Tamara payment buttons via MC09."
+      },
+      {
+        "id": "PL11",
+        "file": "apps/web/src/app/messages/messages-ui.tsx",
+        "change": "Use rounded-ee-md / rounded-es-md instead of rounded-br-md/bl-md so bubble tails flip correctly in RTL."
+      },
+      {
+        "id": "PL12",
+        "file": "apps/web/src/app/influencers/page.tsx",
+        "change": "Use data.total.toLocaleString(locale === 'ar' ? 'ar-SA' : 'en-SA'); add Prev/Next pagination when data.total > data.pageSize."
+      },
+      {
+        "id": "PL13",
+        "file": "apps/admin/src/components/locale-switcher.tsx + apps/admin/src/app/login/login-form.tsx",
+        "change": "Extract a shared setLocaleCookie() helper with SameSite=Lax + Secure (prod) attrs. Use translated labels.signingIn instead of '…'. Add role='alert' on login error."
+      },
+      {
+        "id": "PL14",
+        "file": "apps/admin/src/components/ui.tsx",
+        "change": "Add flex-wrap + gap-y-3 to PageHeader; wrap action in shrink-0. Translate Pill children via statusLabel(status, locale) at every callsite."
+      },
+      {
+        "id": "PL15",
+        "file": "apps/admin/src/app/flow-map/*.tsx",
+        "change": "Either localize role-flows.tsx + order-state-machine.tsx + coverage-matrix.tsx + roadmap.tsx + architecture.tsx via i.flowMap.* OR mark each section with a clear 'Reference (English-only)' header. Replace localhost hostnames with NEXT_PUBLIC_WEB_URL/NEXT_PUBLIC_ADMIN_URL/NEXT_PUBLIC_API_URL."
+      },
+      {
+        "id": "PL16",
+        "file": "apps/admin/src/app/orders/[id]/actions.tsx + users/row-actions.tsx + broadcast/form.tsx",
+        "change": "Replace alert() with MC07 LiveRegion / MC08 Toast; add role='alert' on inline error <p>; add bilingual Link (optional) label + helper text in broadcast form."
+      }
+    ]
+  },
+  "kuwait_fork_plan": {
+    "chosen_brand_name": "Diwaniya",
+    "chosen_arabic_name": "ديوانية",
+    "brand_rationale": "Diwaniya (ديوانية) is the Kuwaiti social gathering room where deals, friendships, and business relationships are made — a uniquely Kuwaiti cultural institution. It instantly signals 'local + trusted + where deals happen', maps perfectly to a creator/brand marketplace (the digital diwaniya), and is impossible to confuse with the Saudi Nakhla brand. The word is universally understood across the Gulf but owned by Kuwait. Pronunciation is easy in both Arabic and English, the .app TLD is cleanly available, and the brand opens up rich UX metaphors ('open a diwaniya', 'invite to the diwaniya', 'pinned offers in the diwaniya').",
+    "new_directory_name": "diwaniya-app",
+    "new_github_repo_name": "diwaniya-app",
+    "new_vercel_project_name": "diwaniya-web",
+    "new_vercel_project_name_admin": "diwaniya-admin",
+    "localization_changes": [
+      {
+        "file": "apps/web/src/lib/format.ts + apps/admin/src/lib/format.ts",
+        "from": "LOCALE = 'en-SA' / 'ar-SA'; currency: 'SAR'; maximumFractionDigits: 0; timeZone: 'Asia/Riyadh'",
+        "to": "LOCALE = 'en-KW' / 'ar-KW'; currency: 'KWD'; minimumFractionDigits: 3, maximumFractionDigits: 3; timeZone: 'Asia/Kuwait'. Store amounts internally as integer fils (×1000)."
+      },
+      {
+        "file": "apps/web/src/lib/i18n.ts + apps/admin/src/lib/i18n.ts",
+        "from": "Brand: 'Nakhla' / 'نخلة'; region pill: 'KSA · SAR ر.س'; flag: 🇸🇦; currency labels: 'SAR' / 'ر.س'; regulator: 'GAMR / Mawthooq / ZATCA'; cities: Riyadh, Jeddah, Dammam, Khobar, Makkah, Madinah",
+        "to": "Brand: 'Diwaniya' / 'ديوانية'; region pill: 'Kuwait · KWD د.ك'; flag: 🇰🇼; currency labels: 'KWD' / 'د.ك'; regulator: 'MoI / MoCI'; cities: Kuwait City, Hawalli, Salmiya, Jahra, Ahmadi, Farwaniya, Mubarak Al-Kabeer"
+      },
+      {
+        "file": "apps/web/src/components/dashboard-brand-bar.tsx + apps/web/src/components/footer.tsx",
+        "from": "🇸🇦 Riyadh, KSA / SAR ر.س",
+        "to": "🇰🇼 Kuwait City / KWD د.ك (via i.brand.regionPill + i.brand.currencyPill)"
+      },
+      {
+        "file": "apps/api/prisma/schema.prisma",
+        "from": "Order.amount Int (halalas, 2 dp), no currency field; defaultLocale 'en-SA'",
+        "to": "Order.amount Int (fils, 3 dp) + currency String @default(\"KWD\"); User.locale @default(\"ar-KW\"); add CountryCode enum with KW default"
+      },
+      {
+        "file": "apps/api/prisma/seed.ts",
+        "from": "Saudi creators (Riyadh/Jeddah), SAR prices, Snapchat-heavy seeding",
+        "to": "Kuwaiti creators (Kuwait City/Salmiya/Hawalli), KWD prices in fils, Instagram + Snapchat + TikTok heavy seeding"
+      },
+      {
+        "file": "apps/web/src/app/(legal)/regulations/*.tsx",
+        "from": "Mawthooq (GAMR) permit page + ZATCA page",
+        "to": "MoI Influencer Registration page + 'No VAT in Kuwait' note + Decree-Law 10/2026 disclosure rules page"
+      },
+      {
+        "file": "apps/api/src/payments/providers/*.ts",
+        "from": "hyperpay.ts, moyasar.ts, tap.ts (KSA config), tabby.ts, tamara.ts",
+        "to": "myfatoorah.ts (primary), tap-kw.ts (KNET-first), hesabe.ts, upayments.ts; remove Tabby/Tamara (not core in KW) — optionally keep Tabby for cross-GCC"
+      },
+      {
+        "file": "apps/web/src/app/checkout/checkout-form.tsx",
+        "from": "Payment methods: Mada, Apple Pay, Visa/MC, STC Pay, Tabby, Tamara",
+        "to": "Payment methods: KNET, Apple Pay, Visa/MC, Google Pay, Tap LINK, COD (toggleable)"
+      },
+      {
+        "file": "apps/web/src/components/seasonal-banner.tsx",
+        "from": "Saudi National Day 23 Sep, Founding Day 22 Feb, Ramadan KSA timing",
+        "to": "Hala February Festival (1–28 Feb), Kuwait National Day 25 Feb, Liberation Day 26 Feb, Ramadan, Eid Al-Fitr, Eid Al-Adha, winter kashta season"
+      },
+      {
+        "file": "apps/web/src/lib/i18n.ts (categories)",
+        "from": "KSA-centric niches: Religious/Islamic lifestyle prominent, halal beauty, NEOM/AlUla travel",
+        "to": "Kuwait-centric niches: Perfumes & oud, Abaya/modest luxury, Chalet & farms (عزب), Restaurant reviews (مطاعم), Ramadan series, Kashta/desert camping"
+      },
+      {
+        "file": "apps/admin/src/lib/i18n.ts (status copy + compliance copy)",
+        "from": "ZATCA / VAT 15% / WHT 5% / Mawthooq permit number",
+        "to": "No VAT (KW) / 5% WHT only on non-resident contractors / MoI influencer registration number"
+      },
+      {
+        "file": "apps/web/src/app/[username]/page.tsx + influencers/page.tsx",
+        "from": "Default city filter: Riyadh; default platform mix: Snapchat-heavy",
+        "to": "Default city filter: Kuwait City; default platform mix: Instagram + Snapchat + TikTok parity"
+      },
+      {
+        "file": "apps/web/src/app/pricing/page.tsx",
+        "from": "Tier prices in SAR (e.g. 0 / 99 / 299 / Enterprise)",
+        "to": "Tier prices in KWD with 3 decimals (e.g. 0.000 / 9.900 / 29.900 / Enterprise) using fmtMoney('ar-KW' | 'en-KW', 'KWD')"
+      },
+      {
+        "file": "apps/web/src/app/layout.tsx + apps/admin/src/app/layout.tsx",
+        "from": "html lang='ar' dir='rtl' (defaults to ar-SA copy)",
+        "to": "html lang='ar-KW' dir='rtl' with Khaleeji-Kuwaiti dialect copy; meta theme-color matches Kuwait flag green #007A3D"
+      },
+      {
+        "file": "apps/web/public/og/*.png + favicon",
+        "from": "Nakhla palm-tree mark, KSA palette (green/sand)",
+        "to": "Diwaniya majlis/lantern mark, Kuwait palette (green #007A3D + red #CE1126 + white)"
+      },
+      {
+        "file": ".env.example + apps/web/.env.example + apps/admin/.env.example",
+        "from": "NEXT_PUBLIC_DEFAULT_LOCALE=ar-SA; NEXT_PUBLIC_DEFAULT_COUNTRY=SA; NEXT_PUBLIC_CURRENCY=SAR; PSP=hyperpay; ZATCA_*",
+        "to": "NEXT_PUBLIC_DEFAULT_LOCALE=ar-KW; NEXT_PUBLIC_DEFAULT_COUNTRY=KW; NEXT_PUBLIC_CURRENCY=KWD; PSP=myfatoorah; MYFATOORAH_API_KEY; TAP_KW_SECRET; KNET_TERMINAL_ID"
+      },
+      {
+        "file": "apps/admin/src/components/shell.tsx",
+        "from": "KSA badge '🇸🇦 KSA · SAR ر.س'; portless host 'collabstr-admin.localhost'",
+        "to": "KW badge '🇰🇼 KWT · KWD د.ك' wrapped in <bdi>; portless host 'diwaniya-admin.localhost'"
+      },
+      {
+        "file": "package.json + apps/*/package.json",
+        "from": "@collabstr/web, @collabstr/api, @collabstr/admin; name: collabstr-monorepo",
+        "to": "@diwaniya/web, @diwaniya/api, @diwaniya/admin; name: diwaniya-monorepo"
+      },
+      {
+        "file": "CLAUDE.md / AGENTS.md / README.md",
+        "from": "References to Collabstr/Nakhla, Riyadh, SAR, ZATCA",
+        "to": "References to Diwaniya, Kuwait City, KWD, MoI registration, MyFatoorah/KNET"
+      }
+    ],
+    "seeded_creators": [
+      {
+        "handle": "@mat3am.q8",
+        "displayName": "Mat3am Q8 / مطعم الكويت",
+        "niche": "Food & restaurant reviews",
+        "followers": 380000,
+        "platform": "instagram"
+      },
+      {
+        "handle": "@noor.alabaya",
+        "displayName": "Noor Al-Abaya / نور العباية",
+        "niche": "Abaya & modest luxury",
+        "followers": 215000,
+        "platform": "instagram"
+      },
+      {
+        "handle": "@oud.bukhoor",
+        "displayName": "Oud & Bukhoor House",
+        "niche": "Perfumes / oud / bakhoor",
+        "followers": 142000,
+        "platform": "snapchat"
+      },
+      {
+        "handle": "@chalet.kw",
+        "displayName": "Chalet Kuwait / شاليه الكويت",
+        "niche": "Chalet & real estate tours",
+        "followers": 198000,
+        "platform": "tiktok"
+      },
+      {
+        "handle": "@beautybyfatma",
+        "displayName": "Beauty by Fatma / فاطمة بيوتي",
+        "niche": "Beauty & skincare",
+        "followers": 540000,
+        "platform": "instagram"
+      },
+      {
+        "handle": "@kashta.q8",
+        "displayName": "Kashta Q8 / كشتة الكويت",
+        "niche": "Kashta / desert camping / 4x4",
+        "followers": 87000,
+        "platform": "tiktok"
+      },
+      {
+        "handle": "@ramadan.ma3a.mom",
+        "displayName": "Ramadan Ma'a Om Ali / رمضان مع أم علي",
+        "niche": "Ramadan recipes & family",
+        "followers": 312000,
+        "platform": "snapchat"
+      },
+      {
+        "handle": "@fit.salmiya",
+        "displayName": "Fit Salmiya / فت السالمية",
+        "niche": "Fitness & wellness",
+        "followers": 96000,
+        "platform": "instagram"
+      },
+      {
+        "handle": "@cars.q8.luxury",
+        "displayName": "Cars Q8 Luxury / سيارات الكويت",
+        "niche": "Luxury automotive",
+        "followers": 178000,
+        "platform": "youtube"
+      },
+      {
+        "handle": "@gaming.aboq8",
+        "displayName": "Abo Q8 Gaming / أبو الكويت قيمنق",
+        "niche": "Gaming & entertainment",
+        "followers": 425000,
+        "platform": "youtube"
+      }
+    ],
+    "seeded_campaigns": [
+      {
+        "brand": "Bawadi Mall",
+        "title": "Hala February Drop — Modest Fashion Capsule / تشكيلة هلا فبراير",
+        "budget_kwd": 4500,
+        "niche": "Fashion & modest luxury"
+      },
+      {
+        "brand": "Talabat Kuwait",
+        "title": "Ramadan Iftar Discoveries / اكتشافات إفطار رمضان",
+        "budget_kwd": 8000,
+        "niche": "Food & restaurant reviews"
+      },
+      {
+        "brand": "Areej Al Ambar",
+        "title": "National Day Oud Collection / مجموعة عود اليوم الوطني",
+        "budget_kwd": 6200,
+        "niche": "Perfumes / oud / bakhoor"
+      },
+      {
+        "brand": "Boubyan Bank",
+        "title": "Diwaniya Talks: Young Entrepreneurs / حوارات الديوانية",
+        "budget_kwd": 3500,
+        "niche": "Finance & entrepreneurship"
+      },
+      {
+        "brand": "Zain KW",
+        "title": "Kashta Connectivity 5G — Winter Edition / كشتة الشتاء",
+        "budget_kwd": 5800,
+        "niche": "Kashta / desert camping"
+      }
+    ],
+    "regulatory_copy_en": "All creators promoting paid products or services on Diwaniya must register with the Kuwaiti Ministry of Information (MoI) under Decree-Law No. 10 of 2026 (Digital Commerce Law). Every sponsored post must carry a clear paid-ad disclosure (Ad / إعلان / Sponsored) and may only promote products that hold a valid Ministry of Commerce & Industry (MoCI) commercial license. Brands and creators are jointly liable. Violations carry fines of KWD 1,000–10,000 and/or imprisonment up to one year. Diwaniya verifies your MoI registration before activating any paid campaign and blocks contracting when the registration is missing or expired.",
+    "regulatory_copy_ar": "يلتزم جميع صنّاع المحتوى على ديوانية الذين يروّجون لمنتجات أو خدمات مدفوعة بالتسجيل لدى وزارة الإعلام الكويتية وفقاً للمرسوم بقانون رقم ١٠ لسنة ٢٠٢٦ (قانون التجارة الإلكترونية). يجب أن يحمل كل منشور ممول إفصاحاً واضحاً (إعلان / Ad / Sponsored)، وأن يقتصر الترويج على المنتجات التي تحمل ترخيصاً تجارياً سارياً من وزارة التجارة والصناعة. تقع المسؤولية بشكل مشترك على العلامة التجارية وصانع المحتوى. تتراوح الغرامات بين ١٬٠٠٠ و١٠٬٠٠٠ دينار كويتي و/أو السجن مدة تصل إلى سنة. تتحقق ديوانية من تسجيلك لدى وزارة الإعلام قبل تفعيل أي حملة مدفوعة، ويُحظر التعاقد عند انتهاء التسجيل أو غيابه.",
+    "homepage_hero_copy_en": "Diwaniya — Kuwait's creator marketplace. Hire verified Kuwaiti influencers across Instagram, Snapchat, TikTok and YouTube with KNET, Apple Pay or KWD bank transfer. Escrow-protected, MoI-registration verified, ZATCA-style bilingual invoices, and culturally fluent from Ramadan to Hala February. Where Kuwait's brands and creators close the deal.",
+    "homepage_hero_copy_ar": "ديوانية — السوق الكويتي لصنّاع المحتوى. وظّف مؤثرين كويتيين موثّقين على إنستغرام وسناب شات وتيك توك ويوتيوب، وادفع بـ كي نت أو آبل باي أو تحويل بنكي بالدينار الكويتي. حماية كاملة بالضمان (Escrow)، توثيق تسجيل وزارة الإعلام، فواتير ثنائية اللغة، وفهم عميق للموسم من رمضان إلى هلا فبراير. حيث تُعقد صفقات العلامات والمبدعين في الكويت.",
+    "payment_integration_swaps": [
+      {
+        "remove": "HyperPay (KSA-licensed PSP) primary gateway",
+        "add": "MyFatoorah primary gateway",
+        "why": "MyFatoorah is CBK-licensed, covers KNET + Mada + BENEFIT + cards in a single integration, and is the de-facto Kuwaiti PSP for marketplace checkout."
+      },
+      {
+        "remove": "Moyasar fallback (Saudi-built)",
+        "add": "Hesabe fallback (Kuwaiti, KNET-first)",
+        "why": "Hesabe is Kuwait-native with the best KNET reliability for local POS-style checkout."
+      },
+      {
+        "remove": "Tap Payments (KSA config) generic",
+        "add": "Tap Payments (Kuwait config with Tap LINK for invoicing creators)",
+        "why": "Tap is Kuwait-founded, CBK-licensed, and Tap LINK is the standard creator-invoicing rail in KW for cross-GCC payouts."
+      },
+      {
+        "remove": "Tabby + Tamara BNPL (SAMA-licensed, primarily KSA/UAE)",
+        "add": "Optional Tabby (multi-GCC) only — drop Tamara",
+        "why": "Tabby has solid Kuwait coverage; Tamara is KSA/UAE-focused and adds complexity without local upside. Keep Tabby behind a feature flag."
+      },
+      {
+        "remove": "STC Pay (SAMA-licensed Saudi wallet)",
+        "add": "UPayments wallet + native Apple Pay / Google Pay",
+        "why": "STC Pay does not operate in Kuwait. Apple Pay penetration is high in KW; UPayments covers SMB merchant wallets."
+      },
+      {
+        "remove": "ZATCA Fatoora Phase 2 e-invoicing",
+        "add": "Simple bilingual KWD invoice generator (3-decimal, no VAT line, MoCI license number, MoI influencer registration number from 2026)",
+        "why": "Kuwait has no VAT through at least 2028; ZATCA does not apply. Invoices still need to be bilingual + carry licensing references."
+      },
+      {
+        "remove": "Unifonic / Taqnyat SMS OTP (KSA-local)",
+        "add": "Zain KW / Ooredoo KW SMS via Twilio or Vonage Kuwait gateway",
+        "why": "Local SMS delivery in Kuwait routes through Kuwaiti MNOs; Unifonic has weaker KW deliverability."
+      },
+      {
+        "remove": "Withholding tax engine (KSA 5%/15%)",
+        "add": "Withholding tax engine (KW 5% retention on non-resident contractors only)",
+        "why": "Kuwait WHT is far simpler: 5% retention on non-resident payments until tax clearance, no resident WHT."
+      },
+      {
+        "remove": "SAR amount integer storage as halalas (×100)",
+        "add": "KWD amount integer storage as fils (×1000)",
+        "why": "KWD is 3-decimal; all PSP APIs (MyFatoorah, Tap, Hesabe, UPayments) expect fils as the smallest unit. Float math is unsafe."
+      }
+    ],
+    "removal_list": [
+      "All 'Nakhla' / 'نخلة' brand strings and palm-tree iconography",
+      "Saudi flag 🇸🇦 emoji from header/footer/badges/seasonal banners",
+      "ZATCA Phase 2 e-invoicing module + XML generator + QR rendering + Fatoora API adapter",
+      "GAMR / Mawthooq permit pages, copy, schema fields, and compliance queue",
+      "HyperPay + Moyasar PSP adapters and webhook handlers",
+      "STC Pay payment method UI + backend adapter",
+      "Tamara BNPL adapter + UI",
+      "Saudi National Day (23 Sep), Founding Day (22 Feb), and KSA Ramadan-specific banners + assets",
+      "Hardcoded 'KSA' / 'Riyadh' city defaults across i18n dictionaries, filters, and seed data",
+      "VAT 15% line items in checkout summary + invoice templates",
+      "WHT 15% royalty engine (keep only the 5% non-resident technical-services case)",
+      "'collabstr-*' portless hostnames in scripts, env, and admin shell Marketplace link",
+      "GitHub repo origin remote pointing to collabstr-clone",
+      "Vercel project link to collabstr-clone + its env vars",
+      "Riyadh/Jeddah/AlUla/NEOM stock imagery from public/og/* and homepage assets",
+      "References to Mada-specific UI flow (replaced by KNET flow)",
+      "All `Asia/Riyadh` timezone constants (replaced by `Asia/Kuwait`)",
+      "Currency formatting at 0 / 2 decimals — must be 3 for KWD",
+      "Saudi cultural-niche copy (Hajj/Umrah, modest beauty 'halal' framing) — Kuwait-relevant niches replace",
+      "References to SDAIA PDPL (replace with Kuwait DPPL: Resolution No. 26/2024 Personal Data Privacy Regulation)"
+    ],
+    "cutover_script_steps": [
+      "cd ~/Projects && cp -R collabstr-clone diwaniya-app && cd diwaniya-app",
+      "rm -rf .git node_modules apps/*/node_modules apps/*/.next apps/*/.turbo .turbo",
+      "git init -b main",
+      "find . -type f \\( -name '*.ts' -o -name '*.tsx' -o -name '*.md' -o -name '*.json' -o -name '*.css' -o -name '*.html' -o -name '*.yml' \\) -not -path './node_modules/*' -print0 | xargs -0 perl -pi -e 's/collabstr/diwaniya/g; s/Collabstr/Diwaniya/g; s/COLLABSTR/DIWANIYA/g; s/Nakhla/Diwaniya/g; s/نخلة/ديوانية/g;'",
+      "perl -pi -e 's/\"@collabstr\\//\"@diwaniya\\//g' package.json apps/*/package.json",
+      "perl -pi -e 's/collabstr-monorepo/diwaniya-monorepo/' package.json",
+      "pnpm install",
+      "Replace currency + locale defaults: run a codemod over apps/web/src/lib/format.ts, apps/admin/src/lib/format.ts, apps/api/prisma/schema.prisma to swap SAR→KWD, en-SA→en-KW, ar-SA→ar-KW, Asia/Riyadh→Asia/Kuwait, fractionDigits 0→3, halalas→fils ×1000",
+      "Rewrite apps/web/src/lib/i18n.ts and apps/admin/src/lib/i18n.ts with the Kuwaiti dictionary (brand, region pill, niches, cities, seasonal calendar, regulatory copy)",
+      "Replace apps/api/src/payments/providers/* with myfatoorah.ts + tap-kw.ts + hesabe.ts + upayments.ts; delete hyperpay.ts, moyasar.ts, tamara.ts, stc-pay.ts; keep tabby.ts behind a feature flag",
+      "Rewrite apps/api/prisma/seed.ts with the 10 Kuwaiti creators + 5 campaigns from this plan; convert all prices to fils (×1000)",
+      "Delete apps/api/src/invoices/zatca.adapter.ts and replace with apps/api/src/invoices/kw-invoice.adapter.ts (bilingual, no VAT, 3-decimal, MoCI + MoI fields)",
+      "Replace apps/web/public/og/* + favicon with Diwaniya brand assets (majlis/lantern mark, Kuwait palette #007A3D / #CE1126 / white)",
+      "Update .env.example files with KW defaults: NEXT_PUBLIC_DEFAULT_LOCALE=ar-KW, NEXT_PUBLIC_DEFAULT_COUNTRY=KW, NEXT_PUBLIC_CURRENCY=KWD, MYFATOORAH_API_KEY, TAP_KW_SECRET, HESABE_MERCHANT, KNET_TERMINAL_ID, TZ=Asia/Kuwait",
+      "Update portless hostnames in apps/*/package.json dev scripts: diwaniya-web, diwaniya-admin, diwaniya-api (verify with `portless list` first)",
+      "pnpm db:migrate && pnpm db:seed (against a fresh Postgres db named diwaniya_dev)",
+      "pnpm typecheck && pnpm lint && pnpm build (fix any leftover collabstr / SAR / KSA literals the codemod missed; grep -rni 'collabstr\\|SAR\\|KSA\\|Riyadh\\|Mawthooq\\|ZATCA\\|HyperPay\\|Moyasar' apps/ packages/ should return zero hits)",
+      "git add -A && SKIP_SECRET_SCAN=0 git commit -m 'feat: bootstrap Diwaniya — Kuwait-localized fork of Collabstr clone'",
+      "gh repo create diwaniya-app --public --source=. --remote=origin --push --description 'Diwaniya — Kuwait creator marketplace (KNET, MyFatoorah, MoI-registered, KWD)'",
+      "git push -u origin main",
+      "vercel link --project diwaniya-web --cwd apps/web --yes && vercel link --project diwaniya-admin --cwd apps/admin --yes",
+      "vercel env add NEXT_PUBLIC_DEFAULT_LOCALE production preview development (ar-KW) && repeat for NEXT_PUBLIC_DEFAULT_COUNTRY (KW), NEXT_PUBLIC_CURRENCY (KWD), NEXT_PUBLIC_API_URL, MYFATOORAH_API_KEY, TAP_KW_SECRET, DATABASE_URL, JWT_ACCESS_SECRET, JWT_REFRESH_SECRET",
+      "vercel --prod --cwd apps/web && vercel --prod --cwd apps/admin",
+      "vercel git connect https://github.com/<owner>/diwaniya-app --cwd apps/web --yes && repeat --cwd apps/admin",
+      "Configure custom domains on Vercel: diwaniya.app (web) + admin.diwaniya.app (admin) — add via `vercel domains add diwaniya.app diwaniya-web` and `vercel domains add admin.diwaniya.app diwaniya-admin`",
+      "Set the production API URL in Vercel env: NEXT_PUBLIC_API_URL=https://api.diwaniya.app (deploy the NestJS API to Railway/Render/Fly with Asia/Kuwait region preference)",
+      "Smoke test: visit https://diwaniya.app (ar-KW default), confirm KWD 3-decimal prices, KNET in checkout, Kuwait City as default city filter, MoI registration disclosure in footer, seasonal Hala February banner visible (if in window), and that grep on the deployed source returns zero hits for 'collabstr' / 'SAR' / 'Riyadh' / 'Mawthooq'",
+      "Report live URLs (https://diwaniya.app + https://admin.diwaniya.app) and GitHub repo URL (https://github.com/<owner>/diwaniya-app) to the user"
+    ]
+  }
+}

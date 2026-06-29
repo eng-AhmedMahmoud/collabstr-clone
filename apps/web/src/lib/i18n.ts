@@ -105,7 +105,6 @@ export const messages = {
       googleSoon: "Continue with Google (soon)",
       appleSoon: "Continue with Apple (soon)",
       or: "or",
-      demoLine: "Demo brand: brand@example.dev · Demo creator: ava@example.dev · pwd Password123!",
     },
     signup: {
       title: "Create your account",
@@ -370,8 +369,8 @@ export const messages = {
     },
     about: {
       title: "About",
-      p1: "Nakhla is a reference build of a modern influencer marketplace for Saudi Arabia — Next.js on the frontend, NestJS + Prisma + PostgreSQL on the backend. It exists to show end-to-end flows: browse, hire, escrow, deliver, review.",
-      p2: "This isn't a production product. Auth tokens, payments, and notifications are simplified for demo purposes.",
+      p1: "Nakhla is the modern influencer marketplace built for Saudi Arabia. Brands hire vetted KSA creators on Instagram, TikTok, Snapchat, YouTube, and UGC — with SAR escrow, ZATCA-ready invoicing, and bilingual support throughout the experience.",
+      p2: "We exist to make Arabic-first creator marketing fast: discover creators by city and niche, brief them in minutes, pay safely, and ship content that converts across the Kingdom.",
     },
     contact: {
       title: "Contact us",
@@ -527,7 +526,6 @@ export const messages = {
       googleSoon: "المتابعة بحساب Google (قريباً)",
       appleSoon: "المتابعة بحساب Apple (قريباً)",
       or: "أو",
-      demoLine: "تجربة علامة: brand@example.dev · تجربة مؤثر: ava@example.dev · كلمة المرور Password123!",
     },
     signup: {
       title: "أنشئ حسابك",
@@ -792,8 +790,8 @@ export const messages = {
     },
     about: {
       title: "من نحن",
-      p1: "نخلة هي نسخة مرجعية حديثة لسوق المؤثرين في المملكة العربية السعودية — Next.js للواجهة، NestJS + Prisma + PostgreSQL للخلفية. هدفها عرض التدفقات الكاملة: التصفح، التوظيف، الضمان، التسليم، التقييم.",
-      p2: "هذا ليس منتجاً إنتاجياً. الرموز، المدفوعات، والإشعارات مبسّطة لأغراض العرض.",
+      p1: "نخلة هو سوق التسويق بالمؤثرين الحديث، مبني خصيصاً للمملكة العربية السعودية. تتعاقد العلامات مع مؤثرين سعوديين موثوقين على إنستغرام، تيك توك، سناب شات، يوتيوب، ومحتوى UGC — مع ضمان بالريال السعودي، فوترة إلكترونية متوافقة مع زاتكا، ودعم ثنائي اللغة في كل تجربة المنصة.",
+      p2: "هدفنا تسريع تسويق المحتوى بالعربية أولاً: اكتشف المؤثرين بالمدينة والتخصص، أرسل البريف خلال دقائق، ادفع بأمان، وأطلق محتوى يحقق تحويلات في كل أنحاء المملكة.",
     },
     contact: {
       title: "تواصل معنا",

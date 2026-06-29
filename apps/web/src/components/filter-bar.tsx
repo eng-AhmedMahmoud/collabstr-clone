@@ -50,7 +50,7 @@ export function FilterBar() {
               onClick={() => setOpen(open === f.label ? null : f.label)}
               className={`text-sm font-medium px-3.5 py-2 rounded-full border transition ${
                 selected[f.label]
-                  ? "bg-fg text-white border-fg"
+                  ? "bg-fg text-bg border-fg"
                   : "bg-elevated text-fg/80 border-border hover:border-fg"
               }`}
             >

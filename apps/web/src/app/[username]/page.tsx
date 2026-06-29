@@ -135,7 +135,7 @@ export default async function CreatorProfile({
                     <div className="brand-gradient grid place-items-center text-white text-xs font-semibold" style={{ width: `${c.audience.gender.female}%` }}>
                       {c.audience.gender.female}%
                     </div>
-                    <div className="bg-fg grid place-items-center text-white text-xs font-semibold" style={{ width: `${c.audience.gender.male}%` }}>
+                    <div className="bg-fg grid place-items-center text-bg text-xs font-semibold" style={{ width: `${c.audience.gender.male}%` }}>
                       {c.audience.gender.male}%
                     </div>
                   </div>

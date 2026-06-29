@@ -41,8 +41,8 @@ export function BroadcastForm() {
   return (
     <form onSubmit={send} className="space-y-5">
       <label className="block">
-        <span className="text-xs font-semibold text-[#8b8ba0]">{i.broadcast.audience}</span>
-        <select value={role} onChange={(e) => setRole(e.target.value as any)} className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30]">
+        <span className="text-xs font-semibold text-muted">{i.broadcast.audience}</span>
+        <select value={role} onChange={(e) => setRole(e.target.value as any)} className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-bg border border-border">
           <option value="">{i.broadcast.audienceAll}</option>
           <option value="brand">{i.broadcast.audienceBrands}</option>
           <option value="creator">{i.broadcast.audienceCreators}</option>
@@ -52,38 +52,38 @@ export function BroadcastForm() {
 
       <div className="grid sm:grid-cols-2 gap-3">
         <label className="block">
-          <span className="text-xs font-semibold text-[#8b8ba0]">{i.broadcast.msgTitle} · EN</span>
+          <span className="text-xs font-semibold text-muted">{i.broadcast.msgTitle} · EN</span>
           <input value={titleEn} onChange={(e) => setTitleEn(e.target.value)} dir="ltr" required maxLength={140}
-            className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30]" />
+            className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-bg border border-border" />
         </label>
         <label className="block">
-          <span className="text-xs font-semibold text-[#8b8ba0]">{i.broadcast.msgTitle} · AR</span>
+          <span className="text-xs font-semibold text-muted">{i.broadcast.msgTitle} · AR</span>
           <input value={titleAr} onChange={(e) => setTitleAr(e.target.value)} dir="rtl" required maxLength={140}
-            className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30]" />
+            className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-bg border border-border" />
         </label>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-3">
         <label className="block">
-          <span className="text-xs font-semibold text-[#8b8ba0]">{i.broadcast.msgBody} · EN</span>
+          <span className="text-xs font-semibold text-muted">{i.broadcast.msgBody} · EN</span>
           <textarea value={bodyEn} onChange={(e) => setBodyEn(e.target.value)} dir="ltr" required rows={5} maxLength={2000}
-            className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30]" />
+            className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-bg border border-border" />
         </label>
         <label className="block">
-          <span className="text-xs font-semibold text-[#8b8ba0]">{i.broadcast.msgBody} · AR</span>
+          <span className="text-xs font-semibold text-muted">{i.broadcast.msgBody} · AR</span>
           <textarea value={bodyAr} onChange={(e) => setBodyAr(e.target.value)} dir="rtl" required rows={5} maxLength={2000}
-            className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30]" />
+            className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-bg border border-border" />
         </label>
       </div>
 
       <label className="block">
-        <span className="text-xs font-semibold text-[#8b8ba0]">Link (optional)</span>
+        <span className="text-xs font-semibold text-muted">Link (optional)</span>
         <input value={href} onChange={(e) => setHref(e.target.value)} dir="ltr" maxLength={500} placeholder="/orders/abc123"
-          className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-[#0b0b14] border border-[#1f1f30]" />
+          className="mt-1 w-full px-3.5 py-2.5 rounded-lg bg-bg border border-border" />
       </label>
 
-      {msg && <p className="text-sm text-[#d1d1da]">{msg}</p>}
-      <div className="pt-3 border-t border-[#1f1f30]">
+      {msg && <p className="text-sm text-fg/85">{msg}</p>}
+      <div className="pt-3 border-t border-border">
       <button disabled={busy || !allFilled} className="px-5 py-2.5 rounded-lg brand-gradient text-white font-bold disabled:opacity-60">
         {busy ? i.broadcast.sending : i.broadcast.send}
       </button>

@@ -39,9 +39,9 @@ export default async function OrdersAdmin({
       <PageHeader title={i.orders.title} subtitle={`${i.orders.countTpl.replace("{n}", String(rows.length))} ${sp.status ? `· ${i.orders.filterTpl.replace("{s}", sp.status)}` : ""}`} />
 
       <div className="flex flex-wrap gap-2 mb-5">
-        <Link href="/orders" className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${!sp.status ? "bg-white text-[#0b0b14] border-white" : "border-[#1f1f30] text-[#d1d1da] hover:border-[#8b8ba0]"}`}>{i.common.all}</Link>
+        <Link href="/orders" className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${!sp.status ? "bg-white text-bg border-white" : "border-border text-fg/85 hover:border-muted"}`}>{i.common.all}</Link>
         {STATUS.map((s) => (
-          <Link key={s} href={`/orders?status=${s}`} className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${sp.status === s ? "bg-white text-[#0b0b14] border-white" : "border-[#1f1f30] text-[#d1d1da] hover:border-[#8b8ba0]"}`}>
+          <Link key={s} href={`/orders?status=${s}`} className={`text-xs font-semibold px-3 py-1.5 rounded-full border ${sp.status === s ? "bg-white text-bg border-white" : "border-border text-fg/85 hover:border-muted"}`}>
             {s.replace(/_/g, " ")}
           </Link>
         ))}
@@ -49,7 +49,7 @@ export default async function OrdersAdmin({
 
       <Card padding={false}>
         <table className="w-full text-sm">
-          <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
+          <thead className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
             <tr>
               <th className="text-left px-5 py-2">{i.orders.colOrder}</th>
               <th className="text-left px-5 py-2">{i.orders.colParties}</th>
@@ -60,21 +60,21 @@ export default async function OrdersAdmin({
           </thead>
           <tbody>
             {rows.map((o) => (
-              <tr key={o.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
+              <tr key={o.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
                 <td className="px-5 py-3">
                   <Link href={`/orders/${o.id}`} className="font-semibold font-mono text-xs hover:text-emerald-300">#{o.id.slice(0, 8)}</Link>
-                  <p className="text-[11px] text-[#8b8ba0] mt-0.5">{o.package.title}</p>
+                  <p className="text-[11px] text-muted mt-0.5">{o.package.title}</p>
                 </td>
-                <td className="px-5 py-3 text-[#d1d1da]">
+                <td className="px-5 py-3 text-fg/85">
                   <p>{o.brand.name}</p>
-                  <p className="text-[11px] text-[#8b8ba0]">→ {o.creator.user.name}</p>
+                  <p className="text-[11px] text-muted">→ {o.creator.user.name}</p>
                 </td>
                 <td className="px-5 py-3"><Pill kind={pillKindForStatus(o.status)}>{o.status.replace(/_/g, " ")}</Pill></td>
-                <td className="px-5 py-3 text-right font-bold">{fmtMoney(o.amount)} <span className="text-[10px] text-[#8b8ba0] font-normal">+{fmtMoney(o.serviceFee)} {i.orders.fee}</span></td>
-                <td className="px-5 py-3 text-right text-[#8b8ba0] pr-5">{fmtAgo(o.createdAt)}</td>
+                <td className="px-5 py-3 text-right font-bold">{fmtMoney(o.amount)} <span className="text-[10px] text-muted font-normal">+{fmtMoney(o.serviceFee)} {i.orders.fee}</span></td>
+                <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(o.createdAt)}</td>
               </tr>
             ))}
-            {rows.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-[#8b8ba0]">{i.orders.none}</td></tr>}
+            {rows.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-muted">{i.orders.none}</td></tr>}
           </tbody>
         </table>
       </Card>

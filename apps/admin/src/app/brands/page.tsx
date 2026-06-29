@@ -31,7 +31,7 @@ export default async function BrandsAdmin() {
       <PageHeader title={i.brands.title} subtitle={`${rows.length} ${i.brands.countSuffix}`} />
       <Card padding={false}>
         <table className="w-full text-sm">
-          <thead className="text-[10px] uppercase tracking-wider text-[#8b8ba0] border-b border-[#1f1f30]">
+          <thead className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
             <tr>
               <th className="text-left px-5 py-2">{i.brands.colBrand}</th>
               <th className="text-right px-5 py-2">{i.brands.colOrders}</th>
@@ -41,17 +41,17 @@ export default async function BrandsAdmin() {
           </thead>
           <tbody>
             {rows.map((b) => (
-              <tr key={b.id} className="border-b last:border-0 border-[#1f1f30] hover:bg-[#161624]/40">
+              <tr key={b.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
                 <td className="px-5 py-3">
                   <p className="font-semibold">{b.brandName}</p>
-                  <p className="text-[11px] text-[#8b8ba0]">{b.user.email}</p>
+                  <p className="text-[11px] text-muted">{b.user.email}</p>
                 </td>
                 <td className="px-5 py-3 text-right">{b.totalOrders}</td>
                 <td className="px-5 py-3 text-right font-bold">{fmtMoney(b.totalSpent)}</td>
-                <td className="px-5 py-3 text-right text-[#8b8ba0] pr-5">{fmtAgo(b.createdAt)}</td>
+                <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(b.createdAt)}</td>
               </tr>
             ))}
-            {rows.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-[#8b8ba0]">{i.brands.none}</td></tr>}
+            {rows.length === 0 && <tr><td colSpan={4} className="px-5 py-12 text-center text-muted">{i.brands.none}</td></tr>}
           </tbody>
         </table>
       </Card>
