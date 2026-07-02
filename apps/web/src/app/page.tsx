@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CreatorCard } from "@/components/creator-card";
+import { Reveal } from "@/components/reveal";
 import { FilterBar } from "@/components/filter-bar";
 import { CATEGORIES } from "@/lib/data";
 import { serverApi } from "@/lib/api";
@@ -35,7 +36,7 @@ export default async function Home() {
           <div className="absolute -top-40 -left-40 h-[640px] w-[640px] rounded-full brand-conic opacity-[0.08] dark:opacity-[0.12] blur-3xl" />
           <div className="absolute -bottom-48 -right-32 h-[560px] w-[560px] rounded-full bg-gradient-to-tr from-brand-300 via-brand-200 to-amber-200 blur-3xl opacity-50 dark:opacity-25" />
         </div>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10 text-center">
+        <div className="hero-stagger mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-16 pb-10 text-center">
           <p className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-elevated/80 border border-border mb-5">
             <span className="text-base leading-none">🇸🇦</span>
             {i.home.badge}
@@ -68,10 +69,10 @@ export default async function Home() {
               <Link
                 key={c.label}
                 href={`/influencers?category=${c.label}`}
-                className="text-sm font-medium px-3.5 py-2 rounded-full bg-elevated border border-border hover:border-fg"
+                className="text-sm font-medium px-3.5 py-2 rounded-full bg-elevated border border-border hover:border-brand hover:-translate-y-0.5 hover:shadow-sm transition-all"
               >
-                <span className="mr-1.5">{c.emoji}</span>
-                {c.label}
+                <span className="me-1.5">{c.emoji}</span>
+                {i.categoryLabels[c.label as keyof typeof i.categoryLabels] ?? c.label}
               </Link>
             ))}
           </div>
@@ -97,16 +98,19 @@ export default async function Home() {
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20">
         <div className="grid md:grid-cols-3 gap-6">
           {i.home.steps.map((s, idx) => (
-            <div key={s.t} className="rounded-2xl p-6 border border-border bg-elevated">
-              <div className="h-10 w-10 grid place-items-center rounded-xl brand-gradient text-white font-black mb-4">{idx + 1}</div>
-              <h3 className="font-bold text-lg">{s.t}</h3>
-              <p className="text-muted mt-1.5 text-sm">{s.d}</p>
-            </div>
+            <Reveal key={s.t} delay={idx * 120}>
+              <div className="h-full rounded-2xl p-6 border border-border bg-elevated hover:border-brand-300 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div className="h-10 w-10 grid place-items-center rounded-xl brand-gradient text-white font-black mb-4">{idx + 1}</div>
+                <h3 className="font-bold text-lg">{s.t}</h3>
+                <p className="text-muted mt-1.5 text-sm">{s.d}</p>
+              </div>
+            </Reveal>
           ))}
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20">
+        <Reveal>
         <div className="rounded-3xl p-10 md:p-14 brand-gradient text-white overflow-hidden relative">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -125,9 +129,11 @@ export default async function Home() {
             </ul>
           </div>
         </div>
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 mt-20">
+        <Reveal>
         <h2 className="text-3xl font-black text-center">{i.home.faqTitle}</h2>
         <div className="mt-8 divide-y divide-border rounded-2xl border border-border bg-elevated">
           {i.home.faq.map((item) => (
@@ -137,12 +143,15 @@ export default async function Home() {
             </details>
           ))}
         </div>
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-20 text-center">
+        <Reveal>
         <h2 className="text-4xl font-black">{i.home.finalTitle}</h2>
         <p className="text-muted mt-3">{i.home.finalSub}</p>
-        <Link href="/influencers" className="inline-flex mt-6 px-6 py-3 rounded-xl brand-gradient text-white font-semibold shadow-sm hover:opacity-95">{i.home.finalCta}</Link>
+        <Link href="/influencers" className="inline-flex mt-6 px-6 py-3 rounded-xl brand-gradient brand-glow text-white font-semibold shadow-sm hover:opacity-95 hover:-translate-y-0.5 active:scale-[0.98] transition-all">{i.home.finalCta}</Link>
+        </Reveal>
       </section>
     </>
   );
@@ -151,16 +160,21 @@ export default async function Home() {
 function Row({ title, subtitle, href, creators, seeAll }: { title: string; subtitle: string; href: string; creators: ApiCreator[]; seeAll: string }) {
   return (
     <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-16">
-      <div className="flex items-end justify-between gap-4 mb-5">
-        <div>
-          <h2 className="text-2xl font-black">{title}</h2>
-          <p className="text-muted text-sm">{subtitle}</p>
+      <Reveal>
+        <div className="flex items-end justify-between gap-4 mb-5">
+          <div>
+            <h2 className="text-2xl font-black">{title}</h2>
+            <p className="text-muted text-sm">{subtitle}</p>
+          </div>
+          <Link href={href} className="group text-sm font-semibold text-brand hover:underline whitespace-nowrap">
+            {seeAll}{" "}
+            <span className="inline-block transition-transform group-hover:translate-x-0.5 rtl:-scale-x-100 rtl:group-hover:-translate-x-0.5">→</span>
+          </Link>
         </div>
-        <Link href={href} className="text-sm font-semibold text-brand hover:underline whitespace-nowrap">{seeAll} →</Link>
-      </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-        {creators.map((c) => <CreatorCard key={c.username} c={c} />)}
-      </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+          {creators.map((c) => <CreatorCard key={c.username} c={c} />)}
+        </div>
+      </Reveal>
     </section>
   );
 }

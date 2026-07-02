@@ -28,4 +28,38 @@ export class UsersService {
     await this.prisma.user.delete({ where: { id: userId } });
     return { ok: true };
   }
+
+  // PDPL art. 4 / GDPR art. 15 & 20 — full copy of the user's personal data
+  // in a portable format. passwordHash and token hashes are secrets, not
+  // personal data the subject needs back, so they are stripped.
+  async exportData(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        brandProfile: true,
+        creatorProfile: { include: { packages: true } },
+        notifications: true,
+        savedCreators: true,
+        reviewsLeft: true,
+        campaigns: { include: { applications: true } },
+        ordersAsBrand: { include: { events: true, deliveries: true } },
+        threadsAsBrand: { include: { messages: true } },
+        threadsAsCreator: { include: { messages: true } },
+      },
+    });
+    if (!user) throw new NotFoundException();
+    const { passwordHash: _passwordHash, ...safeUser } = user;
+    const creatorOrders = user.creatorProfile
+      ? await this.prisma.order.findMany({
+          where: { creatorId: user.creatorProfile.id },
+          include: { events: true, deliveries: true },
+        })
+      : [];
+    return {
+      exportedAt: new Date().toISOString(),
+      format: "nakhla-data-export/v1",
+      user: safeUser,
+      ordersAsCreator: creatorOrders,
+    };
+  }
 }

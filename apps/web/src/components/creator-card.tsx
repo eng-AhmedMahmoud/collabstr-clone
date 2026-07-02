@@ -22,7 +22,7 @@ export async function CreatorCard({ c }: { c: ApiCreator }) {
   return (
     <Link
       href={`/${c.username}`}
-      className="group block rounded-2xl overflow-hidden bg-elevated border border-border hover:shadow-lg hover:-translate-y-0.5 transition"
+      className="group block rounded-2xl overflow-hidden bg-elevated border border-border hover:border-brand-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
     >
       <div
         className="relative aspect-[4/5] overflow-hidden brand-mesh"

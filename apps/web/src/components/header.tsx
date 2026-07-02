@@ -26,7 +26,7 @@ export async function Header() {
 
         <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-fg/80">
           {items.map((it) => (
-            <Link key={it.href} href={it.href} className="hover:text-brand">{it.label}</Link>
+            <Link key={it.href} href={it.href} className="relative transition-colors hover:text-brand after:absolute after:-bottom-1 after:start-0 after:h-0.5 after:w-0 after:rounded-full after:bg-brand after:transition-all after:duration-300 hover:after:w-full">{it.label}</Link>
           ))}
         </nav>
 

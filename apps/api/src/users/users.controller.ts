@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Patch, Post, Res, UseGuards } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Header, Patch, Post, Res, UseGuards } from "@nestjs/common";
 import type { Response } from "express";
 import { UsersService } from "./users.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
@@ -50,5 +50,13 @@ export class UsersController {
   @Delete()
   remove(@CurrentUser() user: AuthUser) {
     return this.users.deleteAccount(user.id);
+  }
+
+  // PDPL/GDPR data portability — served as a download so the browser saves
+  // the file instead of rendering a wall of JSON.
+  @Get("export")
+  @Header("Content-Disposition", 'attachment; filename="nakhla-data-export.json"')
+  export(@CurrentUser() user: AuthUser) {
+    return this.users.exportData(user.id);
   }
 }

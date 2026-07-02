@@ -4,6 +4,7 @@ import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
+import { Throttle } from "@nestjs/throttler";
 import { LoginInput, SignupInput } from "@collabstr/shared-types";
 
 const isProd = process.env.NODE_ENV === "production";
@@ -42,6 +43,7 @@ export class AuthController {
   constructor(private auth: AuthService) {}
 
   @Post("signup")
+  @Throttle({ default: { ttl: 60_000, limit: 5 } })
   @UsePipes(new ZodValidationPipe(SignupInput))
   async signup(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const { user, accessToken, refreshToken } = await this.auth.signup(body);
@@ -52,6 +54,7 @@ export class AuthController {
 
   @Post("login")
   @HttpCode(200)
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
   @UsePipes(new ZodValidationPipe(LoginInput))
   async login(@Body() body: any, @Res({ passthrough: true }) res: Response) {
     const { user, accessToken, refreshToken } = await this.auth.login(body);

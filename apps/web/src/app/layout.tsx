@@ -5,6 +5,7 @@ import { Footer } from "@/components/footer";
 import { ThemeScript } from "@/components/theme-script";
 import { getLocale, dirOf, messages, type Dict } from "@/lib/i18n";
 import { LocaleProvider } from "@/components/locale-provider";
+import { CookieConsent } from "@/components/cookie-consent";
 
 export const metadata: Metadata = {
   title: "Nakhla — Hire KSA Influencers & UGC Creators",
@@ -35,6 +36,7 @@ export default async function RootLayout({
           <Header />
           <main className="flex-1">{children}</main>
           <Footer />
+          <CookieConsent />
         </LocaleProvider>
       </body>
     </html>

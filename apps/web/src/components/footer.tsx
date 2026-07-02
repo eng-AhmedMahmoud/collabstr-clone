@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { t } from "@/lib/i18n";
+import { CookieSettingsLink } from "@/components/cookie-settings-link";
 
 export async function Footer() {
   const i = await t();
@@ -36,6 +37,7 @@ export async function Footer() {
           <Link href="/terms">{i.footer.terms}</Link>
           <Link href="/privacy">{i.footer.privacy}</Link>
           <Link href="/help">Help</Link>
+          <CookieSettingsLink />
         </Col>
       </div>
       <div className="border-t border-white/10 py-5 text-center text-white/60 text-xs">
