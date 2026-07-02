@@ -42,6 +42,17 @@ export async function CreatorCard({ c }: { c: ApiCreator }) {
           unoptimized
         />
         <div className="absolute inset-x-0 top-0 p-3 flex gap-1.5 flex-wrap">
+          {c.mawthooqStatus === "verified" && (
+            <span
+              title={i.mawthooq.badgeFull}
+              className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-1 rounded-full bg-brand text-white shadow-sm"
+            >
+              <svg viewBox="0 0 20 20" className="h-3 w-3" fill="currentColor" aria-hidden="true">
+                <path fillRule="evenodd" d="M10 1.5l2.09 1.52 2.58-.02.79 2.45 2.09 1.5-.8 2.45.8 2.45-2.09 1.5-.79 2.45-2.58-.02L10 18.5l-2.09-1.52-2.58.02-.79-2.45L2.45 13l.8-2.45-.8-2.45 2.09-1.5.79-2.45 2.58.02L10 1.5zm3.03 6.24a.75.75 0 00-1.06-1.06L9 9.65 7.53 8.18a.75.75 0 10-1.06 1.06l2 2a.75.75 0 001.06 0l3.5-3.5z" clipRule="evenodd" />
+              </svg>
+              {i.mawthooq.badge}
+            </span>
+          )}
           {c.badges.map((b) => (
             <span
               key={b}

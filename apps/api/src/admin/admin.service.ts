@@ -100,6 +100,45 @@ export class AdminService {
     });
   }
 
+  // Creators awaiting Mawthooq licence review (pending first, then recently decided).
+  async mawthooqQueue() {
+    return this.prisma.creatorProfile.findMany({
+      where: { mawthooqStatus: { in: ["pending", "verified", "rejected", "expired"] } },
+      orderBy: [{ mawthooqStatus: "asc" }, { mawthooqSubmittedAt: "desc" }],
+      take: 200,
+      select: {
+        id: true, username: true, city: true,
+        mawthooqStatus: true, mawthooqLicenseNo: true,
+        mawthooqSubmittedAt: true, mawthooqVerifiedAt: true,
+        mawthooqExpiresAt: true, mawthooqReviewNote: true,
+        user: { select: { name: true, email: true } },
+      },
+    });
+  }
+
+  async reviewMawthooq(
+    creatorId: string,
+    decision: "verified" | "rejected",
+    expiresAt?: string,
+    note?: string,
+  ) {
+    const profile = await this.prisma.creatorProfile.findUnique({ where: { id: creatorId } });
+    if (!profile) throw new NotFoundException("Creator not found");
+    if (profile.mawthooqStatus === "none") {
+      throw new BadRequestException("Creator has not submitted a licence");
+    }
+    return this.prisma.creatorProfile.update({
+      where: { id: creatorId },
+      data: {
+        mawthooqStatus: decision,
+        mawthooqVerifiedAt: decision === "verified" ? new Date() : null,
+        mawthooqExpiresAt: decision === "verified" && expiresAt ? new Date(expiresAt) : null,
+        mawthooqReviewNote: note ?? null,
+      },
+      select: { id: true, mawthooqStatus: true, mawthooqVerifiedAt: true, mawthooqExpiresAt: true },
+    });
+  }
+
   async listBrands() {
     const brands = await this.prisma.brandProfile.findMany({
       orderBy: { createdAt: "desc" },

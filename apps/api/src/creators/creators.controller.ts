@@ -5,7 +5,7 @@ import { RolesGuard } from "../common/roles.guard";
 import { Roles } from "../common/roles.decorator";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
-import { CreatorListQuery, PackageInput } from "@collabstr/shared-types";
+import { CreatorListQuery, MawthooqInput, PackageInput } from "@collabstr/shared-types";
 
 @Controller("creators")
 export class CreatorsController {
@@ -27,6 +27,14 @@ export class CreatorsController {
   @Patch("me")
   updateMine(@CurrentUser() user: AuthUser, @Body() body: any) {
     return this.creators.updateMyProfile(user.id, body);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("creator")
+  @Post("me/mawthooq")
+  @UsePipes(new ZodValidationPipe(MawthooqInput))
+  submitMawthooq(@CurrentUser() user: AuthUser, @Body() body: MawthooqInput) {
+    return this.creators.submitMawthooq(user.id, body.licenseNo);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

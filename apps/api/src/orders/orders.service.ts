@@ -24,6 +24,12 @@ export class OrdersService {
   async create(brandId: string, input: OrderInput) {
     const pkg = await this.prisma.package.findUnique({ where: { id: input.packageId }, include: { creator: true } });
     if (!pkg) throw new NotFoundException("Package not found");
+    // Mawthooq gate: Saudi firms face fines up to SAR 5M for contracting an
+    // unlicensed advertiser. Enforced in production (ENFORCE_MAWTHOOQ=1); off by
+    // default so demo/seed data (unverified creators) still transacts.
+    if (process.env.ENFORCE_MAWTHOOQ === "1" && pkg.creator.mawthooqStatus !== "verified") {
+      throw new BadRequestException("This creator's advertising licence is not verified yet");
+    }
     const fee = Math.round(pkg.price * SERVICE_FEE);
     const order = await this.prisma.order.create({
       data: {

@@ -41,7 +41,20 @@ export default async function CreatorProfile({
               </div>
               <div className="pb-2">
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-brand">{c.headline}</p>
-                <h1 className="text-3xl font-black">{c.user.name}</h1>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-3xl font-black">{c.user.name}</h1>
+                  {c.mawthooqStatus === "verified" && (
+                    <span
+                      title={i.mawthooq.badgeFull}
+                      className="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full bg-brand text-white"
+                    >
+                      <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="currentColor" aria-hidden="true">
+                        <path fillRule="evenodd" d="M10 1.5l2.09 1.52 2.58-.02.79 2.45 2.09 1.5-.8 2.45.8 2.45-2.09 1.5-.79 2.45-2.58-.02L10 18.5l-2.09-1.52-2.58.02-.79-2.45L2.45 13l.8-2.45-.8-2.45 2.09-1.5.79-2.45 2.58.02L10 1.5zm3.03 6.24a.75.75 0 00-1.06-1.06L9 9.65 7.53 8.18a.75.75 0 10-1.06 1.06l2 2a.75.75 0 001.06 0l3.5-3.5z" clipRule="evenodd" />
+                      </svg>
+                      {i.mawthooq.badge}
+                    </span>
+                  )}
+                </div>
                 <div className="text-sm text-muted mt-0.5 flex items-center gap-3">
                   <span className="flex items-center gap-1 text-amber-500 font-semibold">
                     ★ <span className="text-fg">{c.rating.toFixed(1)}</span>

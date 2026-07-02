@@ -67,6 +67,25 @@ export const PackageInput = z.object({
 });
 export type PackageInput = z.infer<typeof PackageInput>;
 
+export const MawthooqStatus = z.enum(["none", "pending", "verified", "rejected", "expired"]);
+export type MawthooqStatus = z.infer<typeof MawthooqStatus>;
+
+// Creator-submitted Mawthooq (GAMR advertising) licence. Number is the public
+// licence identifier shown on the GAMR/Mawthooq registry — kept loose since the
+// format is not publicly standardised; admin verifies the actual value.
+export const MawthooqInput = z.object({
+  licenseNo: z.string().trim().min(4).max(40),
+});
+export type MawthooqInput = z.infer<typeof MawthooqInput>;
+
+// Admin decision on a submitted licence.
+export const MawthooqReviewInput = z.object({
+  decision: z.enum(["verified", "rejected"]),
+  expiresAt: z.string().datetime().optional(),
+  note: z.string().max(500).optional(),
+});
+export type MawthooqReviewInput = z.infer<typeof MawthooqReviewInput>;
+
 export const CreatorListQuery = z.object({
   platform: Platform.optional(),
   category: Category.optional(),

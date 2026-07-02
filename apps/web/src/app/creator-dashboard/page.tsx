@@ -6,6 +6,7 @@ import { getSession } from "@/lib/session";
 import { fmtMoney } from "@/lib/format";
 import { t } from "@/lib/i18n";
 import { DashboardBrandBar } from "@/components/dashboard-brand-bar";
+import { MawthooqCard } from "./mawthooq-card";
 
 type OrderRow = {
   id: string;
@@ -30,6 +31,14 @@ export default async function CreatorDashboard() {
   let applications: { id: string; status: string; price: number; campaign: { id: string; title: string } }[] = [];
   try { orders = await api.get<OrderRow[]>("/orders?role=creator"); } catch {}
   try { applications = await api.get("/applications/mine"); } catch {}
+
+  let mawthooq: { status: "none" | "pending" | "verified" | "rejected" | "expired"; licenseNo: string | null; note: string | null } = { status: "none", licenseNo: null, note: null };
+  if (me.creatorUsername) {
+    try {
+      const p = await api.get<{ mawthooqStatus?: typeof mawthooq.status; mawthooqLicenseNo?: string | null; mawthooqReviewNote?: string | null }>(`/creators/by-username/${me.creatorUsername}`);
+      mawthooq = { status: p.mawthooqStatus ?? "none", licenseNo: p.mawthooqLicenseNo ?? null, note: p.mawthooqReviewNote ?? null };
+    } catch {}
+  }
 
   const pendingDeliveries = orders.filter((o) => ["awaiting_creator", "in_progress", "revision_requested"].includes(o.status)).length;
   const released = orders.filter((o) => o.status === "released").reduce((s, o) => s + o.amount, 0);
@@ -110,6 +119,9 @@ export default async function CreatorDashboard() {
           )}
         </section>
 
+        <div className="space-y-6">
+        <MawthooqCard initialStatus={mawthooq.status} initialLicenseNo={mawthooq.licenseNo} reviewNote={mawthooq.note} />
+
         <section className="rounded-2xl border border-border bg-elevated p-5">
           <h2 className="font-bold text-lg mb-3">{i.creatorDashboard.myApps}</h2>
           {applications.length === 0 ? (
@@ -127,6 +139,7 @@ export default async function CreatorDashboard() {
             </ul>
           )}
         </section>
+        </div>
       </div>
       </div>
     </div>

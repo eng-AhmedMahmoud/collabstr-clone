@@ -19,6 +19,9 @@ export type ApiCreator = {
   platforms: Platform[];
   categories: Category[];
   badges: string[];
+  mawthooqStatus?: "none" | "pending" | "verified" | "rejected" | "expired";
+  mawthooqLicenseNo?: string | null;
+  mawthooqExpiresAt?: string | null;
   portfolio: string[];
   audience: {
     locations: { code: string; flag: string; pct: number }[];

@@ -66,7 +66,34 @@ export class CreatorsService {
   }>) {
     const profile = await this.prisma.creatorProfile.findUnique({ where: { userId } });
     if (!profile) throw new NotFoundException("No creator profile");
-    return this.prisma.creatorProfile.update({ where: { id: profile.id }, data });
+    // Whitelist self-editable fields — never trust the raw body to set
+    // rating, mawthooq* verification state, startingPrice, etc.
+    const allowed = [
+      "headline", "bio", "city", "country", "coverUrl", "portfolio",
+      "isAvailable", "platforms", "categories", "followersIg", "followersTt", "followersYt",
+    ] as const;
+    const patch: Record<string, unknown> = {};
+    for (const k of allowed) if (k in data) patch[k] = (data as Record<string, unknown>)[k];
+    return this.prisma.creatorProfile.update({ where: { id: profile.id }, data: patch });
+  }
+
+  // Creator submits their Mawthooq (GAMR advertising) licence number for review.
+  // Resets any prior rejection back to pending; only an admin can move it to
+  // verified/rejected (see AdminService). Licence-format and required fields are
+  // validated at the controller via Zod.
+  async submitMawthooq(userId: string, licenseNo: string) {
+    const profile = await this.prisma.creatorProfile.findUnique({ where: { userId } });
+    if (!profile) throw new NotFoundException("No creator profile");
+    return this.prisma.creatorProfile.update({
+      where: { id: profile.id },
+      data: {
+        mawthooqLicenseNo: licenseNo.trim(),
+        mawthooqStatus: "pending",
+        mawthooqSubmittedAt: new Date(),
+        mawthooqReviewNote: null,
+      },
+      select: { mawthooqStatus: true, mawthooqLicenseNo: true, mawthooqSubmittedAt: true },
+    });
   }
 
   async addPackage(userId: string, input: PackageInput) {

@@ -68,6 +68,17 @@ enum NotificationKind {
   system
 }
 
+// Saudi advertising-licence (Mawthooq / موثوق, issued by GAMR) verification state
+// for a creator. Required before a creator can take paid orders — firms face
+// fines up to SAR 5M for contracting unlicensed advertisers.
+enum MawthooqStatus {
+  none        // never submitted
+  pending     // submitted, awaiting admin review
+  verified    // licence confirmed valid
+  rejected    // licence invalid / mismatched
+  expired     // was verified, licence end-date passed
+}
+
 model User {
   id              String           @id @default(cuid())
   email           String           @unique
@@ -145,6 +156,15 @@ model CreatorProfile {
   audience        Json?
   portfolio       String[]
   isAvailable     Boolean        @default(true)
+
+  // Mawthooq advertising-licence verification (GAMR). See MawthooqStatus.
+  mawthooqStatus       MawthooqStatus @default(none)
+  mawthooqLicenseNo    String?
+  mawthooqSubmittedAt  DateTime?
+  mawthooqVerifiedAt   DateTime?
+  mawthooqExpiresAt    DateTime?
+  mawthooqReviewNote   String?
+
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt
 

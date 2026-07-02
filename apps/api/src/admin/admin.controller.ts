@@ -5,7 +5,7 @@ import { RolesGuard } from "../common/roles.guard";
 import { Roles } from "../common/roles.decorator";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
-import { BroadcastInput } from "@collabstr/shared-types";
+import { BroadcastInput, MawthooqReviewInput } from "@collabstr/shared-types";
 import type { OrderStatus, Role } from "@prisma/client";
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -42,6 +42,17 @@ export class AdminController {
   @Get("creators")
   creators() {
     return this.admin.listCreators();
+  }
+
+  @Get("mawthooq")
+  mawthooqQueue() {
+    return this.admin.mawthooqQueue();
+  }
+
+  @Post("mawthooq/:creatorId/review")
+  @UsePipes(new ZodValidationPipe(MawthooqReviewInput))
+  reviewMawthooq(@Param("creatorId") creatorId: string, @Body() body: MawthooqReviewInput) {
+    return this.admin.reviewMawthooq(creatorId, body.decision, body.expiresAt, body.note);
   }
 
   @Get("brands")
