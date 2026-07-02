@@ -4,7 +4,8 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": [".next/**", "!.next/cache/**", "dist/**"]
+      "outputs": [".next/**", "!.next/cache/**", "dist/**"],
+      "env": ["API_URL", "NEXT_PUBLIC_API_URL", "CORS_ORIGIN", "DATABASE_URL", "JWT_*", "COOKIE_DOMAIN", "NODE_ENV"]
     },
     "dev": {
       "cache": false,
