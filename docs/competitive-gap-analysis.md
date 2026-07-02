@@ -29,7 +29,7 @@ Sources: full codebase audit + competitor research (Collabstr, Insense, JoinBran
 
 ## KSA differentiators (priority order)
 
-1. **Mawthooq licence verification badge** — block/flag unlicensed creators from paid orders. Nobody does this.
+1. **Mawthooq licence verification badge** — block/flag unlicensed creators from paid orders. Nobody does this. ✅ **SHIPPED (2026-07-02)**: creator submits licence → admin verify/reject queue → "Licensed" badge on cards + profile (EN/AR); order-creation gate behind `ENFORCE_MAWTHOOQ` flag. Licence no. + review note kept private (owner-only via authed `/creators/me`).
 2. **mada + Apple Pay + STC Pay + BNPL** (mada = 70%+ of KSA card volume; non-negotiable). Gateway shortlist per owner input: **Tap Payments** (strong KSA/GCC presence, bundles mada + Apple Pay + Tabby/Tamara in one contract) and **Tamara** (Saudi-born BNPL leader — integrate directly or via gateway) alongside HyperPay/Moyasar. Recommended: Tap as primary gateway + Tamara/Tabby BNPL toggles at checkout.
 3. **Snapchat-first profiles/packages** — top reach in KSA, near-zero competitor coverage. (Platform enum already includes snapchat ✅)
 4. **ZATCA FATOORA e-invoices** + Jan-2026 *deemed-supplier* VAT rule (marketplace must charge VAT for non-registered resident creators) → capture creator VAT status at onboarding.
