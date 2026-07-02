@@ -24,6 +24,13 @@ export class CreatorsController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("creator")
+  @Get("me")
+  myProfile(@CurrentUser() user: AuthUser) {
+    return this.creators.getMyProfile(user.id);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles("creator")
   @Patch("me")
   updateMine(@CurrentUser() user: AuthUser, @Body() body: any) {
     return this.creators.updateMyProfile(user.id, body);

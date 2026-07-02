@@ -32,6 +32,14 @@ export class CreatorsService {
       this.prisma.creatorProfile.count({ where }),
       this.prisma.creatorProfile.findMany({
         where,
+        // Omit internal mawthooq* fields (licence no, review note, timestamps)
+        // from the public list — only the verification status is public.
+        omit: {
+          mawthooqLicenseNo: true,
+          mawthooqReviewNote: true,
+          mawthooqSubmittedAt: true,
+          mawthooqVerifiedAt: true,
+        },
         include: { user: { select: { name: true, avatarUrl: true } } },
         orderBy: [{ rating: "desc" }, { reviewsCount: "desc" }],
         skip: (q.page - 1) * q.pageSize,
@@ -45,6 +53,13 @@ export class CreatorsService {
   async byUsername(username: string) {
     const c = await this.prisma.creatorProfile.findUnique({
       where: { username },
+      // Public profile — licence number and internal review note are private.
+      omit: {
+        mawthooqLicenseNo: true,
+        mawthooqReviewNote: true,
+        mawthooqSubmittedAt: true,
+        mawthooqVerifiedAt: true,
+      },
       include: {
         user: { select: { name: true, avatarUrl: true } },
         packages: { where: { isActive: true }, orderBy: { price: "asc" } },
@@ -56,6 +71,17 @@ export class CreatorsService {
       },
     });
     if (!c) throw new NotFoundException("Creator not found");
+    return c;
+  }
+
+  // Authenticated: the creator's own full profile, including private mawthooq
+  // fields (licence number + review note) that the public endpoints omit.
+  async getMyProfile(userId: string) {
+    const c = await this.prisma.creatorProfile.findUnique({
+      where: { userId },
+      include: { packages: { orderBy: { price: "asc" } } },
+    });
+    if (!c) throw new NotFoundException("No creator profile");
     return c;
   }
 

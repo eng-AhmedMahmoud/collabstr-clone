@@ -33,12 +33,10 @@ export default async function CreatorDashboard() {
   try { applications = await api.get("/applications/mine"); } catch {}
 
   let mawthooq: { status: "none" | "pending" | "verified" | "rejected" | "expired"; licenseNo: string | null; note: string | null } = { status: "none", licenseNo: null, note: null };
-  if (me.creatorUsername) {
-    try {
-      const p = await api.get<{ mawthooqStatus?: typeof mawthooq.status; mawthooqLicenseNo?: string | null; mawthooqReviewNote?: string | null }>(`/creators/by-username/${me.creatorUsername}`);
-      mawthooq = { status: p.mawthooqStatus ?? "none", licenseNo: p.mawthooqLicenseNo ?? null, note: p.mawthooqReviewNote ?? null };
-    } catch {}
-  }
+  try {
+    const p = await api.get<{ mawthooqStatus?: typeof mawthooq.status; mawthooqLicenseNo?: string | null; mawthooqReviewNote?: string | null }>(`/creators/me`);
+    mawthooq = { status: p.mawthooqStatus ?? "none", licenseNo: p.mawthooqLicenseNo ?? null, note: p.mawthooqReviewNote ?? null };
+  } catch {}
 
   const pendingDeliveries = orders.filter((o) => ["awaiting_creator", "in_progress", "revision_requested"].includes(o.status)).length;
   const released = orders.filter((o) => o.status === "released").reduce((s, o) => s + o.amount, 0);
