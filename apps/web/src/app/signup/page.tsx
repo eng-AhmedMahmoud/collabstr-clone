@@ -42,7 +42,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="flex-1 grid grid-rows-[1fr] lg:grid-cols-2">
+    <div className="min-h-svh grid grid-rows-[1fr] lg:grid-cols-2">
       <section className="hidden lg:flex relative brand-gradient text-white p-12 flex-col justify-between">
         <Link href="/" className="font-black text-2xl">{i.brand.name}</Link>
         <div>

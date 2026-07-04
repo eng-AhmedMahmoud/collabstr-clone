@@ -34,7 +34,7 @@ export default async function RootLayout({
       <body className="min-h-full flex flex-col bg-bg text-fg">
         <LocaleProvider locale={locale} t={dict}>
           <Header />
-          <main className="flex-1 flex flex-col">{children}</main>
+          <main className="flex-1">{children}</main>
           <Footer />
           <CookieConsent />
         </LocaleProvider>
