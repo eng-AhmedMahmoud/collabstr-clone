@@ -49,7 +49,12 @@ export class AuthController {
     const { user, accessToken, refreshToken } = await this.auth.signup(body);
     setAuthCookies(res, accessToken, refreshToken);
     setLocaleCookie(res, user.locale as any);
-    return { id: user.id, email: user.email, name: user.name, role: user.role, locale: user.locale ?? "en" };
+    // accessToken/refreshToken are also returned in the body so non-cookie
+    // clients (mobile/RN) can hold them in secure storage. Web ignores them.
+    return {
+      id: user.id, email: user.email, name: user.name, role: user.role,
+      locale: user.locale ?? "en", accessToken, refreshToken,
+    };
   }
 
   @Post("login")
@@ -60,17 +65,21 @@ export class AuthController {
     const { user, accessToken, refreshToken } = await this.auth.login(body);
     setAuthCookies(res, accessToken, refreshToken);
     setLocaleCookie(res, user.locale as any);
-    return { id: user.id, email: user.email, name: user.name, role: user.role, locale: user.locale ?? "en" };
+    return {
+      id: user.id, email: user.email, name: user.name, role: user.role,
+      locale: user.locale ?? "en", accessToken, refreshToken,
+    };
   }
 
   @Post("refresh")
   @HttpCode(200)
-  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    const token = req.cookies?.refresh_token;
+  async refresh(@Req() req: Request, @Body() body: any, @Res({ passthrough: true }) res: Response) {
+    // Accept refresh token from cookie (web) or JSON body (mobile).
+    const token: string | undefined = req.cookies?.refresh_token ?? body?.refreshToken;
     if (!token) throw new UnauthorizedException();
     const { accessToken, refreshToken } = await this.auth.refresh(token);
     setAuthCookies(res, accessToken, refreshToken);
-    return { ok: true };
+    return { ok: true, accessToken, refreshToken };
   }
 
   @Post("logout")

@@ -5,6 +5,7 @@ node_modules
 dist
 build
 .cache
+*.tsbuildinfo
 
 # env
 .env
@@ -24,3 +25,7 @@ yarn-error.log*
 
 # deploy
 .vercel
+
+# runtime upload storage (keep dir + .gitkeep, ignore content)
+apps/api/uploads/**/*
+!apps/api/uploads/**/.gitkeep

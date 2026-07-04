@@ -2,6 +2,9 @@ import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
 import { APP_GUARD } from "@nestjs/core";
 import { ThrottlerGuard, ThrottlerModule } from "@nestjs/throttler";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
+import { UPLOAD_DIR } from "./uploads/uploads.util";
 import { PrismaModule } from "./prisma/prisma.module";
 import { AuthModule } from "./auth/auth.module";
 import { UsersModule } from "./users/users.module";
@@ -22,6 +25,13 @@ import { HealthController } from "./health.controller";
     // Global rate limit: 300 requests/minute per IP. Auth endpoints override
     // with much stricter limits (see auth.controller.ts).
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 300 }]),
+    // Serve uploaded avatars back under /uploads/*. Bypasses the /api/v1 global
+    // prefix — that's fine, this is static content, not RPC.
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), UPLOAD_DIR),
+      serveRoot: "/uploads",
+      serveStaticOptions: { index: false, redirect: false },
+    }),
     PrismaModule,
     AuthModule,
     UsersModule,

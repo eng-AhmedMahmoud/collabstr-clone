@@ -1,8 +1,11 @@
-import { BadRequestException, Body, Controller, Delete, Get, Header, Patch, Post, Res, UseGuards } from "@nestjs/common";
-import type { Response } from "express";
+import { BadRequestException, Body, Controller, Delete, Get, Header, Patch, Post, Req, Res, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import type { Request, Response } from "express";
 import { UsersService } from "./users.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
+import { AVATAR_DIR, AVATAR_LIMITS, avatarFileFilter, avatarFilename } from "../uploads/uploads.util";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -40,6 +43,29 @@ export class UsersController {
       maxAge: 365 * 24 * 60 * 60 * 1000,
     });
     return { locale: updated.locale };
+  }
+
+  // Native mobile clients upload the image binary directly instead of a URL;
+  // browsers can also POST a `<input type="file">` to this endpoint. The saved
+  // file is served back through the static `/uploads` mount.
+  @Post("avatar")
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({ destination: AVATAR_DIR, filename: avatarFilename }),
+      fileFilter: avatarFileFilter,
+      limits: AVATAR_LIMITS,
+    }),
+  )
+  async uploadAvatar(
+    @CurrentUser() user: AuthUser,
+    @UploadedFile() file: Express.Multer.File | undefined,
+    @Req() req: Request,
+  ) {
+    if (!file) throw new BadRequestException("file required");
+    const base = `${req.protocol}://${req.get("host")}`;
+    const url = `${base}/uploads/avatars/${file.filename}`;
+    await this.users.updateProfile(user.id, { avatarUrl: url });
+    return { url };
   }
 
   @Post("password")

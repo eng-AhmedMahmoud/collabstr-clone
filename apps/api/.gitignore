@@ -1,1 +1,5 @@
 .vercel
+
+# Local file uploads (avatars, etc). Structure kept via .gitkeep.
+uploads/*
+!uploads/.gitkeep

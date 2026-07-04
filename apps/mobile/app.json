@@ -1,0 +1,70 @@
+{
+  "expo": {
+    "name": "Nakhla",
+    "slug": "nakhla",
+    "scheme": "nakhla",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0fb27a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "app.nakhla.mobile",
+      "associatedDomains": [
+        "applinks:nakhla.dev",
+        "applinks:www.nakhla.dev"
+      ],
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "NSPhotoLibraryUsageDescription": "Allows you to upload a profile picture."
+      }
+    },
+    "android": {
+      "package": "app.nakhla.mobile",
+      "adaptiveIcon": {
+        "backgroundColor": "#0fb27a",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            { "scheme": "https", "host": "nakhla.dev" },
+            { "scheme": "https", "host": "www.nakhla.dev" }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-font",
+      "expo-localization",
+      "expo-updates",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allows you to upload a profile picture."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
