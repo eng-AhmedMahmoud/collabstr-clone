@@ -10,7 +10,7 @@ export default async function LoginPage({
   const i = await t();
   const { next } = await searchParams;
   return (
-    <div className="min-h-[70vh] grid lg:grid-cols-2">
+    <div className="min-h-full grid lg:grid-cols-2">
       <section className="hidden lg:flex relative brand-gradient text-white p-12 flex-col justify-between">
         <Link href="/" className="font-black text-2xl">{i.brand.name}</Link>
         <div>
