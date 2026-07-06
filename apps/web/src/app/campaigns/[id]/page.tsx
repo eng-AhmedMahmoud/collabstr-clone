@@ -5,6 +5,7 @@ import { Money } from "@/components/money";
 import { getSession } from "@/lib/session";
 import { t, getLocale } from "@/lib/i18n";
 import { ApplyForm } from "./apply-form";
+import { ApplicationActions } from "./application-actions";
 
 type CampaignDetail = {
   id: string;
@@ -103,7 +104,7 @@ export default async function CampaignDetailPage({
                 </div>
                 <div className="flex items-center gap-3 ms-auto">
                   <Money value={a.price} locale={moneyLocale} className="font-bold" />
-                  <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${a.status === "accepted" ? "bg-emerald-50 text-emerald-700" : a.status === "rejected" ? "bg-red-50 text-red-700" : "bg-amber-50 text-amber-700"}`}>{i.status[a.status as keyof typeof i.status] ?? a.status}</span>
+                  <ApplicationActions applicationId={a.id} status={a.status} />
                 </div>
               </li>
             ))}
