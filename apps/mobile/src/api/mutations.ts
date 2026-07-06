@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "./client";
 import { uploadAvatar } from "./upload";
-import { qk } from "./queries";
+import { qk, type OrderDetail } from "./queries";
+import { useAuth } from "@/auth/context";
 import type { BroadcastInput, CampaignInput, MawthooqInput, MawthooqReviewInput, OrderInput, PackageInput } from "@collabstr/shared-types";
 
 // ─── Creator save / packages ─────────────────────────────────────────────────
@@ -41,8 +42,8 @@ export function useSubmitMawthooq() {
   return useMutation({
     mutationFn: (input: MawthooqInput) => api<void>("/creators/me/mawthooq", { method: "POST", body: input }),
     onSuccess: () => {
+      // Mawthooq status lives on the creator profile — no ["me"] query exists.
       qc.invalidateQueries({ queryKey: qk.creatorMe() });
-      qc.invalidateQueries({ queryKey: qk.me });
     },
   });
 }
@@ -60,20 +61,21 @@ export function useUpdateCreatorProfile() {
 // ─── User profile ────────────────────────────────────────────────────────────
 
 export function useUploadAvatar() {
-  const qc = useQueryClient();
+  // `me` lives in the auth context, not the query cache — refetch it there.
+  const { refresh } = useAuth();
   return useMutation({
     mutationFn: (asset: { uri: string; name?: string; mimeType?: string }) =>
       uploadAvatar(asset),
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.me }),
+    onSuccess: () => refresh(),
   });
 }
 
 export function useUpdateMe() {
-  const qc = useQueryClient();
+  const { refresh } = useAuth();
   return useMutation({
     mutationFn: (input: { name?: string; avatarUrl?: string; locale?: "en" | "ar" }) =>
       api<void>("/users/me", { method: "PATCH", body: input }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: qk.me }),
+    onSuccess: () => refresh(),
   });
 }
 
@@ -153,7 +155,14 @@ export function useLeaveReview(orderId: string) {
   return useMutation({
     mutationFn: (input: { rating: number; text: string }) =>
       api<void>(`/reviews/order/${orderId}`, { method: "POST", body: input }),
-    onSuccess: () => invalidateOrder(qc, orderId),
+    onSuccess: () => {
+      invalidateOrder(qc, orderId);
+      // Reviews also surface on the creator's profile and review list.
+      qc.invalidateQueries({ queryKey: ["reviews", "creator"] });
+      const order = qc.getQueryData<OrderDetail>(qk.orderById(orderId));
+      const username = order?.creator?.username;
+      if (username) qc.invalidateQueries({ queryKey: qk.creatorByUsername(username) });
+    },
   });
 }
 

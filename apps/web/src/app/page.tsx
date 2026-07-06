@@ -49,7 +49,7 @@ export default async function Home() {
             {i.home.sub}
           </p>
 
-          <form action="/influencers" className="mt-9 max-w-3xl mx-auto rounded-2xl bg-elevated border border-border shadow-xl p-3 sm:p-4 text-left">
+          <form action="/influencers" className="mt-9 max-w-3xl mx-auto rounded-2xl bg-elevated border border-border shadow-xl p-3 sm:p-4 text-start">
             <FilterBar />
             <div className="flex items-center gap-2 mt-3">
               <input

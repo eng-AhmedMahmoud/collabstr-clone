@@ -22,6 +22,8 @@ export const messages = {
       confirm: "Confirm", continue: "Continue", send: "Send", loading: "Loading…",
       saving: "Saving…", noData: "No data.", viewAll: "View all", openProfile: "View public profile",
       yes: "Yes", no: "No",
+      apiError: "API not reachable",
+      apiErrorBody: "The list below is empty because the API request failed — not because there are no rows. Start the API + Postgres, then refresh.",
     },
     nav: {
       operate: "Operate", catalog: "Catalog", system: "System",
@@ -33,6 +35,7 @@ export const messages = {
       marketplace: "Open marketplace ↗",
       production: "Production", development: "Development",
       roleAdmin: "Role: admin",
+      roleSuperadmin: "Role: super admin",
     },
     login: {
       title: "Sign in",
@@ -70,11 +73,14 @@ export const messages = {
       countSuffix: "matching · click a role pill below to filter",
       searchPh: "Search email or name…",
       allRoles: "All roles",
-      role: { brand: "Brand", creator: "Creator", admin: "Admin" },
+      role: { brand: "Brand", creator: "Creator", admin: "Admin", superadmin: "Super admin" },
       colUser: "User", colRole: "Role", colStatus: "Status", colJoined: "Joined", colActions: "Actions",
       pillBanned: "banned", pillVerified: "verified", pillUnverified: "unverified",
       noMatch: "No users match.",
-      unban: "Unban", ban: "Ban", makeAdmin: "Make admin",
+      unban: "Unban", ban: "Ban", makeAdmin: "Make admin", removeAdmin: "Remove admin",
+      makeAdminConfirm: "Grant this user full admin access? Admins can manage every order, user and payout.",
+      removeAdminConfirm: "Revoke this admin's access? They'll be demoted back to a regular account and lose the admin console.",
+      forbidden: "Super admin access is required for that action.",
     },
     creators: {
       title: "Creators",
@@ -129,6 +135,7 @@ export const messages = {
         actions: "Admin actions",
         actionsSub: "Force state changes. Bypasses normal guards.",
         forceRelease: "Force release escrow",
+        forceReleaseConfirm: "Force-release escrow for order #{id}? Funds go to the creator immediately and this cannot be undone.",
         reasonNote: "Reason / note",
         forceCancel: "Force cancel + refund",
         forceDispute: "Mark disputed",
@@ -188,7 +195,7 @@ export const messages = {
     settings: {
       title: "Settings", sub: "Admin console preferences",
       account: "Account",
-      name: "Name:", email: "Email:", role: "Role:", admin: "admin",
+      name: "Name:", email: "Email:", role: "Role:", admin: "admin", superadmin: "super admin",
       editNote: "Edit through the marketplace settings page.",
       roadmap: "Roadmap items",
       roadmapItems: [
@@ -222,6 +229,8 @@ export const messages = {
       confirm: "تأكيد", continue: "متابعة", send: "إرسال", loading: "جارٍ التحميل…",
       saving: "جارٍ الحفظ…", noData: "لا توجد بيانات.", viewAll: "عرض الكل", openProfile: "عرض الملف العام",
       yes: "نعم", no: "لا",
+      apiError: "تعذر الوصول إلى الـ API",
+      apiErrorBody: "القائمة أدناه فارغة لأن طلب الـ API فشل — وليس لعدم وجود بيانات. شغّل الـ API + Postgres ثم أعد التحميل.",
     },
     nav: {
       operate: "العمليات", catalog: "السجل", system: "النظام",
@@ -233,6 +242,7 @@ export const messages = {
       marketplace: "افتح السوق ↗",
       production: "إنتاج", development: "تطوير",
       roleAdmin: "الدور: مدير",
+      roleSuperadmin: "الدور: مدير أعلى",
     },
     login: {
       title: "تسجيل دخول المدير",
@@ -270,11 +280,14 @@ export const messages = {
       countSuffix: "مطابق · اضغط شارة الدور للتصفية",
       searchPh: "ابحث بالبريد أو الاسم…",
       allRoles: "كل الأدوار",
-      role: { brand: "علامة", creator: "مؤثر", admin: "مدير" },
+      role: { brand: "علامة", creator: "مؤثر", admin: "مدير", superadmin: "مدير أعلى" },
       colUser: "المستخدم", colRole: "الدور", colStatus: "الحالة", colJoined: "تاريخ الانضمام", colActions: "إجراءات",
       pillBanned: "محظور", pillVerified: "موثق", pillUnverified: "غير موثق",
       noMatch: "لا يوجد مستخدمون مطابقون.",
-      unban: "إلغاء الحظر", ban: "حظر", makeAdmin: "ترقية لمدير",
+      unban: "إلغاء الحظر", ban: "حظر", makeAdmin: "ترقية لمدير", removeAdmin: "إزالة صلاحية المدير",
+      makeAdminConfirm: "منح هذا المستخدم صلاحيات المدير الكاملة؟ المدير يمكنه إدارة كل الطلبات والمستخدمين والمدفوعات.",
+      removeAdminConfirm: "إلغاء صلاحيات هذا المدير؟ سيُخفَّض إلى حساب عادي ويفقد الوصول إلى لوحة المدير.",
+      forbidden: "هذا الإجراء يتطلب صلاحية مدير أعلى.",
     },
     creators: {
       title: "المؤثرون",
@@ -329,6 +342,7 @@ export const messages = {
         actions: "إجراءات المدير",
         actionsSub: "تغييرات قسرية للحالة. تتجاوز الحماية العادية.",
         forceRelease: "تحرير الضمان قسرياً",
+        forceReleaseConfirm: "تحرير الضمان قسرياً للطلب #{id}؟ تنتقل الأموال إلى المؤثر فوراً ولا يمكن التراجع.",
         reasonNote: "السبب / ملاحظة",
         forceCancel: "إلغاء قسري + استرداد",
         forceDispute: "وسم كنزاع",
@@ -388,7 +402,7 @@ export const messages = {
     settings: {
       title: "الإعدادات", sub: "تفضيلات لوحة المدير",
       account: "الحساب",
-      name: "الاسم:", email: "البريد:", role: "الدور:", admin: "مدير",
+      name: "الاسم:", email: "البريد:", role: "الدور:", admin: "مدير", superadmin: "مدير أعلى",
       editNote: "حرّر من صفحة إعدادات السوق.",
       roadmap: "خطة العمل",
       roadmapItems: [

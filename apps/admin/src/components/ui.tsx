@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: string; action?: React.ReactNode }) {
+export function PageHeader({ title, subtitle, action }: { title: string; subtitle?: React.ReactNode; action?: React.ReactNode }) {
   return (
     <header className="flex items-end justify-between flex-wrap gap-y-3 gap-x-4 mb-5 sm:mb-6">
       <div className="min-w-0 flex-1">
@@ -12,7 +12,7 @@ export function PageHeader({ title, subtitle, action }: { title: string; subtitl
   );
 }
 
-export function StatGrid({ stats }: { stats: { label: string; value: string; sub?: string; tone?: "success" | "danger" | "warn" }[] }) {
+export function StatGrid({ stats }: { stats: { label: string; value: React.ReactNode; sub?: string; tone?: "success" | "danger" | "warn" }[] }) {
   const tone = { success: "#34d399", danger: "#f87171", warn: "#fbbf24" } as const;
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -49,15 +49,25 @@ export function Card({ title, action, children, padding = true }: { title?: stri
   );
 }
 
-export function Pill({ kind, children }: { kind: "ok" | "warn" | "bad" | "muted" | "brand"; children: React.ReactNode }) {
+export function Pill({ kind, children }: { kind: "ok" | "warn" | "bad" | "muted" | "brand" | "super"; children: React.ReactNode }) {
   const map = {
     ok:    "bg-emerald-500/15 text-emerald-300",
     warn:  "bg-amber-500/15 text-amber-300",
     bad:   "bg-red-500/15 text-red-300",
     muted: "bg-surface-2 text-muted",
     brand: "bg-emerald-500/15 text-emerald-300",
+    super: "bg-violet-500/15 text-violet-300 ring-1 ring-violet-500/30",
   }[kind];
   return <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${map}`}>{children}</span>;
+}
+
+export function ErrorBanner({ title, body }: { title: string; body?: string }) {
+  return (
+    <div role="alert" className="mb-5 rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-3">
+      <p className="text-sm font-bold text-red-300">{title}</p>
+      {body && <p className="text-xs text-red-300/80 mt-0.5">{body}</p>}
+    </div>
+  );
 }
 
 export function EmptyState({ title, body, cta }: { title: string; body: string; cta?: { href: string; label: string } }) {

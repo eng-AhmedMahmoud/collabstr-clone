@@ -7,6 +7,7 @@ import { StatCard } from "@/components/StatCard";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { EmptyState } from "@/components/EmptyState";
+import { Money } from "@/components/Money";
 import { useMyCampaigns, useMyOrders } from "@/api/queries";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -28,7 +29,7 @@ export default function BrandDashboard() {
     <Screen scroll padded header={<AppHeader title={t.dashboard.brandTitle} />}>
       <View style={styles.statsRow}>
         <StatCard label={t.dashboard.kpiOrders} value={String(orders.data?.length ?? 0)} />
-        <StatCard label={t.dashboard.kpiSpend} value={`${totalSpend}`} hint={t.discover.sar} />
+        <StatCard label={t.dashboard.kpiSpend} value={`${totalSpend}`} money />
       </View>
       <View style={styles.statsRow}>
         <StatCard label={t.dashboard.kpiCampaigns} value={String(campaigns.data?.length ?? 0)} />
@@ -47,7 +48,10 @@ export default function BrandDashboard() {
                 <Text style={{ color: palette.fg, fontWeight: "700" }} numberOfLines={1}>{o.package.title}</Text>
                 <Badge label={t.status[o.status]} tone="brand" />
               </View>
-              <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{o.creator.user.name} · {o.total} {t.discover.sar}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{o.creator.user.name} · </Text>
+                <Money value={o.total} style={{ color: palette.fgMuted, fontSize: 12 }} />
+              </View>
             </Card>
           </Pressable>
         ))

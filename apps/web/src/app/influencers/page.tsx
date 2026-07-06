@@ -19,6 +19,9 @@ export default async function InfluencersPage({
   if (sp.category) params.set("category", sp.category);
   if (sp.q) params.set("q", sp.q);
   if (sp.page) params.set("page", sp.page);
+  if (sp.minPrice) params.set("minPrice", sp.minPrice);
+  if (sp.maxPrice) params.set("maxPrice", sp.maxPrice);
+  if (sp.minFollowers) params.set("minFollowers", sp.minFollowers);
   params.set("pageSize", "24");
 
   const api = await serverApi();

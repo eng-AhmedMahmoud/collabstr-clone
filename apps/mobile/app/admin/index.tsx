@@ -6,6 +6,7 @@ import { StatCard } from "@/components/StatCard";
 import { ListItem } from "@/components/ListItem";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
+import { Money } from "@/components/Money";
 import { useAdminOverview } from "@/api/queries";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -29,7 +30,7 @@ export default function AdminHome() {
           </View>
           <View style={styles.statsRow}>
             <StatCard label={t.admin.kpiOrders} value={String(q.data.orders)} />
-            <StatCard label={t.admin.kpiRevenue} value={String(q.data.revenue)} hint={t.discover.sar} />
+            <StatCard label={t.admin.kpiRevenue} value={String(q.data.revenue)} money />
           </View>
         </>
       ) : null}
@@ -57,7 +58,10 @@ export default function AdminHome() {
                   <Text style={{ color: palette.fg, fontWeight: "700" }} numberOfLines={1}>{o.package.title}</Text>
                   <Badge label={t.status[o.status]} tone="brand" />
                 </View>
-                <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{o.creator.user.name} → {o.brand.name} · {o.total} {t.discover.sar}</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                  <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{o.creator.user.name} → {o.brand.name} · </Text>
+                  <Money value={o.total} style={{ color: palette.fgMuted, fontSize: 12 }} />
+                </View>
               </Card>
             </Pressable>
           ))}

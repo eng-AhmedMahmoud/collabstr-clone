@@ -1,8 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { ApiCreator } from "@/lib/types";
-import { fmtFollowers, fmtMoney } from "@/lib/format";
+import { fmtFollowers } from "@/lib/format";
 import { t, getLocale } from "@/lib/i18n";
+import { Money } from "@/components/money";
 
 function hashHue(s: string): number {
   let h = 0;
@@ -73,9 +74,9 @@ export async function CreatorCard({ c }: { c: ApiCreator }) {
               <p className="text-sm font-bold leading-tight">{c.user.name}</p>
               <p className="text-[11px] text-white/80 line-clamp-1">{c.headline}</p>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <p className="text-[11px] text-white/80">{fromLabel}</p>
-              <p className="text-sm font-extrabold">{fmtMoney(c.startingPrice, { locale: moneyLocale })}</p>
+              <Money value={c.startingPrice} locale={moneyLocale} className="text-sm font-extrabold" />
             </div>
           </div>
         </div>

@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shell } from "@/components/shell";
-import { Card, PageHeader, Pill } from "@/components/ui";
+import { Card, PageHeader, Pill, ErrorBanner } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtMoney, fmtNum, fmtAgo } from "@/lib/format";
+import { fmtNum, fmtAgo, fmtCount, getLocale } from "@/lib/format";
+import { Money } from "@/components/money";
+import { WEB_URL } from "@/lib/web-url";
 import { t as serverT } from "@/lib/i18n";
 
 type Row = {
@@ -28,13 +30,16 @@ export default async function CreatorsAdmin() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/creators");
   const i = await serverT();
+  const locale = await getLocale();
   const api = await serverApi();
   let rows: Row[] = [];
-  try { rows = await api.get<Row[]>("/admin/creators"); } catch {}
+  let apiError = false;
+  try { rows = await api.get<Row[]>("/admin/creators"); } catch { apiError = true; }
 
   return (
     <Shell me={me}>
-      <PageHeader title={i.creators.title} subtitle={`${rows.length} ${i.creators.countSuffix}`} />
+      <PageHeader title={i.creators.title} subtitle={`${fmtCount(rows.length, 200)} ${i.creators.countSuffix}`} />
+      {apiError && <ErrorBanner title={i.common.apiError} body={i.common.apiErrorBody} />}
       <Card padding={false}>
         <table className="w-full text-sm">
           <thead className="text-[10px] uppercase tracking-wider text-muted border-b border-border">
@@ -53,18 +58,18 @@ export default async function CreatorsAdmin() {
               return (
                 <tr key={c.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
                   <td className="px-5 py-3">
-                    <Link href={`https://collabstr-web.localhost/${c.username}`} target="_blank" className="font-semibold hover:text-emerald-300">{c.user.name}</Link>
+                    <Link href={`${WEB_URL}/${c.username}`} target="_blank" className="font-semibold hover:text-emerald-300">{c.user.name}</Link>
                     <p className="text-[11px] text-muted">@{c.username} · {c.user.email}</p>
                   </td>
-                  <td className="px-5 py-3 text-fg/85">{fmtNum(total)}</td>
+                  <td className="px-5 py-3 text-fg/85">{fmtNum(total, locale)}</td>
                   <td className="px-5 py-3">★ {c.rating.toFixed(1)} <span className="text-muted">({c.reviewsCount})</span></td>
-                  <td className="px-5 py-3 text-right font-bold">{fmtMoney(c.startingPrice)}</td>
+                  <td className="px-5 py-3 text-right font-bold"><Money value={c.startingPrice} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></td>
                   <td className="px-5 py-3"><div className="flex gap-1 flex-wrap">{c.badges.map((b) => <Pill key={b} kind="brand">{b}</Pill>)}</div></td>
-                  <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(c.createdAt)}</td>
+                  <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(c.createdAt, locale)}</td>
                 </tr>
               );
             })}
-            {rows.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-muted">{i.creators.none}</td></tr>}
+            {rows.length === 0 && !apiError && <tr><td colSpan={6} className="px-5 py-12 text-center text-muted">{i.creators.none}</td></tr>}
           </tbody>
         </table>
       </Card>

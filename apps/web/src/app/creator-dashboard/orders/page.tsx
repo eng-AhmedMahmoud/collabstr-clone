@@ -2,8 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
-import { fmtMoney } from "@/lib/format";
-import { t } from "@/lib/i18n";
+import { Money } from "@/components/money";
+import { t, getLocale } from "@/lib/i18n";
 
 type OrderRow = {
   id: string;
@@ -18,6 +18,8 @@ export const metadata = { title: "My orders — Nakhla" };
 
 export default async function CreatorOrdersPage() {
   const i = await t();
+  const locale = await getLocale();
+  const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
   const me = await getSession();
   if (!me) redirect("/login?next=/creator-dashboard/orders");
   if (me.role !== "creator") redirect("/dashboard");
@@ -51,7 +53,7 @@ export default async function CreatorOrdersPage() {
                     <p className="text-xs text-muted">{o.package.title} · #{o.id.slice(0,6)}</p>
                   </div>
                   <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200">{i.status[o.status as keyof typeof i.status] ?? o.status.replace(/_/g, " ")}</span>
-                  <span className="font-bold">{fmtMoney(o.amount)}</span>
+                  <Money value={o.amount} locale={moneyLocale} className="font-bold" />
                 </Link>
               ))}
             </div>

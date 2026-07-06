@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { api, tokens } from "../api/client";
+import { api, ApiError, onAuthEvent, tokens } from "../api/client";
 
 export type Me = {
   id: string;
@@ -38,8 +38,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const user = await api<Me>("/auth/me");
       setMe(user);
-    } catch {
-      setMe(null);
+    } catch (err) {
+      // Only a definitive auth rejection logs the user out visually.
+      // Network / 5xx hiccups (e.g. offline app start) keep the prior `me`.
+      if (err instanceof ApiError && (err.status === 401 || err.status === 403)) {
+        setMe(null);
+      }
     }
   }, []);
 
@@ -50,6 +54,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setHydrated(true);
     })();
   }, [refresh]);
+
+  // The API client clears tokens when a refresh is definitively rejected —
+  // mirror that here so `me` never outlives the session (no zombie sessions).
+  useEffect(
+    () =>
+      onAuthEvent((event) => {
+        if (event === "logout") setMe(null);
+      }),
+    [],
+  );
 
   const login = useCallback(async (email: string, password: string) => {
     setLoading(true);
@@ -95,7 +109,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(async () => {
     try {
-      await api("/auth/logout", { method: "POST" });
+      // Send the refresh token so the server can revoke it; always clear
+      // local state regardless of whether the network call succeeds.
+      const { refresh: refreshToken } = await tokens.get();
+      await api("/auth/logout", {
+        method: "POST",
+        body: refreshToken ? { refreshToken } : {},
+      });
     } catch { /* ignore */ }
     await tokens.clear();
     setMe(null);

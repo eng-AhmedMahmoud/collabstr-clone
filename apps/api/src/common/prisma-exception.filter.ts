@@ -7,12 +7,25 @@ import type { Response } from "express";
  * with internal query details. Anything unrecognised falls through as 500
  * with a generic message — the original error only goes to the server log.
  */
-@Catch(Prisma.PrismaClientKnownRequestError)
+@Catch(Prisma.PrismaClientKnownRequestError, Prisma.PrismaClientValidationError)
 export class PrismaExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(PrismaExceptionFilter.name);
 
-  catch(exception: Prisma.PrismaClientKnownRequestError, host: ArgumentsHost) {
+  catch(exception: Prisma.PrismaClientKnownRequestError | Prisma.PrismaClientValidationError, host: ArgumentsHost) {
     const res = host.switchToHttp().getResponse<Response>();
+
+    // Malformed values that slipped past DTO validation (bad enum, wrong type)
+    // are client errors, not server faults — and their messages embed query
+    // internals that must not leak.
+    if (exception instanceof Prisma.PrismaClientValidationError) {
+      this.logger.warn(`Prisma validation error: ${exception.message.split("\n").pop()}`);
+      res.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: "Invalid request data",
+        error: "Bad Request",
+      });
+      return;
+    }
 
     switch (exception.code) {
       case "P2002": {

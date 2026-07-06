@@ -19,7 +19,7 @@ export default async function AdminSettings() {
           <div className="space-y-2 text-sm">
             <p><span className="text-muted">{i.settings.name}</span> <span className="font-semibold">{me.name}</span></p>
             <p><span className="text-muted">{i.settings.email}</span> {me.email}</p>
-            <p><span className="text-muted">{i.settings.role}</span> <span className="font-semibold">{i.settings.admin}</span></p>
+            <p><span className="text-muted">{i.settings.role}</span> <span className="font-semibold">{me.role === "superadmin" ? i.settings.superadmin : i.settings.admin}</span></p>
           </div>
           <p className="text-xs text-muted mt-3">{i.settings.editNote}</p>
         </Card>

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { t } from "@/lib/i18n";
+import { MarkAllButton } from "./mark-all-button";
 
 type Notif = { id: string; kind: string; title: string; body?: string | null; href?: string | null; readAt?: string | null; createdAt: string };
 
@@ -21,9 +22,7 @@ export default async function NotificationsPage() {
     <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
       <header className="flex items-center justify-between">
         <h1 className="text-3xl font-black">{i.notifications.title}</h1>
-        <form action={`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/notifications/read-all`} method="post">
-          <button className="text-sm font-semibold text-brand">{i.notifications.markAll}</button>
-        </form>
+        <MarkAllButton />
       </header>
       <div className="mt-6 rounded-2xl border border-border bg-elevated divide-y divide-border">
         {items.length === 0 ? (

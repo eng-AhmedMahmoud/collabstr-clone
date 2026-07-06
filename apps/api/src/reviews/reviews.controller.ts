@@ -4,6 +4,8 @@ import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RolesGuard } from "../common/roles.guard";
 import { Roles } from "../common/roles.decorator";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
+import { ZodValidationPipe } from "../common/zod-validation.pipe";
+import { ReviewInput } from "@collabstr/shared-types";
 
 @Controller("reviews")
 export class ReviewsController {
@@ -15,7 +17,7 @@ export class ReviewsController {
   leave(
     @CurrentUser() user: AuthUser,
     @Param("orderId") orderId: string,
-    @Body() body: { rating: number; text: string }
+    @Body(new ZodValidationPipe(ReviewInput)) body: ReviewInput
   ) {
     return this.reviews.leave(user.id, orderId, body.rating, body.text);
   }

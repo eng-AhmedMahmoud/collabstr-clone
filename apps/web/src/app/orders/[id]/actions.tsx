@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useT } from "@/components/locale-provider";
+import { useT, useLocale } from "@/components/locale-provider";
+import { serverErrorMessage, msg } from "@/lib/validation";
 
 export function OrderActions({ order, isBrand }: { order: { id: string; status: string }; isBrand: boolean }) {
   const router = useRouter();
   const i = useT();
+  const locale = useLocale();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [deliverUrl, setDeliverUrl] = useState("");
@@ -16,7 +18,7 @@ export function OrderActions({ order, isBrand }: { order: { id: string; status: 
     setBusy(true);
     setError(null);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/orders/${order.id}/${path}`, {
+      const res = await fetch(`/api/v1/orders/${order.id}/${path}`, {
         method: "POST",
         credentials: "include",
         headers: body ? { "Content-Type": "application/json" } : {},
@@ -24,11 +26,12 @@ export function OrderActions({ order, isBrand }: { order: { id: string; status: 
       });
       if (!res.ok) {
         const detail = await res.json().catch(() => ({}));
-        throw new Error(detail?.message ?? `Failed (${res.status})`);
+        setError(serverErrorMessage(res.status, detail, locale));
+        return;
       }
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch {
+      setError(msg("network", locale));
     } finally {
       setBusy(false);
     }

@@ -4,8 +4,22 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useT } from "./locale-provider";
 
-const KEYS = ["platform", "category", "followers", "city", "price", "gender", "age"] as const;
+const KEYS = ["platform", "category", "followers", "price"] as const;
 type Key = (typeof KEYS)[number];
+
+// URL/API params each dropdown controls. Canonical enum values live in the
+// URL; localized labels only in the UI.
+const PARAMS: Record<Key, string[]> = {
+  platform: ["platform"],
+  category: ["category"],
+  followers: ["minFollowers"],
+  price: ["minPrice", "maxPrice"],
+};
+
+function priceValue(min: string | null, max: string | null): string | null {
+  if (!min && !max) return null;
+  return `${min ?? ""}-${max ?? ""}`;
+}
 
 export function FilterBar() {
   const router = useRouter();
@@ -34,10 +48,27 @@ export function FilterBar() {
     router.push(q ? `${target}?${q}` : target);
   }
 
+  function currentValue(key: Key): string | null {
+    if (key === "price") return priceValue(params.get("minPrice"), params.get("maxPrice"));
+    if (key === "followers") return params.get("minFollowers");
+    return params.get(key);
+  }
+
   function set(key: Key, value: string) {
     const next = new URLSearchParams(params.toString());
-    if (params.get(key) === value) next.delete(key);
-    else next.set(key, value);
+    const selected = currentValue(key) === value;
+    PARAMS[key].forEach((p) => next.delete(p));
+    if (!selected) {
+      if (key === "price") {
+        const [min, max] = value.split("-");
+        if (min) next.set("minPrice", min);
+        if (max) next.set("maxPrice", max);
+      } else if (key === "followers") {
+        next.set("minFollowers", value);
+      } else {
+        next.set(key, value);
+      }
+    }
     next.delete("page");
     push(next);
     setOpen(null);
@@ -45,20 +76,24 @@ export function FilterBar() {
 
   function clearAll() {
     const next = new URLSearchParams(params.toString());
-    KEYS.forEach((k) => next.delete(k));
+    KEYS.forEach((k) => PARAMS[k].forEach((p) => next.delete(p)));
+    next.delete("page");
     push(next);
     setOpen(null);
   }
 
-  const hasAny = KEYS.some((k) => params.get(k));
+  const hasAny = KEYS.some((k) => currentValue(k));
 
   return (
     <div ref={ref} className="relative">
       <div className="flex flex-wrap gap-2">
         {KEYS.map((key) => {
           const label = t.filters.labels[key];
-          const options = t.filters.options[key];
-          const current = params.get(key);
+          const options: readonly { value: string; label: string }[] = t.filters.options[key];
+          const current = currentValue(key);
+          const currentLabel = current
+            ? options.find((o) => o.value === current)?.label ?? current
+            : null;
           return (
             <div key={key} className="relative">
               <button
@@ -72,7 +107,7 @@ export function FilterBar() {
                     : "bg-elevated text-fg/80 border-border hover:border-fg"
                 }`}
               >
-                {current ?? label}
+                {currentLabel ?? label}
                 <span className="ms-1 opacity-60" aria-hidden>▾</span>
               </button>
               {open === key && (
@@ -82,15 +117,16 @@ export function FilterBar() {
                 >
                   {options.map((o) => (
                     <button
-                      key={o}
+                      key={o.value}
+                      type="button"
                       role="option"
-                      aria-selected={current === o}
-                      onClick={() => set(key, o)}
+                      aria-selected={current === o.value}
+                      onClick={() => set(key, o.value)}
                       className={`w-full text-start px-3 py-2 rounded-lg text-sm hover:bg-surface ${
-                        current === o ? "bg-surface font-semibold" : ""
+                        current === o.value ? "bg-surface font-semibold" : ""
                       }`}
                     >
-                      {o}
+                      {o.label}
                     </button>
                   ))}
                 </div>
@@ -100,6 +136,7 @@ export function FilterBar() {
         })}
         {hasAny && (
           <button
+            type="button"
             onClick={clearAll}
             className="text-sm font-medium px-3.5 py-2 rounded-full text-brand hover:bg-brand-50"
           >

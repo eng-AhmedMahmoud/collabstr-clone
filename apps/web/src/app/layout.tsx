@@ -8,6 +8,7 @@ import { LocaleProvider } from "@/components/locale-provider";
 import { CookieConsent } from "@/components/cookie-consent";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://collabstr-clone.vercel.app"),
   title: "Nakhla — Hire KSA Influencers & UGC Creators",
   description:
     "Hire creators in Saudi Arabia across Instagram, TikTok, YouTube, Snapchat, and UGC. Vetted talent, secure SAR payments, real results.",

@@ -3,8 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
-import { fmtMoney } from "@/lib/format";
-import { t } from "@/lib/i18n";
+import { Money } from "@/components/money";
+import { t, getLocale } from "@/lib/i18n";
 import { OrderActions } from "./actions";
 
 type OrderDetail = {
@@ -30,6 +30,8 @@ export default async function OrderDetailPage({
   params,
 }: { params: Promise<{ id: string }> }) {
   const i = await t();
+  const locale = await getLocale();
+  const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
   const { id } = await params;
   const me = await getSession();
   if (!me) redirect(`/login?next=/orders/${id}`);
@@ -61,13 +63,13 @@ export default async function OrderDetailPage({
           <section className="rounded-2xl border border-border bg-elevated p-6">
             <header className="flex items-center gap-3 mb-4">
               <div className="relative h-12 w-12 rounded-xl overflow-hidden bg-surface">
-                <Image src={counter.avatar || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(counter.name)}`} alt={counter.name} fill className="object-cover" />
+                <Image src={counter.avatar || `https://i.pravatar.cc/300?u=${encodeURIComponent(counter.name)}`} alt={counter.name} fill className="object-cover" unoptimized />
               </div>
               <div>
                 <Link href={counter.href} className="font-bold hover:text-brand">{counter.name}</Link>
                 <p className="text-xs text-muted">{i.common.role}</p>
               </div>
-              <Link href="/messages" className="ml-auto px-3 py-2 rounded-lg border border-border text-sm font-semibold hover:bg-surface">{i.orders.detail.message}</Link>
+              <Link href="/messages" className="ms-auto px-3 py-2 rounded-lg border border-border text-sm font-semibold hover:bg-surface">{i.orders.detail.message}</Link>
             </header>
             <h2 className="font-bold text-lg">{i.orders.detail.brief}</h2>
             <p className="text-fg/80 mt-2 whitespace-pre-wrap">{o.brief}</p>
@@ -110,9 +112,9 @@ export default async function OrderDetailPage({
           <section className="rounded-2xl border border-border bg-elevated p-5">
             <h2 className="font-bold">{i.orders.detail.parties}</h2>
             <ul className="mt-3 space-y-2 text-sm">
-              <li className="flex justify-between"><span>{o.package.title}</span><span>{fmtMoney(o.amount)}</span></li>
-              <li className="flex justify-between text-muted"><span>{i.orders.detail.serviceFee}</span><span>{fmtMoney(o.serviceFee)}</span></li>
-              <li className="flex justify-between font-bold border-t border-border pt-2 mt-2"><span>{i.orders.detail.total}</span><span>{fmtMoney(total)}</span></li>
+              <li className="flex justify-between"><span>{o.package.title}</span><Money value={o.amount} locale={moneyLocale} /></li>
+              <li className="flex justify-between text-muted"><span>{i.orders.detail.serviceFee}</span><Money value={o.serviceFee} locale={moneyLocale} /></li>
+              <li className="flex justify-between font-bold border-t border-border pt-2 mt-2"><span>{i.orders.detail.total}</span><Money value={total} locale={moneyLocale} /></li>
             </ul>
             <p className="text-xs text-muted mt-3">
               {["released", "cancelled"].includes(o.status) ? i.orders.detail.settled : i.orders.detail.escrowHeld}

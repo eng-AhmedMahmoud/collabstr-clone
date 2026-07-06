@@ -9,6 +9,7 @@ import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
 import { EmptyState } from "@/components/EmptyState";
+import { Money } from "@/components/Money";
 import { useCreatorMe, useMyOrders } from "@/api/queries";
 import { useSubmitMawthooq } from "@/api/mutations";
 import { useTheme } from "@/theme/context";
@@ -45,7 +46,7 @@ export default function CreatorDashboard() {
     <Screen scroll padded header={<AppHeader title={t.dashboard.creatorTitle} />}>
       <View style={styles.statsRow}>
         <StatCard label={t.dashboard.kpiOrders} value={String(orders.data?.length ?? 0)} />
-        <StatCard label={t.dashboard.kpiEarnings} value={String(earnings)} hint={t.discover.sar} />
+        <StatCard label={t.dashboard.kpiEarnings} value={String(earnings)} money />
       </View>
       <View style={styles.statsRow}>
         <StatCard label={t.dashboard.kpiRating} value={(me.data?.rating ?? 0).toFixed(1)} />
@@ -88,7 +89,10 @@ export default function CreatorDashboard() {
                 <Text style={{ color: palette.fg, fontWeight: "700" }} numberOfLines={1}>{o.package.title}</Text>
                 <Badge label={t.status[o.status]} tone="brand" />
               </View>
-              <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{o.brand.name} · {o.total} {t.discover.sar}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{o.brand.name} · </Text>
+                <Money value={o.total} style={{ color: palette.fgMuted, fontSize: 12 }} />
+              </View>
             </Card>
           </Pressable>
         ))

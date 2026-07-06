@@ -1,12 +1,17 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { MessagesService } from "./messages.service";
+import { MessagesGateway } from "./messages.gateway";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
+import { ZodValidationPipe } from "../common/zod-validation.pipe";
+import { SendMessageInput } from "@collabstr/shared-types";
 
 @UseGuards(JwtAuthGuard)
 @Controller()
 export class MessagesController {
-  constructor(private messages: MessagesService) {}
+  // Gateway injected into the controller (not the service) so HTTP sends can
+  // broadcast without creating a gateway<->service circular dependency.
+  constructor(private messages: MessagesService, private gateway: MessagesGateway) {}
 
   @Get("threads")
   threads(@CurrentUser() user: AuthUser) {
@@ -19,8 +24,17 @@ export class MessagesController {
   }
 
   @Post("threads/:id/messages")
-  send(@CurrentUser() user: AuthUser, @Param("id") id: string, @Body("body") body: string) {
-    return this.messages.send(user.id, id, body);
+  async send(
+    @CurrentUser() user: AuthUser,
+    @Param("id") id: string,
+    @Body(new ZodValidationPipe(SendMessageInput)) input: SendMessageInput,
+  ) {
+    const message = await this.messages.send(user.id, id, input.body);
+    // Mirror the message onto any connected sockets so HTTP and WS clients
+    // stay in sync.
+    const participants = await this.messages.threadParticipants(id);
+    this.gateway.broadcastMessage(id, message, participants);
+    return message;
   }
 
   @Post("threads/open/:username")

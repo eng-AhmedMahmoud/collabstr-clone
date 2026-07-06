@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shell } from "@/components/shell";
-import { Card, PageHeader, Pill } from "@/components/ui";
+import { Card, PageHeader, Pill, ErrorBanner } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtAgo } from "@/lib/format";
+import { fmtAgo, fmtCount, getLocale } from "@/lib/format";
+import { WEB_URL } from "@/lib/web-url";
 import { t as serverT } from "@/lib/i18n";
 import { MawthooqReviewActions } from "./review-actions";
 
@@ -31,15 +32,16 @@ export default async function MawthooqAdmin() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/mawthooq");
   const i = await serverT();
+  const locale = await getLocale();
   const api = await serverApi();
   let rows: Row[] = [];
-  try { rows = await api.get<Row[]>("/admin/mawthooq"); } catch {}
-
-  const webBase = process.env.NEXT_PUBLIC_WEB_URL ?? "https://collabstr-clone.vercel.app";
+  let apiError = false;
+  try { rows = await api.get<Row[]>("/admin/mawthooq"); } catch { apiError = true; }
 
   return (
     <Shell me={me}>
-      <PageHeader title={i.mawthooq.title} subtitle={`${rows.length} ${i.mawthooq.countSuffix}`} />
+      <PageHeader title={i.mawthooq.title} subtitle={`${fmtCount(rows.length, 200)} ${i.mawthooq.countSuffix}`} />
+      {apiError && <ErrorBanner title={i.common.apiError} body={i.common.apiErrorBody} />}
       <p className="text-sm text-muted mb-4 max-w-2xl">{i.mawthooq.subtitle}</p>
       <Card padding={false}>
         <table className="w-full text-sm">
@@ -57,17 +59,17 @@ export default async function MawthooqAdmin() {
             {rows.map((r) => (
               <tr key={r.id} className="border-b last:border-0 border-border hover:bg-surface-2/40 align-top">
                 <td className="px-5 py-3">
-                  <Link href={`${webBase}/${r.username}`} target="_blank" className="font-semibold hover:text-emerald-300">{r.user.name}</Link>
+                  <Link href={`${WEB_URL}/${r.username}`} target="_blank" className="font-semibold hover:text-emerald-300">{r.user.name}</Link>
                   <p className="text-[11px] text-muted">@{r.username} · {r.city}</p>
                 </td>
                 <td className="px-5 py-3 font-mono text-xs" dir="ltr">{r.mawthooqLicenseNo ?? "—"}</td>
                 <td className="px-5 py-3"><Pill kind={PILL[r.mawthooqStatus]}>{i.mawthooq.status[r.mawthooqStatus]}</Pill></td>
-                <td className="px-5 py-3 text-muted text-xs">{r.mawthooqSubmittedAt ? fmtAgo(r.mawthooqSubmittedAt) : "—"}</td>
+                <td className="px-5 py-3 text-muted text-xs">{r.mawthooqSubmittedAt ? fmtAgo(r.mawthooqSubmittedAt, locale) : "—"}</td>
                 <td className="px-5 py-3 text-muted text-xs">{r.mawthooqExpiresAt ? new Date(r.mawthooqExpiresAt).toISOString().slice(0, 10) : "—"}</td>
                 <td className="px-5 py-3 pr-5"><MawthooqReviewActions row={{ id: r.id, mawthooqStatus: r.mawthooqStatus }} /></td>
               </tr>
             ))}
-            {rows.length === 0 && (
+            {rows.length === 0 && !apiError && (
               <tr><td colSpan={6} className="px-5 py-10 text-center text-muted">{i.mawthooq.none}</td></tr>
             )}
           </tbody>

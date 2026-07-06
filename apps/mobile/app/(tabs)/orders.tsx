@@ -7,6 +7,7 @@ import { Badge } from "@/components/Badge";
 import { Chip } from "@/components/Chip";
 import { Avatar } from "@/components/Avatar";
 import { Button } from "@/components/Button";
+import { Money } from "@/components/Money";
 import { useMyOrders, type OrderListItem } from "@/api/queries";
 import { useAuth } from "@/auth/context";
 import { useTheme } from "@/theme/context";
@@ -97,9 +98,10 @@ function OrderRow({ item, role, onPress }: { item: OrderListItem; role: string; 
       <Avatar uri={peer.avatarUrl} seed={peer.name} size={40} />
       <View style={{ flex: 1 }}>
         <Text style={[styles.name, { color: palette.fg }]} numberOfLines={1}>{item.package.title}</Text>
-        <Text style={[styles.meta, { color: palette.fgMuted }]} numberOfLines={1}>
-          {peer.name} · {item.total} {t.discover.sar}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap", marginTop: 2 }}>
+          <Text style={{ color: palette.fgMuted, fontSize: 12 }} numberOfLines={1}>{peer.name} · </Text>
+          <Money value={item.total} style={{ color: palette.fgMuted, fontSize: 12 }} />
+        </View>
       </View>
       <Badge label={t.status[item.status] ?? item.status} tone={tone as any} />
     </Pressable>

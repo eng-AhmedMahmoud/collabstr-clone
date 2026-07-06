@@ -1,4 +1,4 @@
-import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import type { OrderInput } from "@collabstr/shared-types";
 import type { OrderStatus } from "@prisma/client";
@@ -9,13 +9,16 @@ const NEXT: Record<OrderStatus, OrderStatus[]> = {
   pending_payment: ["awaiting_creator", "cancelled"],
   awaiting_creator: ["in_progress", "cancelled"],
   in_progress: ["submitted", "cancelled"],
-  submitted: ["revision_requested", "approved"],
-  revision_requested: ["submitted", "cancelled"],
-  approved: ["released"],
+  submitted: ["revision_requested", "approved", "disputed"],
+  revision_requested: ["submitted", "cancelled", "disputed"],
+  approved: ["released", "disputed"],
   released: [],
   cancelled: [],
   disputed: ["released", "cancelled"],
 };
+
+// Order responses embed the creator's account — never the raw User row.
+const CREATOR_USER_SELECT = { select: { id: true, name: true, avatarUrl: true } } as const;
 
 @Injectable()
 export class OrdersService {
@@ -58,7 +61,7 @@ export class OrdersService {
     if (role === "brand") {
       return this.prisma.order.findMany({
         where: { brandId: userId },
-        include: { creator: { include: { user: true } }, package: true },
+        include: { creator: { include: { user: CREATOR_USER_SELECT } }, package: true },
         orderBy: { createdAt: "desc" },
       });
     }
@@ -75,7 +78,7 @@ export class OrdersService {
     const order = await this.prisma.order.findUnique({
       where: { id: orderId },
       include: {
-        creator: { include: { user: true } },
+        creator: { include: { user: CREATOR_USER_SELECT } },
         brand: { select: { id: true, name: true, avatarUrl: true } },
         package: true,
         events: { orderBy: { createdAt: "asc" } },
@@ -94,11 +97,18 @@ export class OrdersService {
     if (!NEXT[order.status].includes(to)) {
       throw new BadRequestException(`Illegal transition ${order.status} → ${to}`);
     }
-    const [updated] = await this.prisma.$transaction([
-      this.prisma.order.update({ where: { id: orderId }, data: { status: to } }),
-      this.prisma.orderEvent.create({ data: { orderId, status: to, note } }),
-    ]);
-    return updated;
+    return this.prisma.$transaction(async (tx) => {
+      // Guard the update on the status we validated against — two concurrent
+      // transitions (e.g. double pay/release) can both pass the check above,
+      // but only one can win this conditional write.
+      const { count } = await tx.order.updateMany({
+        where: { id: orderId, status: order.status },
+        data: { status: to },
+      });
+      if (count === 0) throw new ConflictException("Order was updated concurrently — refresh and retry");
+      await tx.orderEvent.create({ data: { orderId, status: to, note } });
+      return tx.order.findUniqueOrThrow({ where: { id: orderId } });
+    });
   }
 
   async accept(userId: string, orderId: string) {

@@ -5,12 +5,14 @@ import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
 import { Card } from "@/components/Card";
+import { Money } from "@/components/Money";
 import { EmptyState } from "@/components/EmptyState";
 import { useCreatorMe } from "@/api/queries";
 import { useAddPackage, useDeletePackage } from "@/api/mutations";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
 import { useToast } from "@/components/Toast";
+import { fieldErrorsFrom, apiErrorMessage } from "@/i18n/errors";
 import { useConfirm } from "@/components/useConfirm";
 import { Ionicons } from "@expo/vector-icons";
 import { spacing } from "@/theme";
@@ -27,15 +29,31 @@ export default function PackagesScreen() {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState("");
   const [desc, setDesc] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
 
   const submit = async () => {
     const p = Number(price);
-    if (!title || !p) return;
+    const next: Record<string, string> = {};
+    if (title.trim().length < 2) next.title = t.errors.titleMin;
+    if (!price.trim() || !Number.isInteger(p)) next.price = t.errors.priceInt;
+    else if (p < 10) next.price = t.errors.priceMin;
+    if (Object.keys(next).length) {
+      setErrors(next);
+      setFormError(null);
+      return;
+    }
+    setErrors({});
+    setFormError(null);
     try {
       await add.mutateAsync({ title, price: p, description: desc || undefined });
       setTitle(""); setPrice(""); setDesc("");
       toast(t.common.done, "success");
-    } catch { toast(t.common.error, "error"); }
+    } catch (err) {
+      const fe = fieldErrorsFrom(err);
+      if (fe) setErrors(fe);
+      setFormError(apiErrorMessage(err, t));
+    }
   };
 
   const onDelete = async (id: string) => {
@@ -48,9 +66,10 @@ export default function PackagesScreen() {
     <Screen scroll padded header={<AppHeader title={t.dashboard.packagesTitle} />}>
       <Card>
         <Text style={[styles.section, { color: palette.fgMuted }]}>{t.dashboard.addPackage}</Text>
-        <TextField label={t.dashboard.packageTitle} value={title} onChangeText={setTitle} />
-        <TextField label={t.dashboard.packagePrice} value={price} onChangeText={setPrice} keyboardType="numeric" />
+        <TextField label={t.dashboard.packageTitle} value={title} onChangeText={setTitle} error={errors.title} />
+        <TextField label={t.dashboard.packagePrice} value={price} onChangeText={setPrice} keyboardType="numeric" error={errors.price} />
         <TextField label={t.dashboard.packageDesc} value={desc} onChangeText={setDesc} multiline numberOfLines={3} style={{ minHeight: 80, textAlignVertical: "top" }} />
+        {formError ? <Text style={{ color: palette.danger }}>{formError}</Text> : null}
         <Button title={t.dashboard.addPackage} onPress={submit} loading={add.isPending} disabled={!title || !price} />
       </Card>
 
@@ -67,7 +86,7 @@ export default function PackagesScreen() {
                 <Text style={{ color: palette.fg, fontWeight: "700" }}>{p.title}</Text>
                 {p.description ? <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{p.description}</Text> : null}
               </View>
-              <Text style={{ color: palette.brand, fontWeight: "800" }}>{p.price} {t.discover.sar}</Text>
+              <Money value={p.price} style={{ color: palette.brand, fontWeight: "800" }} />
               <Pressable onPress={() => onDelete(p.id)} hitSlop={8}>
                 <Ionicons name="trash-outline" size={20} color={palette.danger} />
               </Pressable>

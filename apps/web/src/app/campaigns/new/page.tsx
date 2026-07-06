@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { PLATFORMS, CATEGORIES } from "@/lib/data";
-import { useT } from "@/components/locale-provider";
+import { useT, useLocale } from "@/components/locale-provider";
+import { validateCampaign, serverErrorMessage, msg } from "@/lib/validation";
 
 type Form = {
   title: string;
@@ -25,16 +26,25 @@ const empty: Form = {
   creatorsNeeded: "10", deadline: "",
 };
 
+// Which wizard step a given field lives on, so a validation failure can jump
+// the user straight to the offending field.
+const STEP_OF_FIELD: Record<string, number> = {
+  title: 1, description: 1, platforms: 2, categories: 3, budget: 4,
+};
+
 export default function NewCampaignPage() {
   const router = useRouter();
   const i = useT();
+  const locale = useLocale();
   const [step, setStep] = useState(1);
   const total = 4;
   const [f, setF] = useState<Form>(empty);
   const [error, setError] = useState<string | null>(null);
+  const [errorField, setErrorField] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
   function toggle(key: "platforms" | "categories", value: string) {
+    setError(null); setErrorField(null);
     setF((prev) => ({
       ...prev,
       [key]: prev[key].includes(value)
@@ -44,9 +54,16 @@ export default function NewCampaignPage() {
   }
 
   async function submit() {
-    setBusy(true); setError(null);
+    const invalid = validateCampaign(f, locale);
+    if (invalid) {
+      setError(invalid.message);
+      setErrorField(invalid.field);
+      setStep(STEP_OF_FIELD[invalid.field] ?? step);
+      return;
+    }
+    setBusy(true); setError(null); setErrorField(null);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/campaigns`, {
+      const res = await fetch("/api/v1/campaigns", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
@@ -61,11 +78,16 @@ export default function NewCampaignPage() {
           deadline: f.deadline ? new Date(f.deadline).toISOString() : undefined,
         }),
       });
-      if (!res.ok) throw new Error((await res.json())?.message ?? "Failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setError(serverErrorMessage(res.status, body, locale));
+        return;
+      }
       const camp = await res.json();
       router.push(`/campaigns/${camp.id}`);
-    } catch (e: any) { setError(e.message); }
-    finally { setBusy(false); }
+    } catch {
+      setError(msg("network", locale));
+    } finally { setBusy(false); }
   }
 
   return (
@@ -88,15 +110,15 @@ export default function NewCampaignPage() {
             <h2 className="font-bold text-xl">{i.campaigns.new.briefH}</h2>
             <p className="text-sm text-muted mt-1">{i.campaigns.new.briefSub}</p>
             <div className="mt-5 space-y-3">
-              <Field label={i.campaigns.new.campaignTitle} value={f.title} onChange={(v) => setF({ ...f, title: v })} placeholder="Spring drop — sustainable activewear" />
+              <Field label={i.campaigns.new.campaignTitle} value={f.title} invalid={errorField === "title"} onChange={(v) => { setF({ ...f, title: v }); setError(null); setErrorField(null); }} placeholder="Spring drop — sustainable activewear" />
               <label className="block">
                 <span className="text-xs font-semibold text-fg/80">{i.campaigns.new.description}</span>
                 <textarea
                   value={f.description}
-                  onChange={(e) => setF({ ...f, description: e.target.value })}
+                  onChange={(e) => { setF({ ...f, description: e.target.value }); setError(null); setErrorField(null); }}
                   rows={5}
                   placeholder={i.campaigns.new.descPh}
-                  className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border"
+                  className={`mt-1 w-full px-3.5 py-3 rounded-xl border ${errorField === "description" ? "border-red-500 focus:border-red-500" : "border-border"}`}
                 />
               </label>
             </div>
@@ -113,7 +135,7 @@ export default function NewCampaignPage() {
                   type="button"
                   key={p.value}
                   onClick={() => toggle("platforms", p.value)}
-                  className={`p-4 rounded-xl border text-left ${
+                  className={`p-4 rounded-xl border text-start ${
                     f.platforms.includes(p.value) ? "border-fg bg-surface" : "border-border hover:border-fg"
                   }`}
                 >
@@ -155,14 +177,15 @@ export default function NewCampaignPage() {
           <>
             <h2 className="font-bold text-xl">{i.campaigns.new.budgetH}</h2>
             <div className="mt-5 grid grid-cols-2 gap-3">
-              <Field label={i.campaigns.new.minBudget} type="number" value={f.budgetMin} onChange={(v) => setF({ ...f, budgetMin: v })} placeholder="500" />
-              <Field label={i.campaigns.new.maxBudget} type="number" value={f.budgetMax} onChange={(v) => setF({ ...f, budgetMax: v })} placeholder="5000" />
+              <Field label={i.campaigns.new.minBudget} type="number" value={f.budgetMin} invalid={errorField === "budget"} onChange={(v) => { setF({ ...f, budgetMin: v }); setError(null); setErrorField(null); }} placeholder="500" />
+              <Field label={i.campaigns.new.maxBudget} type="number" value={f.budgetMax} invalid={errorField === "budget"} onChange={(v) => { setF({ ...f, budgetMax: v }); setError(null); setErrorField(null); }} placeholder="5000" />
               <Field label={i.campaigns.new.needed} type="number" value={f.creatorsNeeded} onChange={(v) => setF({ ...f, creatorsNeeded: v })} placeholder="10" />
               <Field label={i.campaigns.new.deadline} type="date" value={f.deadline} onChange={(v) => setF({ ...f, deadline: v })} />
             </div>
-            {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
           </>
         )}
+
+        {error && <p className="text-sm text-red-600 mt-4">{error}</p>}
 
         <div className="flex justify-between mt-7">
           <button
@@ -187,15 +210,16 @@ export default function NewCampaignPage() {
   );
 }
 
-function Field({ label, value, onChange, ...rest }: { label: string; value: string; onChange: (v: string) => void } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
+function Field({ label, value, onChange, invalid, ...rest }: { label: string; value: string; onChange: (v: string) => void; invalid?: boolean } & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "onChange">) {
   return (
     <label className="block">
       <span className="text-xs font-semibold text-fg/80">{label}</span>
       <input
         {...rest}
         value={value}
+        aria-invalid={invalid || undefined}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border"
+        className={`mt-1 w-full px-3.5 py-3 rounded-xl border ${invalid ? "border-red-500 focus:border-red-500" : "border-border"}`}
       />
     </label>
   );

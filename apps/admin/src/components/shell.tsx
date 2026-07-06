@@ -5,10 +5,7 @@ import { MobileNav } from "./mobile-nav";
 import { BrandMark } from "./brand-mark";
 import type { Me } from "@collabstr/shared-types";
 import { t } from "@/lib/i18n";
-
-const MARKETPLACE_URL =
-  process.env.NEXT_PUBLIC_WEB_URL ??
-  (process.env.NODE_ENV === "production" ? "https://collabstr-clone.vercel.app" : "https://collabstr-web.localhost");
+import { WEB_URL } from "@/lib/web-url";
 
 export async function Shell({ me, children }: { me: Me; children: React.ReactNode }) {
   const i = await t();
@@ -58,7 +55,7 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
         brandAr="نخلة"
         sub={i.brand.sub}
         marketplaceLabel={i.nav.marketplace}
-        marketplaceHref={MARKETPLACE_URL}
+        marketplaceHref={WEB_URL}
       />
 
       <aside className="hidden md:flex md:w-60 lg:w-64 shrink-0 border-e border-border bg-bg/80 backdrop-blur-md flex-col sticky top-0 h-screen z-10">
@@ -112,7 +109,7 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
               {process.env.NODE_ENV === "production" ? i.nav.production : i.nav.development}
             </span>
             <span className="hidden lg:inline">·</span>
-            <span className="truncate">{i.nav.roleAdmin}</span>
+            <span className="truncate">{me.role === "superadmin" ? i.nav.roleSuperadmin : i.nav.roleAdmin}</span>
             <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-2 py-0.5 rounded-full bg-brand-900/50 border border-brand-800 text-brand-300 shrink-0">
               🇸🇦 KSA · SAR ر.س
             </span>
@@ -120,7 +117,7 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
           <div className="flex items-center gap-2 shrink-0">
             <LocaleSwitcher />
             <Link
-              href={MARKETPLACE_URL}
+              href={WEB_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-brand-800 bg-brand-900/40 text-brand-200 hover:border-brand-500 hover:text-white transition whitespace-nowrap"

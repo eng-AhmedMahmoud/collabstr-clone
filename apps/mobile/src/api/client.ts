@@ -5,15 +5,35 @@ import { getCurrentLocale } from "@/i18n/context";
 // Base URL priority:
 //   1. EXPO_PUBLIC_API_URL env (works in dev, EAS, prod builds)
 //   2. Expo Go's LAN hostUri (so a phone on the same wifi can hit the mac)
-//   3. localhost (last resort — only iOS sim / desktop)
+//   3. localhost (last resort — only iOS sim / desktop, dev only)
+// Production builds without an env URL fail fast instead of shipping localhost.
 function resolveBaseUrl(): string {
-  const env = process.env.EXPO_PUBLIC_API_URL;
-  if (env && env.length > 0) return env.replace(/\/$/, "");
+  const env = process.env.EXPO_PUBLIC_API_URL?.replace(/\/$/, "");
   const hostUri = Constants.expoConfig?.hostUri ?? (Constants as any).manifest?.debuggerHost;
-  if (hostUri) {
-    const host = hostUri.split(":")[0];
-    if (host) return `http://${host}:4000`;
+  const lanHost = typeof hostUri === "string" ? hostUri.split(":")[0] : undefined;
+  const isLanHost = !!lanHost && lanHost !== "localhost" && lanHost !== "127.0.0.1";
+
+  if (!__DEV__) {
+    if (!env) {
+      throw new Error(
+        "EXPO_PUBLIC_API_URL is not set in this production build. " +
+        "Configure it in the eas.json build profile env (see apps/mobile/README.md) — " +
+        "refusing to fall back to localhost.",
+      );
+    }
+    return env;
   }
+
+  if (env) {
+    // Dev on a physical device: the env URL often says localhost, which points
+    // at the phone itself. Swap in the mac's LAN IP from Expo's hostUri while
+    // keeping the env port so phone-on-wifi dev works.
+    const m = env.match(/^(https?):\/\/(localhost|127\.0\.0\.1)(:\d+)?(\/.*)?$/i);
+    if (m && isLanHost) return `${m[1]}://${lanHost}${m[3] ?? ""}${m[4] ?? ""}`;
+    return env;
+  }
+
+  if (lanHost) return `http://${lanHost}:4000`;
   return "http://localhost:4000";
 }
 
@@ -44,6 +64,27 @@ export const tokens = {
     ]);
   },
 };
+
+// Tiny auth-event emitter — the API layer can't reach React context, so the
+// AuthProvider subscribes here to reset `me` when the session dies.
+type AuthEvent = "logout";
+type AuthListener = (event: AuthEvent) => void;
+const authListeners = new Set<AuthListener>();
+
+export function onAuthEvent(listener: AuthListener): () => void {
+  authListeners.add(listener);
+  return () => { authListeners.delete(listener); };
+}
+
+function emitAuthEvent(event: AuthEvent) {
+  for (const listener of authListeners) listener(event);
+}
+
+// Clear tokens because the server definitively rejected the session.
+async function clearSession() {
+  await tokens.clear();
+  emitAuthEvent("logout");
+}
 
 export class ApiError extends Error {
   status: number;
@@ -92,14 +133,20 @@ async function tryRefresh(): Promise<boolean> {
   refreshing = (async () => {
     const { refresh } = await tokens.get();
     if (!refresh) return false;
+    // Network errors reject here and propagate to the caller — tokens stay put.
     const res = await fetch(`${API_BASE}${API_PREFIX}/auth/refresh`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ refreshToken: refresh }),
     });
-    if (!res.ok) {
-      await tokens.clear();
+    if (res.status === 401 || res.status === 403) {
+      // Only a definitive rejection kills the session.
+      await clearSession();
       return false;
+    }
+    if (!res.ok) {
+      // 5xx / other transient failures: keep tokens, surface the error.
+      throw new ApiError(res.status, `Token refresh failed (HTTP ${res.status})`, null);
     }
     const data = (await res.json()) as { accessToken?: string; refreshToken?: string };
     if (!data.accessToken || !data.refreshToken) return false;

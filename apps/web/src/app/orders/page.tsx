@@ -2,8 +2,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
-import { fmtMoney } from "@/lib/format";
-import { t } from "@/lib/i18n";
+import { Money } from "@/components/money";
+import { t, getLocale } from "@/lib/i18n";
 
 type OrderRow = {
   id: string;
@@ -19,8 +19,11 @@ export const dynamic = "force-dynamic";
 
 export default async function OrdersPage() {
   const i = await t();
+  const locale = await getLocale();
+  const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
   const me = await getSession();
   if (!me) redirect("/login?next=/orders");
+  if (me.role === "creator") redirect("/creator-dashboard/orders");
   const api = await serverApi();
   let orders: OrderRow[] = [];
   try { orders = await api.get<OrderRow[]>("/orders"); } catch {}
@@ -42,7 +45,7 @@ export default async function OrdersPage() {
               : o.status === "submitted" ? "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
               : "bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200"
             }`}>{i.status[o.status as keyof typeof i.status] ?? o.status.replace(/_/g, " ")}</span>
-            <span className="font-bold">{fmtMoney(o.amount)}</span>
+            <Money value={o.amount} locale={moneyLocale} className="font-bold" />
           </Link>
         ))}
       </div>

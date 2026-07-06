@@ -19,3 +19,29 @@ export function buildShareUrl(path: string): string {
 export function buildAppUrl(path: string): string {
   return Linking.createURL(path);
 }
+
+// Route patterns the app actually ships screens for. Notification hrefs come
+// from the API in web-path form (e.g. "/orders/abc123") — anything outside
+// this list has no mobile screen and must not be pushed.
+const ROUTABLE_PATHS: RegExp[] = [
+  /^\/orders\/[^/]+$/,
+  /^\/campaigns\/[^/]+$/,
+  /^\/creator\/[^/]+$/,
+  /^\/messages\/[^/]+$/,
+  /^\/notifications$/,
+  /^\/saved$/,
+  /^\/checkout$/,
+  /^\/dashboard\/(brand|creator|packages)$/,
+];
+
+// Map an API-provided notification href (web path or absolute URL on our
+// host) to an in-app route. Returns null when there's no matching screen.
+export function mapNotificationHref(href?: string | null): string | null {
+  if (!href) return null;
+  let path = href.trim();
+  const abs = path.match(/^https?:\/\/[^/]+(\/.*)?$/i);
+  if (abs) path = abs[1] ?? "/";
+  if (!path.startsWith("/")) path = `/${path}`;
+  const clean = path.split(/[?#]/)[0];
+  return ROUTABLE_PATHS.some((re) => re.test(clean)) ? path : null;
+}

@@ -4,6 +4,7 @@ import { Screen } from "@/components/Screen";
 import { AppHeader } from "@/components/AppHeader";
 import { Avatar } from "@/components/Avatar";
 import { EmptyState } from "@/components/EmptyState";
+import { Money } from "@/components/Money";
 import { useSavedCreators } from "@/api/queries";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -42,7 +43,10 @@ export default function Saved() {
               <Text style={[styles.meta, { color: palette.fgMuted }]}>{item.city} · @{item.username}</Text>
             </View>
             {item.startingPrice ? (
-              <Text style={{ color: palette.brand, fontWeight: "700" }}>{t.discover.from} {item.startingPrice} {t.discover.sar}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                <Text style={{ color: palette.brand, fontWeight: "700" }}>{t.discover.from}</Text>
+                <Money value={item.startingPrice} style={{ color: palette.brand, fontWeight: "700" }} />
+              </View>
             ) : null}
           </Pressable>
         )}

@@ -4,7 +4,9 @@ import { Shell } from "@/components/shell";
 import { Card, PageHeader, Pill, pillKindForStatus } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtMoney, fmtDate } from "@/lib/format";
+import { fmtDate, getLocale } from "@/lib/format";
+import { Money } from "@/components/money";
+import { WEB_URL } from "@/lib/web-url";
 import { OrderAdminActions } from "./actions";
 import { t as serverT } from "@/lib/i18n";
 
@@ -30,6 +32,7 @@ export default async function OrderDetailAdmin({
   const me = await getAdminSession();
   if (!me) redirect("/login");
   const i = await serverT();
+  const locale = await getLocale();
   const { id } = await params;
   const api = await serverApi();
   let o: Detail;
@@ -40,7 +43,7 @@ export default async function OrderDetailAdmin({
     <Shell me={me}>
       <PageHeader
         title={i.orders.detail.backTpl.replace("{id}", o.id.slice(0, 8))}
-        subtitle={i.orders.detail.subTpl.replace("{pkg}", o.package.title).replace("{date}", fmtDate(o.createdAt))}
+        subtitle={i.orders.detail.subTpl.replace("{pkg}", o.package.title).replace("{date}", fmtDate(o.createdAt, locale))}
         action={<Pill kind={pillKindForStatus(o.status)}>{o.status.replace(/_/g, " ")}</Pill>}
       />
 
@@ -57,7 +60,7 @@ export default async function OrderDetailAdmin({
                   <li key={d.id} className="px-5 py-3">
                     <a href={d.url} target="_blank" className="text-sm font-mono break-all text-emerald-300 hover:text-emerald-200">{d.url}</a>
                     {d.note && <p className="text-sm text-fg/85 mt-1">{d.note}</p>}
-                    <p className="text-[11px] text-muted mt-1">{fmtDate(d.createdAt)}</p>
+                    <p className="text-[11px] text-muted mt-1">{fmtDate(d.createdAt, locale)}</p>
                   </li>
                 ))}
               </ul>
@@ -72,7 +75,7 @@ export default async function OrderDetailAdmin({
                   <div className="flex-1">
                     <p className="font-semibold">{e.status.replace(/_/g, " ")}</p>
                     {e.note && <p className="text-muted">{e.note}</p>}
-                    <p className="text-[11px] text-muted">{fmtDate(e.createdAt)}</p>
+                    <p className="text-[11px] text-muted">{fmtDate(e.createdAt, locale)}</p>
                   </div>
                 </li>
               ))}
@@ -88,14 +91,14 @@ export default async function OrderDetailAdmin({
             <p className="text-[10px] uppercase tracking-wider text-muted">{i.orders.detail.creator}</p>
             <p className="font-semibold">{o.creator.user.name}</p>
             <p className="text-xs text-muted">{o.creator.user.email}</p>
-            <Link href={`https://collabstr-web.localhost/${o.creator.username}`} target="_blank" className="text-xs text-emerald-300 mt-2 inline-block">{i.common.openProfile} →</Link>
+            <Link href={`${WEB_URL}/${o.creator.username}`} target="_blank" className="text-xs text-emerald-300 mt-2 inline-block">{i.common.openProfile} →</Link>
           </Card>
 
           <Card title={i.orders.detail.money}>
             <ul className="text-sm space-y-1.5">
-              <li className="flex justify-between"><span className="text-muted">{i.orders.detail.amount}</span><span className="font-bold">{fmtMoney(o.amount)}</span></li>
-              <li className="flex justify-between"><span className="text-muted">{i.orders.detail.serviceFee}</span><span>{fmtMoney(o.serviceFee)}</span></li>
-              <li className="flex justify-between border-t border-border pt-2 mt-2"><span>{i.orders.detail.total}</span><span className="font-bold">{fmtMoney(o.amount + o.serviceFee)}</span></li>
+              <li className="flex justify-between"><span className="text-muted">{i.orders.detail.amount}</span><span className="font-bold"><Money value={o.amount} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></span></li>
+              <li className="flex justify-between"><span className="text-muted">{i.orders.detail.serviceFee}</span><span><Money value={o.serviceFee} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></span></li>
+              <li className="flex justify-between border-t border-border pt-2 mt-2"><span>{i.orders.detail.total}</span><span className="font-bold"><Money value={o.amount + o.serviceFee} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></span></li>
             </ul>
           </Card>
 

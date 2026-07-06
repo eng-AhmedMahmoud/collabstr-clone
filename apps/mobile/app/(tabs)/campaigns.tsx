@@ -5,6 +5,7 @@ import { Screen } from "@/components/Screen";
 import { EmptyState } from "@/components/EmptyState";
 import { Badge } from "@/components/Badge";
 import { RoleGate } from "@/components/RoleGate";
+import { Money } from "@/components/Money";
 import { useCampaigns, type CampaignListItem } from "@/api/queries";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -70,9 +71,11 @@ function CampaignRow({ item, onPress }: { item: CampaignListItem; onPress: () =>
         <Text style={[styles.name, { color: palette.fg }]} numberOfLines={1}>{item.title}</Text>
         <Text style={[styles.desc, { color: palette.fgMuted }]} numberOfLines={2}>{item.description}</Text>
         <View style={styles.metaRow}>
-          <Text style={[styles.meta, { color: palette.brand }]}>
-            {item.budgetMin} — {item.budgetMax} {t.discover.sar}
-          </Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+            <Money value={item.budgetMin} style={[styles.meta, { color: palette.brand }]} />
+            <Text style={[styles.meta, { color: palette.brand }]}>—</Text>
+            <Money value={item.budgetMax} style={[styles.meta, { color: palette.brand }]} />
+          </View>
           <Badge label={t.campaigns.status[item.status]} tone={tone as any} />
         </View>
       </View>

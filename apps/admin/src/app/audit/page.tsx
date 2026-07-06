@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shell } from "@/components/shell";
-import { Card, PageHeader, EmptyState } from "@/components/ui";
+import { Card, PageHeader, EmptyState, ErrorBanner } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtDate } from "@/lib/format";
+import { fmtDate, getLocale } from "@/lib/format";
 import { t as serverT } from "@/lib/i18n";
 
 type Row = {
@@ -22,14 +22,18 @@ export default async function AuditPage() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/audit");
   const i = await serverT();
+  const locale = await getLocale();
   const api = await serverApi();
   let rows: Row[] = [];
-  try { rows = await api.get<Row[]>("/admin/audit"); } catch {}
+  let apiError = false;
+  try { rows = await api.get<Row[]>("/admin/audit"); } catch { apiError = true; }
 
   return (
     <Shell me={me}>
       <PageHeader title={i.audit.title} subtitle={i.audit.sub} />
-      {rows.length === 0 ? (
+      {apiError ? (
+        <ErrorBanner title={i.common.apiError} body={i.common.apiErrorBody} />
+      ) : rows.length === 0 ? (
         <Card><EmptyState title={i.audit.none} body={i.audit.noneBody} /></Card>
       ) : (
         <Card padding={false}>
@@ -45,7 +49,7 @@ export default async function AuditPage() {
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id} className="border-b last:border-0 border-border hover:bg-surface-2/40">
-                  <td className="px-5 py-3 text-muted whitespace-nowrap">{fmtDate(r.createdAt)}</td>
+                  <td className="px-5 py-3 text-muted whitespace-nowrap">{fmtDate(r.createdAt, locale)}</td>
                   <td className="px-5 py-3">
                     <Link href={`/orders/${r.order.id}`} className="font-mono text-xs font-semibold hover:text-emerald-300">#{r.order.id.slice(0, 8)}</Link>
                     <p className="text-[11px] text-muted">{r.order.brand.name}</p>

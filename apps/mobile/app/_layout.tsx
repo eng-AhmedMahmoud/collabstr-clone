@@ -7,6 +7,7 @@ import { AuthProvider } from "@/auth/context";
 import { ThemeProvider } from "@/theme/context";
 import { I18nProvider } from "@/i18n/context";
 import { ToastProvider } from "@/components/Toast";
+import { RtlRestartBanner } from "@/components/RtlRestartBanner";
 import { queryClient } from "@/api/queryClient";
 
 export default function RootLayout() {
@@ -20,6 +21,7 @@ export default function RootLayout() {
                 <ToastProvider>
                   <StatusBar style="auto" />
                   <Stack screenOptions={{ headerShown: false }} />
+                  <RtlRestartBanner />
                 </ToastProvider>
               </AuthProvider>
             </I18nProvider>

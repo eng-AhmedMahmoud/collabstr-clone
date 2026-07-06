@@ -92,6 +92,25 @@ export class AdminService {
     return this.prisma.user.update({ where: { id: userId }, data: { role: "admin" } });
   }
 
+  // Demote an admin back to a non-privileged role. We don't persist the prior
+  // role, so we infer it from which profile the user owns: brand if they have a
+  // brandProfile, creator if they have a creatorProfile, else fall back to
+  // brand. Superadmins can never be demoted through this endpoint.
+  async demoteAdmin(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { brandProfile: true, creatorProfile: true },
+    });
+    if (!user) throw new NotFoundException();
+    if (user.role === "superadmin") throw new ForbiddenException("Cannot demote a superadmin");
+    const role: Role = user.brandProfile ? "brand" : user.creatorProfile ? "creator" : "brand";
+    return this.prisma.user.update({
+      where: { id: userId },
+      data: { role },
+      select: { id: true, name: true, email: true, role: true },
+    });
+  }
+
   async listCreators() {
     return this.prisma.creatorProfile.findMany({
       orderBy: { createdAt: "desc" },
@@ -145,17 +164,18 @@ export class AdminService {
       take: 200,
       include: { user: { select: { name: true, email: true, id: true } } },
     });
-    const stats = await Promise.all(
-      brands.map(async (b) => {
-        const orders = await this.prisma.order.aggregate({
-          where: { brandId: b.user.id, status: "released" },
-          _sum: { amount: true },
-          _count: true,
-        });
-        return { ...b, totalOrders: orders._count, totalSpent: orders._sum.amount ?? 0 };
-      })
-    );
-    return stats;
+    // Single groupBy instead of one aggregate round-trip per brand.
+    const grouped = await this.prisma.order.groupBy({
+      by: ["brandId"],
+      where: { brandId: { in: brands.map((b) => b.user.id) }, status: "released" },
+      _sum: { amount: true },
+      _count: true,
+    });
+    const byBrand = new Map(grouped.map((g) => [g.brandId, g]));
+    return brands.map((b) => {
+      const g = byBrand.get(b.user.id);
+      return { ...b, totalOrders: g?._count ?? 0, totalSpent: g?._sum.amount ?? 0 };
+    });
   }
 
   async listCampaigns() {

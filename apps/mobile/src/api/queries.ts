@@ -1,5 +1,6 @@
 import { useInfiniteQuery, useQuery, type UseQueryOptions } from "@tanstack/react-query";
 import { api } from "./client";
+import { useAuth } from "@/auth/context";
 import type { Locale, MawthooqStatus, Platform, Category, OrderStatus } from "@collabstr/shared-types";
 
 // ─── Shared response shapes ─────────────────────────────────────────────────
@@ -229,18 +230,60 @@ export function useOrderById(id: string, opts?: Opts<OrderDetail>) {
   });
 }
 
+// The API returns raw thread/message rows; the screens want a viewer-relative
+// shape (peer = the OTHER participant, fromMe on each message). Map here using
+// the signed-in user's id — casting the raw rows straight to Thread[] left
+// `peer`/`fromMe` undefined and crashed the inbox.
+type RawParticipant = { id: string; name: string; avatarUrl: string | null };
+type RawThread = {
+  id: string;
+  brandId: string;
+  creatorUserId: string;
+  lastMessageAt: string;
+  brand: RawParticipant;
+  creator: RawParticipant;
+  messages: { id: string; senderId: string; body: string; createdAt: string; readAt: string | null }[];
+};
+type RawMessage = { id: string; senderId: string; body: string; createdAt: string; readAt: string | null };
+
 export function useThreads(opts?: Opts<Thread[]>) {
+  const { me } = useAuth();
+  const myId = me?.id;
   return useQuery({
     queryKey: qk.threads(),
-    queryFn: () => api<Thread[]>("/threads"),
+    queryFn: async (): Promise<Thread[]> => {
+      const rows = await api<RawThread[]>("/threads");
+      return rows.map((tRow) => {
+        const peer = myId && tRow.brandId === myId ? tRow.creator : tRow.brand;
+        const last = tRow.messages?.[0];
+        return {
+          id: tRow.id,
+          updatedAt: tRow.lastMessageAt,
+          peer: { id: peer?.id ?? "", name: peer?.name ?? "", avatarUrl: peer?.avatarUrl ?? null },
+          lastMessage: last ? { body: last.body, createdAt: last.createdAt, fromMe: last.senderId === myId } : null,
+          unread: last && last.senderId !== myId && !last.readAt ? 1 : 0,
+        };
+      });
+    },
     ...opts,
   });
 }
 
 export function useThreadMessages(threadId: string, opts?: Opts<ChatMessage[]>) {
+  const { me } = useAuth();
+  const myId = me?.id;
   return useQuery({
     queryKey: qk.messages(threadId),
-    queryFn: () => api<ChatMessage[]>(`/threads/${threadId}/messages`),
+    queryFn: async (): Promise<ChatMessage[]> => {
+      const rows = await api<RawMessage[]>(`/threads/${threadId}/messages`);
+      return rows.map((m) => ({
+        id: m.id,
+        body: m.body,
+        createdAt: m.createdAt,
+        senderId: m.senderId,
+        fromMe: m.senderId === myId,
+      }));
+    },
     enabled: !!threadId,
     refetchInterval: 8000,
     ...opts,

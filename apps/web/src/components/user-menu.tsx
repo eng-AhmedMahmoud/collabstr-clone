@@ -12,7 +12,7 @@ export function UserMenu({ me }: { me: Me }) {
   const i = useT();
 
   async function logout() {
-    await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/logout`, {
+    await fetch("/api/v1/auth/logout", {
       method: "POST",
       credentials: "include",
     });
@@ -27,7 +27,7 @@ export function UserMenu({ me }: { me: Me }) {
     <div className="relative">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-2 rounded-full pl-1.5 pr-3 py-1.5 border border-border hover:border-fg"
+        className="flex items-center gap-2 rounded-full ps-1.5 pe-3 py-1.5 border border-border hover:border-fg"
       >
         <span className="h-7 w-7 rounded-full brand-gradient grid place-items-center text-white text-xs font-bold">
           {initials || "U"}
@@ -36,7 +36,7 @@ export function UserMenu({ me }: { me: Me }) {
         <span className="text-muted text-xs">▾</span>
       </button>
       {open && (
-        <div className="absolute right-0 mt-2 w-56 rounded-xl border border-border bg-elevated shadow-xl p-1.5 z-50">
+        <div className="absolute end-0 mt-2 w-56 rounded-xl border border-border bg-elevated shadow-xl p-1.5 z-50">
           <p className="px-3 py-2 text-xs text-muted border-b border-border mb-1">
             {i.nav.signedInAs} <span className="font-semibold text-fg block truncate">{me.email}</span>
           </p>
@@ -60,7 +60,7 @@ export function UserMenu({ me }: { me: Me }) {
           <MenuLink href="/settings">{i.nav.settings}</MenuLink>
           <button
             onClick={logout}
-            className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 mt-1 border-t border-border pt-2"
+            className="w-full text-start px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 mt-1 border-t border-border pt-2"
           >
             {i.nav.logout}
           </button>

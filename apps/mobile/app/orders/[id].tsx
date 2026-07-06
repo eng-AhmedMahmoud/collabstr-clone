@@ -9,6 +9,7 @@ import { TextField } from "@/components/TextField";
 import { Badge } from "@/components/Badge";
 import { Card } from "@/components/Card";
 import { Avatar } from "@/components/Avatar";
+import { Money } from "@/components/Money";
 import { useOrderById } from "@/api/queries";
 import {
   useOrderAction,
@@ -21,6 +22,7 @@ import { useAuth } from "@/auth/context";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
 import { useToast } from "@/components/Toast";
+import { fieldErrorsFrom, apiErrorMessage } from "@/i18n/errors";
 import { useConfirm } from "@/components/useConfirm";
 import { radius, spacing } from "@/theme";
 import type { OrderStatus } from "@collabstr/shared-types";
@@ -54,6 +56,7 @@ export default function OrderDetail() {
   const [dispReason, setDispReason] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [reviewRating, setReviewRating] = useState(5);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   if (q.isLoading) {
     return (
@@ -78,8 +81,10 @@ export default function OrderDetail() {
     try {
       await fn();
       toast(label, "success");
-    } catch {
-      toast(t.common.error, "error");
+    } catch (err) {
+      const fe = fieldErrorsFrom(err);
+      if (fe) setErrors((prev) => ({ ...prev, ...fe }));
+      toast(apiErrorMessage(err, t), "error");
     }
   };
 
@@ -92,7 +97,7 @@ export default function OrderDetail() {
         </View>
         <View style={styles.metaRow}>
           <Text style={{ color: palette.fgMuted }}>{t.orders.total}</Text>
-          <Text style={[styles.strong, { color: palette.brand }]}>{d.total} {t.discover.sar}</Text>
+          <Money value={d.total} style={[styles.strong, { color: palette.brand }]} />
         </View>
         <View style={styles.peerRow}>
           <Avatar uri={d.creator.user.avatarUrl} seed={d.creator.username} size={32} />
@@ -133,11 +138,16 @@ export default function OrderDetail() {
         {isCreator && (status === "in_progress" || status === "revision_requested") ? (
           <Card>
             <Text style={[styles.section, { color: palette.fgMuted }]}>{t.orders.submit}</Text>
-            <TextField label={t.orders.submitUrl} value={delivUrl} onChangeText={setDelivUrl} autoCapitalize="none" />
+            <TextField label={t.orders.submitUrl} value={delivUrl} onChangeText={setDelivUrl} autoCapitalize="none" error={errors.delivUrl} />
             <TextField label={t.orders.submitNote} value={delivNote} onChangeText={setDelivNote} multiline />
             <Button
               title={t.orders.submit}
-              onPress={() => run(t.orders.submit, () => submitDeliv.mutateAsync({ url: delivUrl, note: delivNote || undefined }))}
+              onPress={() => {
+                const ok = /^https?:\/\/.+/i.test(delivUrl.trim());
+                setErrors((prev) => ({ ...prev, delivUrl: ok ? "" : t.errors.urlInvalid }));
+                if (!ok) return;
+                run(t.orders.submit, () => submitDeliv.mutateAsync({ url: delivUrl, note: delivNote || undefined }));
+              }}
               loading={submitDeliv.isPending}
               disabled={!delivUrl}
             />
@@ -147,11 +157,16 @@ export default function OrderDetail() {
           <>
             <Card>
               <Text style={[styles.section, { color: palette.fgMuted }]}>{t.orders.revision}</Text>
-              <TextField label={t.orders.revisionNote} value={revNote} onChangeText={setRevNote} multiline />
+              <TextField label={t.orders.revisionNote} value={revNote} onChangeText={setRevNote} multiline error={errors.revNote} />
               <Button
                 title={t.orders.revision}
                 variant="outline"
-                onPress={() => run(t.orders.revision, () => revision.mutateAsync({ note: revNote }))}
+                onPress={() => {
+                  const ok = revNote.trim().length > 0;
+                  setErrors((prev) => ({ ...prev, revNote: ok ? "" : t.errors.reasonRequired }));
+                  if (!ok) return;
+                  run(t.orders.revision, () => revision.mutateAsync({ note: revNote }));
+                }}
                 loading={revision.isPending}
                 disabled={!revNote}
               />
@@ -176,11 +191,16 @@ export default function OrderDetail() {
         {status !== "released" && status !== "cancelled" && status !== "disputed" ? (
           <Card>
             <Text style={[styles.section, { color: palette.fgMuted }]}>{t.orders.dispute}</Text>
-            <TextField label={t.orders.disputeReason} value={dispReason} onChangeText={setDispReason} multiline />
+            <TextField label={t.orders.disputeReason} value={dispReason} onChangeText={setDispReason} multiline error={errors.dispReason} />
             <Button
               title={t.orders.dispute}
               variant="outline"
-              onPress={() => run(t.orders.dispute, () => dispute.mutateAsync({ reason: dispReason }))}
+              onPress={() => {
+                const ok = dispReason.trim().length > 0;
+                setErrors((prev) => ({ ...prev, dispReason: ok ? "" : t.errors.reasonRequired }));
+                if (!ok) return;
+                run(t.orders.dispute, () => dispute.mutateAsync({ reason: dispReason }));
+              }}
               loading={dispute.isPending}
               disabled={!dispReason}
             />
@@ -200,10 +220,18 @@ export default function OrderDetail() {
                 />
               ))}
             </View>
-            <TextField label={t.creator.reviews} value={reviewText} onChangeText={setReviewText} multiline />
+            {errors.rating ? <Text style={[styles.fieldError, { color: palette.danger }]}>{errors.rating}</Text> : null}
+            <TextField label={t.creator.reviews} value={reviewText} onChangeText={setReviewText} multiline error={errors.review} />
             <Button
               title={t.common.submit}
-              onPress={() => run(t.common.submit, () => leaveReview.mutateAsync({ rating: reviewRating, text: reviewText }))}
+              onPress={() => {
+                const next: Record<string, string> = {};
+                if (reviewRating < 1) next.rating = t.errors.ratingRequired;
+                if (reviewText.trim().length < 10) next.review = t.errors.reviewMin;
+                setErrors((prev) => ({ ...prev, rating: next.rating ?? "", review: next.review ?? "" }));
+                if (Object.keys(next).length) return;
+                run(t.common.submit, () => leaveReview.mutateAsync({ rating: reviewRating, text: reviewText }));
+              }}
               loading={leaveReview.isPending}
               disabled={!reviewText}
             />
@@ -244,6 +272,7 @@ const styles = StyleSheet.create({
   strong: { fontSize: 15, fontWeight: "700" },
   peerRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
   section: { fontSize: 11, textTransform: "uppercase", fontWeight: "700" },
+  fieldError: { fontSize: 12 },
   timelineRow: { flexDirection: "row", alignItems: "flex-start", gap: spacing.sm, paddingVertical: spacing.sm, borderTopWidth: StyleSheet.hairlineWidth },
   dot: { width: 10, height: 10, borderRadius: 999, marginTop: 6 },
 });

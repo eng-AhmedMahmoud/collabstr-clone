@@ -2,11 +2,32 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { serverApi } from "@/lib/api";
-import { fmtFollowers, fmtMoney } from "@/lib/format";
-import { t } from "@/lib/i18n";
+import { getSession } from "@/lib/session";
+import { fmtFollowers } from "@/lib/format";
+import { t, getLocale } from "@/lib/i18n";
+import { Money } from "@/components/money";
 import type { ApiCreator } from "@/lib/types";
+import { SaveButton } from "./save-button";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const { username } = await params;
+  try {
+    const api = await serverApi();
+    const c = await api.get<ApiCreator>(`/creators/by-username/${encodeURIComponent(username)}`);
+    return {
+      title: `${c.user.name} — ${c.headline} | Nakhla`,
+      description: c.bio?.slice(0, 160),
+    };
+  } catch {
+    return { title: "Creator — Nakhla" };
+  }
+}
 
 export default async function CreatorProfile({
   params,
@@ -14,7 +35,10 @@ export default async function CreatorProfile({
   params: Promise<{ username: string }>;
 }) {
   const i = await t();
+  const locale = await getLocale();
+  const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
   const { username } = await params;
+  const me = await getSession();
   const api = await serverApi();
   let c: ApiCreator;
   try {
@@ -25,7 +49,7 @@ export default async function CreatorProfile({
   }
 
   const cover = c.coverUrl || `https://picsum.photos/seed/${c.username}/1200/600`;
-  const avatar = c.user.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(c.username)}`;
+  const avatar = c.user.avatarUrl || `https://i.pravatar.cc/300?u=${encodeURIComponent(c.username)}`;
 
   return (
     <article className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
@@ -35,11 +59,11 @@ export default async function CreatorProfile({
             <div className="relative aspect-[2/1] rounded-2xl overflow-hidden bg-surface">
               <Image src={cover} alt={c.user.name} fill className="object-cover" priority />
             </div>
-            <div className="flex items-end gap-4 -mt-12 px-4">
-              <div className="relative h-24 w-24 rounded-2xl ring-4 ring-white bg-elevated overflow-hidden shrink-0">
-                <Image src={avatar} alt={c.user.name} fill className="object-cover" />
+            <div className="flex items-end gap-4 px-4">
+              <div className="relative h-24 w-24 -mt-12 rounded-2xl ring-4 ring-white dark:ring-elevated bg-elevated overflow-hidden shrink-0">
+                <Image src={avatar} alt={c.user.name} fill className="object-cover" unoptimized />
               </div>
-              <div className="pb-2">
+              <div className="min-w-0 pb-2">
                 <p className="text-[11px] font-semibold uppercase tracking-wide text-brand">{c.headline}</p>
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-3xl font-black">{c.user.name}</h1>
@@ -64,11 +88,9 @@ export default async function CreatorProfile({
                   <span>{c.city}, {c.country}</span>
                 </div>
               </div>
-              <div className="ml-auto flex gap-2 pb-2">
+              <div className="ms-auto flex gap-2 pb-2">
                 <button className="px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-surface">{i.profile.shareLabel}</button>
-                <form action={`/api/save/${c.id}`} method="post">
-                  <button className="px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-surface">{i.profile.saveLabel}</button>
-                </form>
+                <SaveButton creatorId={c.id} username={c.username} loggedIn={!!me} />
               </div>
             </div>
           </div>
@@ -123,7 +145,7 @@ export default async function CreatorProfile({
                         <div className="w-24 h-1.5 bg-surface rounded-full overflow-hidden">
                           <div className="h-full brand-gradient" style={{ width: `${l.pct}%` }} />
                         </div>
-                        <span className="text-muted w-8 text-right">{l.pct}%</span>
+                        <span className="text-muted w-8 text-end">{l.pct}%</span>
                       </li>
                     ))}
                   </ul>
@@ -137,7 +159,7 @@ export default async function CreatorProfile({
                         <div className="flex-1 h-1.5 bg-surface rounded-full overflow-hidden">
                           <div className="h-full brand-gradient" style={{ width: `${a.pct}%` }} />
                         </div>
-                        <span className="text-muted w-8 text-right">{a.pct}%</span>
+                        <span className="text-muted w-8 text-end">{a.pct}%</span>
                       </li>
                     ))}
                   </ul>
@@ -180,19 +202,24 @@ export default async function CreatorProfile({
         <aside className="lg:sticky lg:top-24 self-start">
           <div className="rounded-2xl border border-border bg-elevated p-5 shadow-sm">
             <p className="text-sm text-muted">{i.profile.from}</p>
-            <p className="text-3xl font-black">{fmtMoney(c.startingPrice)}</p>
+            <p className="text-3xl font-black"><Money value={c.startingPrice} locale={moneyLocale} /></p>
 
             <ul className="mt-5 space-y-2">
               {c.packages?.map((p) => (
-                <li key={p.id} className="flex items-center justify-between gap-3 rounded-lg border border-border p-3 hover:border-fg cursor-pointer">
-                  <span className="text-sm font-medium">{p.title}</span>
-                  <span className="text-sm font-bold">{fmtMoney(p.price)}</span>
+                <li key={p.id}>
+                  <Link
+                    href={`/checkout?creator=${encodeURIComponent(c.username)}&package=${encodeURIComponent(p.id)}`}
+                    className="flex items-center justify-between gap-3 rounded-lg border border-border p-3 hover:border-fg"
+                  >
+                    <span className="text-sm font-medium">{p.title}</span>
+                    <Money value={p.price} locale={moneyLocale} className="text-sm font-bold" />
+                  </Link>
                 </li>
               ))}
             </ul>
 
-            <Link href={`/checkout?creator=${c.username}&package=${c.packages?.[0]?.id ?? ""}`} className="mt-5 w-full inline-flex justify-center px-4 py-3 rounded-xl brand-gradient text-white font-bold hover:opacity-95">
-              {i.profile.addToCart}
+            <Link href={`/checkout?creator=${encodeURIComponent(c.username)}&package=${encodeURIComponent(c.packages?.[0]?.id ?? "")}`} className="mt-5 w-full inline-flex justify-center px-4 py-3 rounded-xl brand-gradient text-white font-bold hover:opacity-95">
+              {i.profile.bookNow}
             </Link>
             <Link href={`/messages?to=${c.username}`} className="mt-2 w-full inline-flex justify-center px-4 py-3 rounded-xl border border-fg text-fg font-bold hover:bg-surface">
               {i.profile.negotiate}

@@ -1,10 +1,11 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shell } from "@/components/shell";
-import { Card, PageHeader, Pill, EmptyState } from "@/components/ui";
+import { Card, PageHeader, Pill, EmptyState, ErrorBanner } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtMoney, fmtAgo } from "@/lib/format";
+import { fmtAgo, fmtCount, getLocale } from "@/lib/format";
+import { Money } from "@/components/money";
 import { t as serverT } from "@/lib/i18n";
 
 type Row = { id: string; status: string; amount: number; createdAt: string; brand: { name: string }; creator: { user: { name: string } } };
@@ -16,14 +17,18 @@ export default async function DisputesAdmin() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/disputes");
   const i = await serverT();
+  const locale = await getLocale();
   const api = await serverApi();
   let rows: Row[] = [];
-  try { rows = await api.get<Row[]>("/admin/orders?status=disputed"); } catch {}
+  let apiError = false;
+  try { rows = await api.get<Row[]>("/admin/orders?status=disputed"); } catch { apiError = true; }
 
   return (
     <Shell me={me}>
-      <PageHeader title={i.disputes.title} subtitle={i.disputes.countTpl.replace("{n}", String(rows.length))} />
-      {rows.length === 0 ? (
+      <PageHeader title={i.disputes.title} subtitle={i.disputes.countTpl.replace("{n}", fmtCount(rows.length, 200))} />
+      {apiError ? (
+        <ErrorBanner title={i.common.apiError} body={i.common.apiErrorBody} />
+      ) : rows.length === 0 ? (
         <Card><EmptyState title={i.disputes.none} body={i.disputes.noneBody} /></Card>
       ) : (
         <Card padding={false}>
@@ -39,8 +44,8 @@ export default async function DisputesAdmin() {
                     <div className="mt-1"><Pill kind="bad">{o.status.replace(/_/g, " ")}</Pill></div>
                   </td>
                   <td className="px-5 py-3"><p>{o.brand.name}</p><p className="text-[11px] text-muted">→ {o.creator.user.name}</p></td>
-                  <td className="px-5 py-3 text-right font-bold">{fmtMoney(o.amount)}</td>
-                  <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(o.createdAt)}</td>
+                  <td className="px-5 py-3 text-right font-bold"><Money value={o.amount} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></td>
+                  <td className="px-5 py-3 text-right text-muted pr-5">{fmtAgo(o.createdAt, locale)}</td>
                 </tr>
               ))}
             </tbody>

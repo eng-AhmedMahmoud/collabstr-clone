@@ -14,6 +14,8 @@ export function DeleteReviewButton({ id }: { id: string }) {
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/admin/reviews/${id}`, {
         method: "DELETE", credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({}),
       });
       router.refresh();
     } finally { setBusy(false); }

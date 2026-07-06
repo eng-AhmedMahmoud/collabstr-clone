@@ -22,7 +22,7 @@ export function pickLocalized(s: LocalizedString | string, locale: Locale): stri
 export const Platform = z.enum(["instagram", "tiktok", "youtube", "ugc"]);
 export type Platform = z.infer<typeof Platform>;
 
-export const Role = z.enum(["brand", "creator", "admin"]);
+export const Role = z.enum(["brand", "creator", "admin", "superadmin"]);
 export type Role = z.infer<typeof Role>;
 
 export const Category = z.enum([
@@ -48,7 +48,7 @@ export const SignupInput = z.object({
   name: z.string().min(2).max(80),
   email: z.string().email(),
   password: z.string().min(8).max(128),
-  role: Role.exclude(["admin"]),
+  role: Role.exclude(["admin", "superadmin"]),
   handle: z.string().optional(),
   locale: Locale.optional(),
 });
@@ -107,8 +107,77 @@ export const CampaignInput = z.object({
   categories: z.array(Category).min(1),
   deadline: z.string().datetime().optional(),
   creatorsNeeded: z.number().int().min(1).max(500).optional(),
+}).refine((c) => c.budgetMax >= c.budgetMin, {
+  message: "budgetMax must be >= budgetMin",
+  path: ["budgetMax"],
 });
 export type CampaignInput = z.infer<typeof CampaignInput>;
+
+// Brand editing its own profile. All fields optional (partial update); blank
+// strings clear the optional ones.
+export const BrandProfileInput = z.object({
+  brandName: z.string().min(2).max(120).optional(),
+  website: z.string().max(2048).optional(),
+  industry: z.string().max(120).optional(),
+  about: z.string().max(2000).optional(),
+  logoUrl: z.string().max(2048).optional(),
+});
+export type BrandProfileInput = z.infer<typeof BrandProfileInput>;
+
+// Brand editing an existing campaign (partial). Same field rules as creation.
+export const CampaignUpdateInput = z.object({
+  title: z.string().min(4).max(200).optional(),
+  description: z.string().min(20).max(5000).optional(),
+  budgetMin: z.number().int().min(0).optional(),
+  budgetMax: z.number().int().min(0).optional(),
+  platforms: z.array(Platform).min(1).optional(),
+  categories: z.array(Category).min(1).optional(),
+  deadline: z.string().datetime().nullable().optional(),
+  creatorsNeeded: z.number().int().min(1).max(500).optional(),
+  status: z.enum(["open", "closed", "draft"]).optional(),
+}).refine((c) => c.budgetMin === undefined || c.budgetMax === undefined || c.budgetMax >= c.budgetMin, {
+  message: "budgetMax must be >= budgetMin",
+  path: ["budgetMax"],
+});
+export type CampaignUpdateInput = z.infer<typeof CampaignUpdateInput>;
+
+export const ApplicationInput = z.object({
+  price: z.number().int().min(10).max(1_000_000),
+  pitch: z.string().min(10).max(3000),
+});
+export type ApplicationInput = z.infer<typeof ApplicationInput>;
+
+export const ApplicationStatusInput = z.object({
+  status: z.enum(["accepted", "rejected"]),
+});
+export type ApplicationStatusInput = z.infer<typeof ApplicationStatusInput>;
+
+export const ReviewInput = z.object({
+  rating: z.number().int().min(1).max(5),
+  text: z.string().min(2).max(3000),
+});
+export type ReviewInput = z.infer<typeof ReviewInput>;
+
+export const DeliveryInput = z.object({
+  url: z.string().url().max(2048),
+  note: z.string().max(2000).optional(),
+});
+export type DeliveryInput = z.infer<typeof DeliveryInput>;
+
+export const OrderNoteInput = z.object({
+  note: z.string().min(2).max(2000),
+});
+export type OrderNoteInput = z.infer<typeof OrderNoteInput>;
+
+export const OrderReasonInput = z.object({
+  reason: z.string().min(2).max(2000),
+});
+export type OrderReasonInput = z.infer<typeof OrderReasonInput>;
+
+export const SendMessageInput = z.object({
+  body: z.string().min(1).max(5000),
+});
+export type SendMessageInput = z.infer<typeof SendMessageInput>;
 
 export const OrderInput = z.object({
   packageId: z.string().min(1),

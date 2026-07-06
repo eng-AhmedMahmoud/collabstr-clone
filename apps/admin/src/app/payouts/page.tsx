@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
 import { Shell } from "@/components/shell";
-import { Card, PageHeader, EmptyState } from "@/components/ui";
+import { Card, PageHeader, EmptyState, ErrorBanner } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtMoney } from "@/lib/format";
+import { getLocale } from "@/lib/format";
+import { Money } from "@/components/money";
 import { t as serverT } from "@/lib/i18n";
 
 type Row = {
@@ -19,16 +20,30 @@ export default async function PayoutsPage() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/payouts");
   const i = await serverT();
+  const locale = await getLocale();
   const api = await serverApi();
   let rows: Row[] = [];
-  try { rows = await api.get<Row[]>("/admin/payouts"); } catch {}
+  let apiError = false;
+  try { rows = await api.get<Row[]>("/admin/payouts"); } catch { apiError = true; }
 
   const total = rows.reduce((s, r) => s + r.amount, 0);
+  const summaryParts = i.payouts.summaryTpl.replace("{n}", String(rows.length)).split("{amount}");
 
   return (
     <Shell me={me}>
-      <PageHeader title={i.payouts.title} subtitle={i.payouts.summaryTpl.replace("{n}", String(rows.length)).replace("{amount}", fmtMoney(total))} />
-      {rows.length === 0 ? (
+      <PageHeader
+        title={i.payouts.title}
+        subtitle={
+          <>
+            {summaryParts[0]}
+            <Money value={total} locale={locale === "ar" ? "ar-SA" : "en-SA"} />
+            {summaryParts[1]}
+          </>
+        }
+      />
+      {apiError ? (
+        <ErrorBanner title={i.common.apiError} body={i.common.apiErrorBody} />
+      ) : rows.length === 0 ? (
         <Card><EmptyState title={i.payouts.none} body={i.payouts.noneBody} /></Card>
       ) : (
         <Card padding={false}>
@@ -48,7 +63,7 @@ export default async function PayoutsPage() {
                     <p className="text-[11px] text-muted">@{r.creator.username} · {r.creator.user.email}</p>
                   </td>
                   <td className="px-5 py-3 text-right">{r.orders}</td>
-                  <td className="px-5 py-3 text-right font-bold pr-5">{fmtMoney(r.amount)}</td>
+                  <td className="px-5 py-3 text-right font-bold pr-5"><Money value={r.amount} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></td>
                 </tr>
               ))}
             </tbody>

@@ -155,7 +155,17 @@ export class CreatorsService {
   async listSaved(userId: string) {
     return this.prisma.savedCreator.findMany({
       where: { userId },
-      include: { creator: { include: { user: true } } },
+      include: {
+        creator: {
+          omit: {
+            mawthooqLicenseNo: true,
+            mawthooqReviewNote: true,
+            mawthooqSubmittedAt: true,
+            mawthooqVerifiedAt: true,
+          },
+          include: { user: { select: { id: true, name: true, avatarUrl: true } } },
+        },
+      },
       orderBy: { createdAt: "desc" },
     });
   }

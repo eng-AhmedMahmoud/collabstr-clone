@@ -9,7 +9,7 @@ import { useAuth } from "@/auth/context";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
 import { spacing } from "@/theme";
-import { ApiError } from "@/api/client";
+import { fieldErrorsFrom, apiErrorMessage } from "@/i18n/errors";
 
 export default function Login() {
   const { login, loading } = useAuth();
@@ -18,15 +18,25 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
 
   const submit = async () => {
-    setError(null);
+    setFormError(null);
+    const nextErrors: Record<string, string> = {};
+    const em = email.trim();
+    if (!em) nextErrors.email = t.errors.emailRequired;
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) nextErrors.email = t.errors.emailInvalid;
+    if (!password) nextErrors.password = t.errors.passwordRequired;
+    if (Object.keys(nextErrors).length) { setErrors(nextErrors); return; }
+    setErrors({});
     try {
-      await login(email.trim(), password);
+      await login(em, password);
       router.replace("/(tabs)/account");
     } catch (e) {
-      setError(e instanceof ApiError ? (e.status === 401 ? t.auth.invalid : e.message) : t.common.error);
+      const fe = fieldErrorsFrom(e);
+      if (fe) setErrors(fe);
+      setFormError(apiErrorMessage(e, t, { on401: t.errors.invalidCredentials }));
     }
   };
 
@@ -46,6 +56,7 @@ export default function Login() {
           autoComplete="email"
           keyboardType="email-address"
           textContentType="emailAddress"
+          error={errors.email}
           testID="login-email"
         />
         <TextField
@@ -56,9 +67,10 @@ export default function Login() {
           autoCapitalize="none"
           autoComplete="current-password"
           textContentType="password"
+          error={errors.password}
           testID="login-password"
         />
-        {error ? <Text style={{ color: palette.danger }}>{error}</Text> : null}
+        {formError ? <Text style={{ color: palette.danger }}>{formError}</Text> : null}
         <Button title={t.auth.loginCta} onPress={submit} loading={loading} testID="login-submit" />
         <Pressable onPress={() => router.push("/(auth)/forgot-password")}>
           <Text style={[styles.switch, { color: palette.brand }]}>{t.auth.forgot}</Text>

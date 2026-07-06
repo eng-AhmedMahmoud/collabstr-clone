@@ -1,11 +1,11 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { OrdersService } from "./orders.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RolesGuard } from "../common/roles.guard";
 import { Roles } from "../common/roles.decorator";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
-import { OrderInput } from "@collabstr/shared-types";
+import { DeliveryInput, OrderInput, OrderNoteInput, OrderReasonInput } from "@collabstr/shared-types";
 
 @UseGuards(JwtAuthGuard)
 @Controller("orders")
@@ -15,8 +15,7 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("brand")
   @Post()
-  @UsePipes(new ZodValidationPipe(OrderInput))
-  create(@CurrentUser() user: AuthUser, @Body() body: any) {
+  create(@CurrentUser() user: AuthUser, @Body(new ZodValidationPipe(OrderInput)) body: any) {
     return this.orders.create(user.id, body);
   }
 
@@ -48,7 +47,7 @@ export class OrdersController {
   submit(
     @CurrentUser() user: AuthUser,
     @Param("id") id: string,
-    @Body() body: { url: string; note?: string }
+    @Body(new ZodValidationPipe(DeliveryInput)) body: DeliveryInput
   ) {
     return this.orders.submit(user.id, id, body.url, body.note);
   }
@@ -56,8 +55,12 @@ export class OrdersController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("brand")
   @Post(":id/revision")
-  revision(@CurrentUser() user: AuthUser, @Param("id") id: string, @Body("note") note: string) {
-    return this.orders.requestRevision(user.id, id, note);
+  revision(
+    @CurrentUser() user: AuthUser,
+    @Param("id") id: string,
+    @Body(new ZodValidationPipe(OrderNoteInput)) body: OrderNoteInput,
+  ) {
+    return this.orders.requestRevision(user.id, id, body.note);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -80,7 +83,11 @@ export class OrdersController {
   }
 
   @Post(":id/dispute")
-  dispute(@CurrentUser() user: AuthUser, @Param("id") id: string, @Body("reason") reason: string) {
-    return this.orders.dispute(user.id, id, reason);
+  dispute(
+    @CurrentUser() user: AuthUser,
+    @Param("id") id: string,
+    @Body(new ZodValidationPipe(OrderReasonInput)) body: OrderReasonInput,
+  ) {
+    return this.orders.dispute(user.id, id, body.reason);
   }
 }

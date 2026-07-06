@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { safeNext } from "@/lib/safe-next";
 
 type Labels = { email: string; password: string; submit: string };
 
@@ -22,10 +23,15 @@ export function LoginForm({ next, labels }: { next?: string; labels: Labels }) {
         credentials: "include",
         body: JSON.stringify({ email, password }),
       });
-      if (!res.ok) throw new Error((await res.json())?.message ?? "Login failed");
-      const me = await res.json();
-      if (me.role !== "admin") {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/auth/logout`, { method: "POST", credentials: "include" });
+      const me = await res.json().catch(() => null);
+      if (!res.ok) throw new Error(me?.message ?? "Login failed");
+      if (me?.role !== "admin") {
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/auth/logout`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({}),
+        });
         router.push("/login?error=not_admin");
         return;
       }
@@ -34,8 +40,7 @@ export function LoginForm({ next, labels }: { next?: string; labels: Labels }) {
       }
       router.refresh();
       // Defense in depth: server already sanitized `next` via safeNext().
-      const safe = next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : "/";
-      router.push(safe);
+      router.push(safeNext(next));
     } catch (err: any) {
       setError(err.message);
     } finally {

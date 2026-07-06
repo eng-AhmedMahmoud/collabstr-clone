@@ -60,9 +60,12 @@ function ToastPill({ item }: { item: ToastItem }) {
     item.tone === "success" ? palette.success :
     item.tone === "error" ? palette.danger :
     palette.fg;
+  // "info" sits on palette.fg (near-white in dark mode), so pair it with
+  // palette.bg for text — readable in both schemes. Success/error stay white.
+  const fg = item.tone === "info" ? palette.bg : "#fff";
   return (
     <Animated.View style={[styles.pill, { backgroundColor: bg, opacity, transform: [{ translateY }] }]}>
-      <Text style={styles.text}>{item.text}</Text>
+      <Text style={[styles.text, { color: fg }]}>{item.text}</Text>
     </Animated.View>
   );
 }
@@ -87,5 +90,5 @@ const styles = StyleSheet.create({
     borderRadius: radius.pill,
     maxWidth: "100%",
   },
-  text: { color: "#fff", fontWeight: "600", fontSize: 14 },
+  text: { fontWeight: "600", fontSize: 14 },
 });

@@ -1,6 +1,5 @@
 import { cookies } from "next/headers";
-
-const BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+import { apiBase } from "./api-base";
 
 type FetchOpts = RequestInit & { cookieHeader?: string; locale?: string };
 
@@ -10,7 +9,7 @@ async function call<T>(path: string, opts: FetchOpts = {}): Promise<T> {
   if (opts.cookieHeader) headers.set("cookie", opts.cookieHeader);
   if (opts.locale) headers.set("accept-language", opts.locale);
 
-  const res = await fetch(`${BASE}/api/v1${path}`, {
+  const res = await fetch(`${apiBase()}/api/v1${path}`, {
     ...opts,
     headers,
     cache: opts.cache ?? "no-store",
@@ -37,10 +36,12 @@ export async function serverApi() {
   const locale = localeCookie === "ar" ? "ar" : "en";
   return {
     get: <T>(path: string) => call<T>(path, { method: "GET", cookieHeader, locale }),
+    // Mutations always carry a JSON body (even `{}`) so they can't be mimicked
+    // by cross-site "simple request" form posts.
     post: <T>(path: string, body?: unknown) =>
-      call<T>(path, { method: "POST", cookieHeader, locale, body: body ? JSON.stringify(body) : undefined }),
+      call<T>(path, { method: "POST", cookieHeader, locale, body: JSON.stringify(body ?? {}) }),
     patch: <T>(path: string, body?: unknown) =>
-      call<T>(path, { method: "PATCH", cookieHeader, locale, body: body ? JSON.stringify(body) : undefined }),
-    del: <T>(path: string) => call<T>(path, { method: "DELETE", cookieHeader, locale }),
+      call<T>(path, { method: "PATCH", cookieHeader, locale, body: JSON.stringify(body ?? {}) }),
+    del: <T>(path: string) => call<T>(path, { method: "DELETE", cookieHeader, locale, body: JSON.stringify({}) }),
   };
 }

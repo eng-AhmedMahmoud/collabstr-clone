@@ -1,16 +1,13 @@
-import { useEffect } from "react";
-import { Stack, useRouter } from "expo-router";
+import { Redirect, Stack } from "expo-router";
 import { useAuth } from "@/auth/context";
 
 export default function AdminLayout() {
   const { me, hydrated } = useAuth();
-  const router = useRouter();
 
-  useEffect(() => {
-    if (hydrated && (!me || me.role !== "admin")) {
-      router.replace("/(tabs)/account");
-    }
-  }, [hydrated, me, router]);
+  // Guard during render — a useEffect redirect briefly flashes admin content
+  // (and data fetches) to non-admins before kicking them out.
+  if (!hydrated) return null;
+  if (!me || me.role !== "admin") return <Redirect href="/(tabs)/account" />;
 
   return <Stack screenOptions={{ headerShown: false }} />;
 }

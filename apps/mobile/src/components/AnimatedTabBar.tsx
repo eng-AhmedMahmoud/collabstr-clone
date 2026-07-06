@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import {
   Animated,
-  I18nManager,
   LayoutAnimation,
   Platform,
   Pressable,
@@ -10,10 +9,16 @@ import {
   UIManager,
   View,
 } from "react-native";
+import type { ComponentProps } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
-import type { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { Tabs } from "expo-router";
 import { useTheme } from "@/theme/context";
+
+// Infer the exact props expo-router's <Tabs tabBar={...}> passes, instead of
+// importing @react-navigation/bottom-tabs' BottomTabBarProps directly — the two
+// can resolve to different copies of the @react-navigation types and mismatch.
+type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>["tabBar"]>>[0];
 import { radius, spacing } from "@/theme";
 
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -138,7 +143,9 @@ function TabButton({
 
 const styles = StyleSheet.create({
   wrap: {
-    flexDirection: I18nManager.isRTL ? "row-reverse" : "row",
+    // Plain "row" — RN already mirrors flex rows under RTL; row-reverse here
+    // double-flipped the tab order.
+    flexDirection: "row",
     borderTopWidth: StyleSheet.hairlineWidth,
     paddingTop: 6,
     paddingHorizontal: spacing.sm,

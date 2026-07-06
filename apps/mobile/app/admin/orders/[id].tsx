@@ -7,6 +7,7 @@ import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
+import { Money } from "@/components/Money";
 import { useAdminOrderById } from "@/api/queries";
 import { useAdminOrderForce } from "@/api/mutations";
 import { useTheme } from "@/theme/context";
@@ -57,9 +58,10 @@ export default function AdminOrderDetail() {
           <Text style={[styles.title, { color: palette.fg }]}>{d.package.title}</Text>
           <Badge label={t.status[d.status]} tone="brand" />
         </View>
-        <Text style={{ color: palette.fgMuted }}>
-          {d.creator.user.name} → {d.brand.name} · {d.total} {t.discover.sar}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+          <Text style={{ color: palette.fgMuted }}>{d.creator.user.name} → {d.brand.name} · </Text>
+          <Money value={d.total} style={{ color: palette.fgMuted }} />
+        </View>
         <Text style={{ color: palette.fg, marginTop: spacing.sm }}>{d.brief}</Text>
       </Card>
 

@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { Shell } from "@/components/shell";
-import { Card, PageHeader } from "@/components/ui";
+import { Card, PageHeader, ErrorBanner } from "@/components/ui";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtAgo } from "@/lib/format";
+import { fmtAgo, fmtCount, getLocale } from "@/lib/format";
 import { DeleteReviewButton } from "./delete-button";
 import { t as serverT } from "@/lib/i18n";
 
@@ -23,13 +23,16 @@ export default async function ReviewsPage() {
   const me = await getAdminSession();
   if (!me) redirect("/login?next=/reviews");
   const i = await serverT();
+  const locale = await getLocale();
   const api = await serverApi();
   let rows: Row[] = [];
-  try { rows = await api.get<Row[]>("/admin/reviews"); } catch {}
+  let apiError = false;
+  try { rows = await api.get<Row[]>("/admin/reviews"); } catch { apiError = true; }
 
   return (
     <Shell me={me}>
-      <PageHeader title={i.reviews.title} subtitle={i.reviews.countTpl.replace("{n}", String(rows.length))} />
+      <PageHeader title={i.reviews.title} subtitle={i.reviews.countTpl.replace("{n}", fmtCount(rows.length, 100))} />
+      {apiError && <ErrorBanner title={i.common.apiError} body={i.common.apiErrorBody} />}
       <Card padding={false}>
         <ul className="divide-y divide-border">
           {rows.map((r) => (
@@ -42,12 +45,12 @@ export default async function ReviewsPage() {
                   <span className="text-amber-400 ml-2">{"★".repeat(r.rating)}</span>
                 </div>
                 <p className="text-sm text-fg/85 mt-1">{r.text}</p>
-                <p className="text-[11px] text-muted mt-1">{fmtAgo(r.createdAt)}</p>
+                <p className="text-[11px] text-muted mt-1">{fmtAgo(r.createdAt, locale)}</p>
               </div>
               <DeleteReviewButton id={r.id} />
             </li>
           ))}
-          {rows.length === 0 && <li className="px-5 py-12 text-center text-muted">{i.reviews.none}</li>}
+          {rows.length === 0 && !apiError && <li className="px-5 py-12 text-center text-muted">{i.reviews.none}</li>}
         </ul>
       </Card>
     </Shell>

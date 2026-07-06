@@ -6,11 +6,13 @@ import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
 import { Card } from "@/components/Card";
+import { Money } from "@/components/Money";
 import { useCreatorByUsername } from "@/api/queries";
 import { useCreateOrder } from "@/api/mutations";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
 import { useToast } from "@/components/Toast";
+import { fieldErrorsFrom, apiErrorMessage } from "@/i18n/errors";
 import { spacing } from "@/theme";
 
 export default function Checkout() {
@@ -23,7 +25,8 @@ export default function Checkout() {
   const create = useCreateOrder();
   const [brief, setBrief] = useState("");
   const [deadline, setDeadline] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
 
   const pkg = useMemo(
     () => creator.data?.packages.find((p) => p.id === params.package) ?? null,
@@ -31,12 +34,17 @@ export default function Checkout() {
   );
 
   const submit = async () => {
-    setError(null);
     if (!pkg) return;
-    if (brief.trim().length < 10) {
-      setError(t.common.required);
+    const next: Record<string, string> = {};
+    if (brief.trim().length < 10) next.brief = t.errors.briefMin;
+    if (deadline.trim() && !/^\d{4}-\d{2}-\d{2}$/.test(deadline.trim())) next.deadline = t.errors.invalidDate;
+    if (Object.keys(next).length) {
+      setErrors(next);
+      setFormError(null);
       return;
     }
+    setErrors({});
+    setFormError(null);
     try {
       const res = await create.mutateAsync({
         packageId: pkg.id,
@@ -45,8 +53,10 @@ export default function Checkout() {
       });
       toast(t.checkout.success, "success");
       router.replace(`/orders/${res.id}`);
-    } catch {
-      setError(t.common.error);
+    } catch (err) {
+      const fe = fieldErrorsFrom(err);
+      if (fe) setErrors(fe);
+      setFormError(apiErrorMessage(err, t));
     }
   };
 
@@ -64,7 +74,7 @@ export default function Checkout() {
             <Text style={[styles.section, { color: palette.fgMuted }]}>{t.orders.package}</Text>
             <View style={styles.rowBetween}>
               <Text style={[styles.strong, { color: palette.fg }]}>{pkg.title}</Text>
-              <Text style={[styles.strong, { color: palette.brand }]}>{pkg.price} {t.discover.sar}</Text>
+              <Money value={pkg.price} style={[styles.strong, { color: palette.brand }]} />
             </View>
             {pkg.description ? <Text style={{ color: palette.fgMuted }}>{pkg.description}</Text> : null}
           </Card>
@@ -77,6 +87,7 @@ export default function Checkout() {
             multiline
             numberOfLines={5}
             style={{ minHeight: 120, textAlignVertical: "top" }}
+            error={errors.brief}
           />
           <TextField
             label={t.checkout.deadline}
@@ -84,8 +95,9 @@ export default function Checkout() {
             onChangeText={setDeadline}
             placeholder={t.checkout.deadlinePlaceholder}
             autoCapitalize="none"
+            error={errors.deadline}
           />
-          {error ? <Text style={{ color: palette.danger }}>{error}</Text> : null}
+          {formError ? <Text style={{ color: palette.danger }}>{formError}</Text> : null}
           <Button title={t.checkout.submit} onPress={submit} loading={create.isPending} />
         </>
       )}

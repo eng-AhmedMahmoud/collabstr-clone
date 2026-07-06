@@ -5,7 +5,8 @@ import { Card, PageHeader, StatGrid, Pill, pillKindForStatus } from "@/component
 import { ResponsiveTable } from "@/components/responsive-table";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtMoney, fmtAgo, fmtNum } from "@/lib/format";
+import { fmtAgo, fmtNum } from "@/lib/format";
+import { Money } from "@/components/money";
 import { t as serverT, getLocale } from "@/lib/i18n";
 
 type Overview = {
@@ -55,8 +56,8 @@ export default async function AdminOverview() {
         { label: i.overview.kpis.users, value: fmtNum(tot.users, locale), sub: i.overview.kpis.creatorsBrands.replace("{c}", String(tot.creators)).replace("{b}", String(tot.brands)) },
         { label: i.overview.kpis.campaigns, value: fmtNum(tot.campaigns, locale), sub: i.overview.kpis.anyStatus },
         { label: i.overview.kpis.orders, value: fmtNum(tot.orders, locale), sub: i.overview.kpis.lifetime },
-        { label: i.overview.kpis.gmv, value: fmtMoney(tot.gmv, locale), sub: i.overview.kpis.released },
-        { label: i.overview.kpis.inEscrow, value: fmtMoney(tot.escrow, locale), sub: i.overview.kpis.pendingRelease, tone: "warn" },
+        { label: i.overview.kpis.gmv, value: <Money value={tot.gmv} locale={locale === "ar" ? "ar-SA" : "en-SA"} className="[&_svg]:text-emerald-400" />, sub: i.overview.kpis.released },
+        { label: i.overview.kpis.inEscrow, value: <Money value={tot.escrow} locale={locale === "ar" ? "ar-SA" : "en-SA"} />, sub: i.overview.kpis.pendingRelease, tone: "warn" },
         { label: i.overview.kpis.openDisputes, value: String(tot.open_disputes), sub: tot.open_disputes ? i.overview.kpis.needsReview : i.overview.kpis.allClear, tone: tot.open_disputes ? "danger" : "success" },
       ]} />
 
@@ -84,7 +85,7 @@ export default async function AdminOverview() {
                         </span>
                       </td>
                       <td className="px-4 sm:px-5 py-3"><Pill kind={pillKindForStatus(o.status)}>{statusLabel(o.status)}</Pill></td>
-                      <td className="px-4 sm:px-5 py-3 text-end font-bold"><bdi>{fmtMoney(o.amount, locale)}</bdi></td>
+                      <td className="px-4 sm:px-5 py-3 text-end font-bold"><bdi><Money value={o.amount} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></bdi></td>
                       <td className="px-4 sm:px-5 py-3 text-end text-muted pe-5">{fmtAgo(o.createdAt, locale)}</td>
                     </tr>
                   ))}

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { AdminService } from "./admin.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RolesGuard } from "../common/roles.guard";
@@ -34,9 +34,19 @@ export class AdminController {
     return this.admin.unbanUser(id);
   }
 
+  // Minting new admins is a privileged action reserved for superadmins.
+  // Method-level @Roles overrides the class-level @Roles("admin").
   @Post("users/:id/promote-admin")
+  @Roles("superadmin")
   promote(@Param("id") id: string) {
     return this.admin.promoteAdmin(id);
+  }
+
+  // Revoke an admin back to their prior (non-privileged) role. Superadmin only.
+  @Post("users/:id/demote-admin")
+  @Roles("superadmin")
+  demote(@Param("id") id: string) {
+    return this.admin.demoteAdmin(id);
   }
 
   @Get("creators")
@@ -50,8 +60,7 @@ export class AdminController {
   }
 
   @Post("mawthooq/:creatorId/review")
-  @UsePipes(new ZodValidationPipe(MawthooqReviewInput))
-  reviewMawthooq(@Param("creatorId") creatorId: string, @Body() body: MawthooqReviewInput) {
+  reviewMawthooq(@Param("creatorId") creatorId: string, @Body(new ZodValidationPipe(MawthooqReviewInput)) body: MawthooqReviewInput) {
     return this.admin.reviewMawthooq(creatorId, body.decision, body.expiresAt, body.note);
   }
 
@@ -111,10 +120,10 @@ export class AdminController {
   }
 
   @Post("broadcast")
-  @UsePipes(new ZodValidationPipe(BroadcastInput))
   broadcast(
     @CurrentUser() me: AuthUser,
-    @Body() body: { titleEn: string; titleAr: string; bodyEn: string; bodyAr: string; href?: string; role?: Role },
+    @Body(new ZodValidationPipe(BroadcastInput))
+    body: { titleEn: string; titleAr: string; bodyEn: string; bodyAr: string; href?: string; role?: Role },
   ) {
     return this.admin.broadcast(me.id, body, body.role);
   }

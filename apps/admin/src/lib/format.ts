@@ -43,6 +43,12 @@ function rtf(locale: Locale) {
   return (RTF_CACHE[locale] ??= new Intl.RelativeTimeFormat(INTL_LOCALE[locale], { numeric: "auto" }));
 }
 
+// Admin API lists are capped server-side (take: 200, reviews 100). Render
+// "200+" at the cap instead of implying the cap is the true total.
+export function fmtCount(n: number, cap: number): string {
+  return n >= cap ? `${n}+` : String(n);
+}
+
 export function fmtAgo(s?: string | null, locale: Locale = "en"): string {
   if (!s) return "—";
   const sec = Math.floor((Date.now() - new Date(s).getTime()) / 1000);

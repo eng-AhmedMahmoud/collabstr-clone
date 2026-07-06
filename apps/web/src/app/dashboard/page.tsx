@@ -3,8 +3,9 @@ import Image from "next/image";
 import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
-import { fmtMoney } from "@/lib/format";
-import { t } from "@/lib/i18n";
+import type { ReactNode } from "react";
+import { Money } from "@/components/money";
+import { t, getLocale } from "@/lib/i18n";
 import { DashboardBrandBar } from "@/components/dashboard-brand-bar";
 
 type OrderRow = {
@@ -22,15 +23,19 @@ export const dynamic = "force-dynamic";
 
 export default async function BrandDashboard() {
   const i = await t();
+  const locale = await getLocale();
+  const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
   const me = await getSession();
   if (!me) redirect("/login?next=/dashboard");
   if (me.role !== "brand") redirect("/creator-dashboard");
 
   const api = await serverApi();
-  let orders: OrderRow[] = [];
-  let campaigns: { id: string; title: string; status: string; _count?: { applications: number } }[] = [];
-  try { orders = await api.get<OrderRow[]>("/orders"); } catch {}
-  try { campaigns = await api.get("/campaigns/mine"); } catch {}
+  const [orders, campaigns] = await Promise.all([
+    api.get<OrderRow[]>("/orders").catch(() => [] as OrderRow[]),
+    api
+      .get<{ id: string; title: string; status: string; _count?: { applications: number } }[]>("/campaigns/mine")
+      .catch(() => [] as { id: string; title: string; status: string; _count?: { applications: number } }[]),
+  ]);
 
   const active = orders.filter((o) => !["released", "cancelled"].includes(o.status)).length;
   const pendingApprovals = orders.filter((o) => o.status === "submitted").length;
@@ -58,19 +63,20 @@ export default async function BrandDashboard() {
             {i.dashboard.hey} <span className="brand-text">{me.name.split(" ")[0]}</span>
           </h1>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          <Link href="/dashboard/profile" className="px-4 py-2.5 rounded-xl border border-border font-semibold hover:bg-surface">{i.dashboard.editProfile}</Link>
           <Link href="/campaigns/new" className="px-4 py-2.5 rounded-xl border border-border font-semibold hover:bg-surface">{i.dashboard.newCampaign}</Link>
           <Link href="/influencers" className="px-4 py-2.5 rounded-xl brand-gradient text-white font-semibold">{i.dashboard.hireCreator}</Link>
         </div>
       </header>
 
       <div className="mt-8 grid sm:grid-cols-4 gap-4">
-        {[
+        {([
           [i.dashboard.kpis.activeBookings, String(active), `${orders.length} ${i.dashboard.kpis.totalLabel}`],
           [i.dashboard.kpis.pendingApprovals, String(pendingApprovals), i.dashboard.kpis.reviewNow],
-          [i.dashboard.kpis.totalSpent, fmtMoney(totalSpent), i.dashboard.kpis.allTime],
+          [i.dashboard.kpis.totalSpent, <Money value={totalSpent} locale={moneyLocale} />, i.dashboard.kpis.allTime],
           [i.dashboard.kpis.campaigns, String(campaigns.length), i.dashboard.kpis.openDraft],
-        ].map(([l, v, sub]) => (
+        ] as [string, ReactNode, string][]).map(([l, v, sub]) => (
           <div key={l} className="rounded-2xl border border-brand-100 dark:border-brand-900/60 bg-elevated/90 backdrop-blur-sm p-5 hover:border-brand-300 hover:shadow-lg hover:shadow-brand-100/50 dark:hover:shadow-brand-900/30 transition">
             <p className="text-xs uppercase tracking-wide text-muted">{l}</p>
             <p className="text-3xl font-black mt-1">{v}</p>
@@ -90,11 +96,11 @@ export default async function BrandDashboard() {
           ) : (
             <ul className="divide-y divide-border">
               {orders.slice(0, 5).map((o) => {
-                const avatar = o.creator.user.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(o.creator.user.name)}`;
+                const avatar = o.creator.user.avatarUrl || `https://i.pravatar.cc/300?u=${encodeURIComponent(o.creator.user.name)}`;
                 return (
                   <li key={o.id} className="p-5 flex items-center gap-4">
                     <div className="relative h-12 w-12 rounded-xl overflow-hidden bg-surface shrink-0">
-                      <Image src={avatar} alt={o.creator.user.name} fill className="object-cover" />
+                      <Image src={avatar} alt={o.creator.user.name} fill className="object-cover" unoptimized />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{o.creator.user.name}</p>
@@ -105,7 +111,7 @@ export default async function BrandDashboard() {
                       : o.status === "submitted" ? "bg-amber-50 text-amber-700 dark:bg-amber-950 dark:text-amber-300"
                       : "bg-brand-50 text-brand dark:bg-brand-900/40 dark:text-brand-200"
                     }`}>{i.status[o.status as keyof typeof i.status] ?? o.status.replace(/_/g, " ")}</span>
-                    <Link href={`/orders/${o.id}`} className="font-bold text-sm hover:underline">{fmtMoney(o.amount)}</Link>
+                    <Link href={`/orders/${o.id}`} className="font-bold text-sm hover:underline"><Money value={o.amount} locale={moneyLocale} /></Link>
                   </li>
                 );
               })}
@@ -116,7 +122,7 @@ export default async function BrandDashboard() {
         <section className="rounded-2xl border border-border bg-elevated p-5">
           <header className="flex items-center justify-between mb-3">
             <h2 className="font-bold text-lg">{i.dashboard.myCampaigns}</h2>
-            <Link href="/campaigns/new" className="text-sm font-semibold text-brand">{i.dashboard.addNew}</Link>
+            <Link href="/dashboard/campaigns" className="text-sm font-semibold text-brand">{i.dashboard.manageCampaigns}</Link>
           </header>
           {campaigns.length === 0 ? (
             <p className="text-sm text-muted">{i.dashboard.noCampaigns}</p>

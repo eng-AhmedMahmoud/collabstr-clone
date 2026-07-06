@@ -36,7 +36,7 @@ export async function Footer() {
           <Link href="/contact">{i.footer.contact}</Link>
           <Link href="/terms">{i.footer.terms}</Link>
           <Link href="/privacy">{i.footer.privacy}</Link>
-          <Link href="/help">Help</Link>
+          <Link href="/help">{i.footer.help}</Link>
           <CookieSettingsLink />
         </Col>
       </div>

@@ -8,6 +8,8 @@ export function LogoutButton() {
     await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/auth/logout`, {
       method: "POST",
       credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({}),
     });
     router.refresh();
     router.push("/login");

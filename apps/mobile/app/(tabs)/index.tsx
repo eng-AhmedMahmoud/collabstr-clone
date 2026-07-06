@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
@@ -7,6 +7,7 @@ import { BrandMark } from "@/components/BrandMark";
 import { Avatar } from "@/components/Avatar";
 import { Badge } from "@/components/Badge";
 import { EmptyState } from "@/components/EmptyState";
+import { Money } from "@/components/Money";
 import { useCreatorsInfinite, type CreatorListItem } from "@/api/queries";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -19,7 +20,7 @@ export default function Discover() {
   const [q, setQ] = useState("");
   const [debounced, setDebounced] = useState("");
 
-  useMemo(() => {
+  useEffect(() => {
     const h = setTimeout(() => setDebounced(q), 300);
     return () => clearTimeout(h);
   }, [q]);
@@ -118,9 +119,10 @@ function CreatorCard({ item, onPress }: { item: CreatorListItem; onPress: () => 
             <Text style={[styles.meta, { color: palette.fgMuted }]}>· {formatFollowers(followers)} {t.discover.followers}</Text>
           ) : null}
           {item.startingPrice ? (
-            <Text style={[styles.price, { color: palette.brand }]}>
-              {t.discover.from} {item.startingPrice} {t.discover.sar}
-            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 4, marginStart: "auto" as any }}>
+              <Text style={[styles.price, { color: palette.brand, marginStart: undefined }]}>{t.discover.from}</Text>
+              <Money value={item.startingPrice} style={[styles.price, { color: palette.brand, marginStart: undefined }]} />
+            </View>
           ) : null}
         </View>
       </View>

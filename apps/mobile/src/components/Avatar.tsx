@@ -8,7 +8,9 @@ type Props = {
 };
 
 export function Avatar({ uri, seed, size = 40, style }: Props) {
-  const fallback = `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(seed ?? "nakhla")}`;
+  // Dummy influencer face photos (deterministic by seed). RN <Image> can't
+  // render SVG, and the dicebear PNG endpoint left blank circles on device.
+  const fallback = `https://i.pravatar.cc/300?u=${encodeURIComponent(seed ?? "nakhla")}`;
   return (
     <Image
       source={{ uri: uri || fallback }}

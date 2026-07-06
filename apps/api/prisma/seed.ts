@@ -18,6 +18,29 @@ type Seed = {
   cover: string;
 };
 
+// Human/influencer imagery (Unsplash, URLs verified reachable). Assigned
+// deterministically per creator so re-seeds stay stable. crop=faces keeps the
+// person centered in the 2:1 cover and square portfolio tiles.
+const INFLUENCER_PHOTOS = [
+  "photo-1531123897727-8f129e1688ce",
+  "photo-1524504388940-b1c1722653e1",
+  "photo-1506794778202-cad84cf45f1d",
+  "photo-1500648767791-00dcc994a43e",
+  "photo-1534528741775-53994a69daeb",
+  "photo-1517841905240-472988babdf9",
+  "photo-1544005313-94ddf0286df2",
+  "photo-1502823403499-6ccfcf4fb453",
+  "photo-1507003211169-0a1dd7228f2d",
+  "photo-1519085360753-af0119f7cbe7",
+  "photo-1487412720507-e7ab37603c6f",
+  "photo-1488426862026-3ee34a7d66df",
+];
+const unsplash = (id: string, w: number, h: number) =>
+  `https://images.unsplash.com/${id}?w=${w}&h=${h}&fit=crop&crop=faces&q=80`;
+const coverFor = (i: number) => unsplash(INFLUENCER_PHOTOS[i % INFLUENCER_PHOTOS.length], 1200, 600);
+const portfolioFor = (i: number, j: number) =>
+  unsplash(INFLUENCER_PHOTOS[(i * 2 + j) % INFLUENCER_PHOTOS.length], 600, 600);
+
 // KSA creator roster modeled after real, top-tier Saudi influencers.
 // Handles + niches + tiers sourced from public 2026 influencer rankings
 // (Feedspot, HypeAuditor, IstiZada). Prices SAR. Demo data — emails/profiles
@@ -50,18 +73,36 @@ async function main() {
     const adminPassword = process.env.DEMO_ADMIN_PASSWORD || "Admin1234!";
     const adminEmail = process.env.DEMO_ADMIN_EMAIL || "admin@nakhla.sa";
     const adminHash = await bcrypt.hash(adminPassword, 11);
+    // Primary demo admin is a superadmin (top of the hierarchy). Update the
+    // role on re-seed so pre-existing rows get upgraded, not left as "admin".
     await prisma.user.upsert({
       where: { email: adminEmail },
-      update: {},
+      update: { role: "superadmin" },
       create: {
         email: adminEmail,
-        name: "Nakhla Admin",
-        role: "admin",
+        name: "Nakhla Super Admin",
+        role: "superadmin",
         passwordHash: adminHash,
         emailVerifiedAt: new Date(),
       },
     });
-    console.log(`  Admin (dev only): ${adminEmail} / ${adminPassword}`);
+    // Second demo admin is a regular admin, so the role hierarchy (superadmin >
+    // admin) can be exercised locally. Same password + same gate.
+    const admin2Email = "admin2@nakhla.sa";
+    const admin2Hash = await bcrypt.hash(adminPassword, 11);
+    await prisma.user.upsert({
+      where: { email: admin2Email },
+      update: { role: "admin" },
+      create: {
+        email: admin2Email,
+        name: "Nakhla Admin",
+        role: "admin",
+        passwordHash: admin2Hash,
+        emailVerifiedAt: new Date(),
+      },
+    });
+    console.log(`  Super Admin (dev only): ${adminEmail} / ${adminPassword}  [superadmin]`);
+    console.log(`  Admin       (dev only): ${admin2Email} / ${adminPassword}  [admin]`);
   } else {
     console.log("  Admin user NOT seeded. Set ENABLE_DEMO_ADMIN=1 for local dev.");
   }
@@ -69,32 +110,38 @@ async function main() {
   const brandHash = await bcrypt.hash("Password123!", 11);
   const brand = await prisma.user.upsert({
     where: { email: "brand@example.dev" },
-    update: {},
+    update: { name: "Aseel KSA · أسيل", avatarUrl: "https://i.pravatar.cc/400?u=aseel.ksa" },
     create: {
       email: "brand@example.dev",
       name: "Aseel KSA · أسيل",
       role: "brand",
       passwordHash: brandHash,
+      avatarUrl: "https://i.pravatar.cc/400?u=aseel.ksa",
       brandProfile: { create: { brandName: "Aseel KSA · أسيل" } },
     },
   });
 
-  for (const s of SEEDS) {
+  for (const [idx, s] of SEEDS.entries()) {
     const passwordHash = await bcrypt.hash("Password123!", 11);
     const user = await prisma.user.upsert({
       where: { email: s.email },
-      update: {},
+      // Dummy influencer face photos (deterministic by username). Also set on
+      // update so re-seeding fixes rows created before the switch.
+      update: { avatarUrl: `https://i.pravatar.cc/400?u=${encodeURIComponent(s.username)}` },
       create: {
         email: s.email,
         name: s.name,
         role: "creator",
         passwordHash,
-        avatarUrl: `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(s.username)}`,
+        avatarUrl: `https://i.pravatar.cc/400?u=${encodeURIComponent(s.username)}`,
       },
     });
+    const cover = coverFor(idx);
+    const portfolio = Array.from({ length: 6 }, (_, j) => portfolioFor(idx, j));
     const profile = await prisma.creatorProfile.upsert({
       where: { userId: user.id },
-      update: {},
+      // Also set on update so re-seeding replaces the old nature/picsum images.
+      update: { coverUrl: cover, portfolio },
       create: {
         userId: user.id,
         username: s.username,
@@ -102,7 +149,7 @@ async function main() {
         bio: `${s.headline}. Working with brands across ${s.categories.slice(0,2).join(" and ")} to create thumb-stopping content that converts.`,
         city: s.city,
         country: s.country,
-        coverUrl: s.cover,
+        coverUrl: cover,
         startingPrice: s.startingPrice,
         platforms: s.platforms,
         categories: s.categories,
@@ -112,7 +159,7 @@ async function main() {
         followersYt: s.followers.yt,
         avgViews: Math.round((s.followers.ig ?? s.followers.tt ?? s.followers.yt ?? 5000) * 0.18),
         engagement: Math.round((Math.random() * 4 + 2) * 10) / 10,
-        portfolio: Array.from({ length: 6 }, (_, i) => `https://picsum.photos/seed/${s.username}-${i}/600/600`),
+        portfolio,
         audience: {
           locations: [
             { code: "SA", flag: "🇸🇦", pct: 72 },

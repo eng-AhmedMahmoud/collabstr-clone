@@ -1,11 +1,12 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Shell } from "@/components/shell";
-import { Card, PageHeader, Pill, pillKindForStatus } from "@/components/ui";
+import { Card, PageHeader, Pill, pillKindForStatus, ErrorBanner } from "@/components/ui";
 import { ResponsiveTable } from "@/components/responsive-table";
 import { serverApi } from "@/lib/api";
 import { getAdminSession } from "@/lib/session";
-import { fmtMoney, fmtAgo } from "@/lib/format";
+import { fmtAgo, fmtCount } from "@/lib/format";
+import { Money } from "@/components/money";
 import { t as serverT, getLocale } from "@/lib/i18n";
 
 type Row = {
@@ -38,14 +39,16 @@ export default async function OrdersAdmin({
   const sp = await searchParams;
   const api = await serverApi();
   let rows: Row[] = [];
-  try { rows = await api.get<Row[]>(`/admin/orders${sp.status ? `?status=${sp.status}` : ""}`); } catch {}
+  let apiError = false;
+  try { rows = await api.get<Row[]>(`/admin/orders${sp.status ? `?status=${sp.status}` : ""}`); } catch { apiError = true; }
 
   return (
     <Shell me={me}>
       <PageHeader
         title={i.orders.title}
-        subtitle={`${i.orders.countTpl.replace("{n}", String(rows.length))} ${sp.status ? `· ${i.orders.filterTpl.replace("{s}", statusLabel(sp.status))}` : ""}`}
+        subtitle={`${i.orders.countTpl.replace("{n}", fmtCount(rows.length, 200))} ${sp.status ? `· ${i.orders.filterTpl.replace("{s}", statusLabel(sp.status))}` : ""}`}
       />
+      {apiError && <ErrorBanner title={i.common.apiError} body={i.common.apiErrorBody} />}
 
       <div role="group" aria-label={i.orders.title} className="flex flex-wrap gap-2 mb-5">
         <Link
@@ -98,15 +101,15 @@ export default async function OrdersAdmin({
                   </td>
                   <td className="px-5 py-3"><Pill kind={pillKindForStatus(o.status)}>{statusLabel(o.status)}</Pill></td>
                   <td className="px-5 py-3 text-end font-bold">
-                    <bdi>{fmtMoney(o.amount, locale)}</bdi>{" "}
+                    <bdi><Money value={o.amount} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></bdi>{" "}
                     <span className="text-[10px] text-muted font-normal">
-                      +<bdi>{fmtMoney(o.serviceFee, locale)}</bdi> {i.orders.fee}
+                      +<bdi><Money value={o.serviceFee} locale={locale === "ar" ? "ar-SA" : "en-SA"} /></bdi> {i.orders.fee}
                     </span>
                   </td>
                   <td className="px-5 py-3 text-end text-muted pe-5">{fmtAgo(o.createdAt, locale)}</td>
                 </tr>
               ))}
-              {rows.length === 0 && <tr><td colSpan={5} className="px-5 py-12 text-center text-muted">{i.orders.none}</td></tr>}
+              {rows.length === 0 && !apiError && <tr><td colSpan={5} className="px-5 py-12 text-center text-muted">{i.orders.none}</td></tr>}
             </tbody>
           </table>
         </ResponsiveTable>

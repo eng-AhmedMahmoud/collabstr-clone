@@ -18,7 +18,10 @@ type Ctx = {
   dir: "ltr" | "rtl";
   t: Dict;
   setLocale: (l: Locale) => Promise<void>;
-  restartRequired: boolean;
+  // True whenever the native layout direction doesn't match the active
+  // locale — including first launch on an Arabic device, where JS runs in
+  // Arabic but the app still renders LTR until a restart.
+  needsRestart: boolean;
 };
 
 const I18nCtx = createContext<Ctx | null>(null);
@@ -34,7 +37,6 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     currentLocale = l;
     return l;
   });
-  const [restartRequired, setRestartRequired] = useState(false);
 
   useEffect(() => {
     SecureStore.getItemAsync(KEY).then((v) => {
@@ -50,23 +52,26 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     if (I18nManager.isRTL !== shouldRTL) {
       I18nManager.allowRTL(shouldRTL);
       I18nManager.forceRTL(shouldRTL);
-      setRestartRequired(true);
     }
   }, [locale]);
+
+  // I18nManager.isRTL is fixed for the lifetime of the native session, so
+  // this stays true until the app is actually restarted.
+  const needsRestart = I18nManager.isRTL !== (locale === "ar");
 
   const value = useMemo<Ctx>(
     () => ({
       locale,
       dir: locale === "ar" ? "rtl" : "ltr",
       t: dict[locale],
-      restartRequired,
+      needsRestart,
       setLocale: async (l) => {
         await SecureStore.setItemAsync(KEY, l);
         currentLocale = l;
         setLocaleState(l);
       },
     }),
-    [locale, restartRequired],
+    [locale, needsRestart],
   );
 
   return <I18nCtx.Provider value={value}>{children}</I18nCtx.Provider>;

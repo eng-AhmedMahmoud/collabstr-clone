@@ -3,11 +3,14 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useT } from "@/components/locale-provider";
+import { useT, useLocale } from "@/components/locale-provider";
+import { safeNext } from "@/lib/safe-next";
+import { validateLogin, serverErrorMessage, msg } from "@/lib/validation";
 
 export function LoginForm({ next }: { next?: string }) {
   const router = useRouter();
   const i = useT();
+  const locale = useLocale();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -15,10 +18,15 @@ export function LoginForm({ next }: { next?: string }) {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    const invalid = validateLogin({ email, password }, locale);
+    if (invalid) {
+      setError(invalid.message);
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/auth/login`, {
+      const res = await fetch("/api/v1/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -26,7 +34,8 @@ export function LoginForm({ next }: { next?: string }) {
       });
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body?.message ?? "Login failed");
+        setError(serverErrorMessage(res.status, body, locale, "login"));
+        return;
       }
       const user = await res.json();
       // Sync the user's stored locale preference into the cookie so the next
@@ -37,10 +46,9 @@ export function LoginForm({ next }: { next?: string }) {
       }
       router.refresh();
       const fallback = user.role === "creator" ? "/creator-dashboard" : "/dashboard";
-      const safe = next && next.startsWith("/") && !next.startsWith("//") && !next.includes("\\") ? next : fallback;
-      router.push(safe);
-    } catch (err: any) {
-      setError(err.message);
+      router.push(safeNext(next, fallback));
+    } catch {
+      setError(msg("network", locale));
     } finally {
       setLoading(false);
     }
@@ -67,8 +75,7 @@ export function LoginForm({ next }: { next?: string }) {
           <span className="text-xs font-semibold text-fg/80">{i.login.password}</span>
           <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required placeholder="••••••••" className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border bg-elevated" />
         </label>
-        <div className="flex items-center justify-between text-sm">
-          <label className="flex items-center gap-2 text-fg/80"><input type="checkbox" /> {i.login.remember}</label>
+        <div className="flex items-center justify-end text-sm">
           <Link href="/forgot-password" className="font-semibold text-brand hover:underline">{i.login.forgot}</Link>
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}

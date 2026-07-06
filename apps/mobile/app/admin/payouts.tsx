@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { EmptyState } from "@/components/EmptyState";
+import { Money } from "@/components/Money";
 import { useAdminPayouts } from "@/api/queries";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -36,7 +37,7 @@ export default function AdminPayouts() {
                 <Text style={{ color: palette.fg, fontWeight: "700" }}>@{item.creator.username}</Text>
                 <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{new Date(item.createdAt).toLocaleString()}</Text>
               </View>
-              <Text style={{ color: palette.brand, fontWeight: "700" }}>{item.amount} {t.discover.sar}</Text>
+              <Money value={item.amount} style={{ color: palette.brand, fontWeight: "700" }} />
               <Badge label={item.status} tone="brand" />
             </View>
           </Card>

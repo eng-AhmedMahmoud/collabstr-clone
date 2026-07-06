@@ -11,6 +11,7 @@ import { useMarkAllNotificationsRead } from "@/api/mutations";
 import { useAuth } from "@/auth/context";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
+import { mapNotificationHref } from "@/linking";
 import { radius, spacing } from "@/theme";
 import { Button } from "@/components/Button";
 
@@ -154,14 +155,23 @@ function NotificationsList() {
 
 function NotifRow({ item }: { item: NotificationItem }) {
   const { palette } = useTheme();
+  const router = useRouter();
+  const href = mapNotificationHref(item.href);
   return (
-    <View style={[styles.row, { backgroundColor: palette.card, borderColor: palette.border, opacity: item.read ? 0.7 : 1 }]}>
+    <Pressable
+      disabled={!href}
+      onPress={() => { if (href) router.push(href as never); }}
+      style={({ pressed }) => [
+        styles.row,
+        { backgroundColor: palette.card, borderColor: palette.border, opacity: item.read ? 0.7 : pressed ? 0.9 : 1 },
+      ]}
+    >
       <View style={{ flex: 1 }}>
         <Text style={[styles.name, { color: palette.fg }]}>{item.title}</Text>
         <Text style={[styles.preview, { color: palette.fgMuted }]}>{item.body}</Text>
       </View>
       {!item.read ? <View style={[styles.dot, { backgroundColor: palette.brand }]} /> : null}
-    </View>
+    </Pressable>
   );
 }
 

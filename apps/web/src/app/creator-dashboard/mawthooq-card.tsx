@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useT } from "@/components/locale-provider";
+import { useT, useLocale } from "@/components/locale-provider";
+import { validateLicense, serverErrorMessage, msg } from "@/lib/validation";
 
 type Status = "none" | "pending" | "verified" | "rejected" | "expired";
 
@@ -24,31 +25,40 @@ export function MawthooqCard({
   reviewNote?: string | null;
 }) {
   const i = useT();
+  const locale = useLocale();
   const m = i.mawthooq;
   const router = useRouter();
   const [status, setStatus] = useState<Status>(initialStatus);
   const [licenseNo, setLicenseNo] = useState(initialLicenseNo ?? "");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [invalid, setInvalid] = useState(false);
 
   const canEdit = status === "none" || status === "rejected" || status === "expired";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    const bad = validateLicense(licenseNo, locale);
+    if (bad) { setErr(bad.message); setInvalid(true); return; }
     setBusy(true);
     setErr(null);
+    setInvalid(false);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/creators/me/mawthooq`, {
+      const res = await fetch("/api/v1/creators/me/mawthooq", {
         method: "POST",
         credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ licenseNo }),
       });
-      if (!res.ok) throw new Error((await res.json())?.message ?? "Failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setErr(serverErrorMessage(res.status, body, locale));
+        return;
+      }
       setStatus("pending");
       router.refresh();
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed");
+    } catch {
+      setErr(msg("network", locale));
     } finally {
       setBusy(false);
     }
@@ -76,12 +86,13 @@ export function MawthooqCard({
             <span className="text-xs font-semibold">{m.licenseLabel}</span>
             <input
               value={licenseNo}
-              onChange={(e) => setLicenseNo(e.target.value)}
+              onChange={(e) => { setLicenseNo(e.target.value); setErr(null); setInvalid(false); }}
               placeholder={m.placeholder}
               required
               minLength={4}
               maxLength={40}
-              className="mt-1 w-full px-3.5 py-3 rounded-xl border border-border bg-surface focus:bg-elevated focus:outline-none focus:ring-2 focus:ring-brand-200"
+              aria-invalid={invalid || undefined}
+              className={`mt-1 w-full px-3.5 py-3 rounded-xl border bg-surface focus:bg-elevated focus:outline-none focus:ring-2 focus:ring-brand-200 ${invalid ? "border-red-500 focus:border-red-500" : "border-border"}`}
             />
           </label>
           {err && <p className="text-sm text-red-500">{err}</p>}

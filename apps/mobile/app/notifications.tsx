@@ -1,4 +1,5 @@
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { useRouter } from "expo-router";
 import { Screen } from "@/components/Screen";
 import { AppHeader } from "@/components/AppHeader";
 import { EmptyState } from "@/components/EmptyState";
@@ -6,11 +7,13 @@ import { useNotifications } from "@/api/queries";
 import { useMarkAllNotificationsRead } from "@/api/mutations";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
+import { mapNotificationHref } from "@/linking";
 import { radius, spacing } from "@/theme";
 
 export default function Notifications() {
   const { palette } = useTheme();
   const { t } = useI18n();
+  const router = useRouter();
   const q = useNotifications();
   const markAll = useMarkAllNotificationsRead();
 
@@ -37,16 +40,26 @@ export default function Notifications() {
             <EmptyState title={t.notifications.empty} icon="notifications-outline" />
           )
         }
-        renderItem={({ item }) => (
-          <View style={[styles.row, { backgroundColor: palette.card, borderColor: palette.border, opacity: item.read ? 0.7 : 1 }]}>
-            <View style={{ flex: 1 }}>
-              <Text style={[styles.title, { color: palette.fg }]}>{item.title}</Text>
-              <Text style={[styles.body, { color: palette.fgMuted }]}>{item.body}</Text>
-              <Text style={[styles.time, { color: palette.fgMuted }]}>{new Date(item.createdAt).toLocaleString()}</Text>
-            </View>
-            {!item.read ? <View style={[styles.dot, { backgroundColor: palette.brand }]} /> : null}
-          </View>
-        )}
+        renderItem={({ item }) => {
+          const href = mapNotificationHref(item.href);
+          return (
+            <Pressable
+              disabled={!href}
+              onPress={() => { if (href) router.push(href as never); }}
+              style={({ pressed }) => [
+                styles.row,
+                { backgroundColor: palette.card, borderColor: palette.border, opacity: item.read ? 0.7 : pressed ? 0.9 : 1 },
+              ]}
+            >
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.title, { color: palette.fg }]}>{item.title}</Text>
+                <Text style={[styles.body, { color: palette.fgMuted }]}>{item.body}</Text>
+                <Text style={[styles.time, { color: palette.fgMuted }]}>{new Date(item.createdAt).toLocaleString()}</Text>
+              </View>
+              {!item.read ? <View style={[styles.dot, { backgroundColor: palette.brand }]} /> : null}
+            </Pressable>
+          );
+        }}
       />
     </Screen>
   );

@@ -1,8 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useT } from "@/components/locale-provider";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { Socket } from "socket.io-client";
+import { useT, useLocale } from "@/components/locale-provider";
+import { validateMessage, serverErrorMessage } from "@/lib/validation";
+import { getSocket, disconnectSocket } from "@/lib/socket";
 
 type Thread = {
   id: string;
@@ -12,39 +16,152 @@ type Thread = {
   messages: { id: string; body: string; createdAt: string; senderId: string }[];
 };
 
-type Message = { id: string; body: string; createdAt: string; senderId: string };
+type Message = { id: string; body: string; createdAt: string; senderId: string; threadId?: string };
+type SendAck = Message & { ok?: boolean; error?: string };
 
-export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | "creator" | "admin" }; threads: Thread[] }) {
+export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | "creator" | "admin" | "superadmin" }; threads: Thread[] }) {
   const i = useT();
+  const locale = useLocale();
+  const router = useRouter();
   const [active, setActive] = useState<Thread | null>(threads[0] ?? null);
   const [msgs, setMsgs] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const [live, setLive] = useState(false);
 
+  const socketRef = useRef<Socket | null>(null);
+  const activeIdRef = useRef<string | null>(active?.id ?? null);
+  const cleanupRef = useRef<(() => void) | null>(null);
+
+  // Append a message unless we already have it (the sender receives both the
+  // send-ack AND the thread-room broadcast for its own message).
+  function appendUnique(m: Message) {
+    setMsgs((prev) => (prev.some((x) => x.id === m.id) ? prev : [...prev, m]));
+  }
+
+  // HTTP initial load of the open thread's messages + mark read.
   useEffect(() => {
     if (!active) return;
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/threads/${active.id}/messages`, { credentials: "include" })
-      .then((r) => r.json())
-      .then((m) => setMsgs(m))
+    setError(null);
+    setMsgs([]);
+    fetch(`/api/v1/threads/${active.id}/messages`, { credentials: "include" })
+      .then(async (r) => {
+        if (!r.ok) throw new Error();
+        const m = await r.json();
+        setMsgs(Array.isArray(m) ? m : []);
+      })
+      .catch(() => setError(i.messages.loadError))
       .finally(() => setLoading(false));
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/threads/${active.id}/read`, { method: "POST", credentials: "include" });
+    fetch(`/api/v1/threads/${active.id}/read`, { method: "POST", credentials: "include" }).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active?.id]);
+
+  // Connect the realtime socket once on mount and wire the event listeners.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const s = await getSocket();
+      if (!s || cancelled) return;
+      socketRef.current = s;
+
+      const onConnect = () => {
+        setLive(true);
+        const id = activeIdRef.current;
+        if (id) s.emit("thread:join", { threadId: id });
+      };
+      const onDisconnect = () => setLive(false);
+      const onNew = (m: Message) => {
+        if (m.threadId && m.threadId === activeIdRef.current) {
+          appendUnique(m);
+          // We're looking at this thread — mark it read straight away.
+          s.emit("thread:read", { threadId: m.threadId });
+        } else {
+          // Message landed in another thread — refresh the list preview + order.
+          router.refresh();
+        }
+      };
+      const onThreadUpdated = () => router.refresh();
+
+      s.on("connect", onConnect);
+      s.on("disconnect", onDisconnect);
+      s.on("message:new", onNew);
+      s.on("thread:updated", onThreadUpdated);
+      if (s.connected) onConnect();
+
+      cleanupRef.current = () => {
+        s.off("connect", onConnect);
+        s.off("disconnect", onDisconnect);
+        s.off("message:new", onNew);
+        s.off("thread:updated", onThreadUpdated);
+      };
+    })();
+
+    return () => {
+      cancelled = true;
+      cleanupRef.current?.();
+      cleanupRef.current = null;
+      const id = activeIdRef.current;
+      // Best-effort leave (the gateway has no leave handler yet — harmless no-op).
+      if (id && socketRef.current) socketRef.current.emit("thread:leave", { threadId: id });
+      disconnectSocket();
+      socketRef.current = null;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Join the newly opened thread's room (and leave the previous one).
+  useEffect(() => {
+    const prev = activeIdRef.current;
+    activeIdRef.current = active?.id ?? null;
+    const s = socketRef.current;
+    if (s && prev && prev !== active?.id) s.emit("thread:leave", { threadId: prev });
+    if (s && active?.id && s.connected) s.emit("thread:join", { threadId: active.id });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active?.id]);
 
   async function send(e: React.FormEvent) {
     e.preventDefault();
-    if (!active || !input.trim()) return;
+    if (!active || sending) return;
+    const invalid = validateMessage(input, locale);
+    if (invalid) { setError(invalid.message); return; }
+    setSending(true);
+    setError(null);
     const body = input;
-    setInput("");
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/threads/${active.id}/messages`, {
-      method: "POST",
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ body }),
-    });
-    if (res.ok) {
-      const newMsg = await res.json();
-      setMsgs((m) => [...m, newMsg]);
+    const s = socketRef.current;
+    try {
+      if (s && s.connected) {
+        // Send over the socket; the ack is the persisted message.
+        const ack = (await s.timeout(8000).emitWithAck("message:send", { threadId: active.id, body })) as SendAck;
+        if (ack && ack.id) {
+          appendUnique(ack);
+          setInput("");
+        } else {
+          setError(i.messages.sendError);
+        }
+      } else {
+        // Socket unavailable — fall back to the HTTP POST.
+        const res = await fetch(`/api/v1/threads/${active.id}/messages`, {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ body }),
+        });
+        if (!res.ok) {
+          const b = await res.json().catch(() => ({}));
+          setError(serverErrorMessage(res.status, b, locale));
+          return;
+        }
+        const newMsg = await res.json();
+        appendUnique(newMsg);
+        setInput("");
+      }
+    } catch {
+      setError(i.messages.sendError);
+    } finally {
+      setSending(false);
     }
   }
 
@@ -64,12 +181,12 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
                 <li key={t.id}>
                   <button
                     onClick={() => setActive(t)}
-                    className={`w-full text-left flex items-center gap-3 p-4 border-b border-border ${
+                    className={`w-full text-start flex items-center gap-3 p-4 border-b border-border ${
                       active?.id === t.id ? "bg-surface" : "hover:bg-surface"
                     }`}
                   >
                     <div className="relative h-11 w-11 rounded-full overflow-hidden bg-surface shrink-0">
-                      <Image src={counter.avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent(counter.name)}`} alt={counter.name} fill className="object-cover" />
+                      <Image src={counter.avatarUrl || `https://i.pravatar.cc/300?u=${encodeURIComponent(counter.name)}`} alt={counter.name} fill className="object-cover" unoptimized />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold truncate">{counter.name}</p>
@@ -87,13 +204,18 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
             <>
               <header className="flex items-center gap-3 p-4 border-b border-border">
                 <div className="relative h-10 w-10 rounded-full overflow-hidden bg-surface">
-                  <Image src={(me.role === "brand" ? active.creator : active.brand).avatarUrl || `https://api.dicebear.com/9.x/avataaars/svg?seed=${encodeURIComponent((me.role === "brand" ? active.creator : active.brand).name)}`} alt="" fill className="object-cover" />
+                  <Image src={(me.role === "brand" ? active.creator : active.brand).avatarUrl || `https://i.pravatar.cc/300?u=${encodeURIComponent((me.role === "brand" ? active.creator : active.brand).name)}`} alt="" fill className="object-cover" unoptimized />
                 </div>
                 <p className="font-bold">{(me.role === "brand" ? active.creator : active.brand).name}</p>
+                <span className="ms-auto inline-flex items-center gap-1.5 text-[11px] font-semibold text-muted" aria-live="polite">
+                  <span className={`h-2 w-2 rounded-full ${live ? "bg-emerald-500" : "bg-amber-400 animate-pulse"}`} />
+                  {live ? i.messages.live : i.messages.connecting}
+                </span>
               </header>
 
               <div className="flex-1 overflow-y-auto p-6 space-y-3 bg-surface">
                 {loading && <p className="text-center text-xs text-muted">{i.common.loading}</p>}
+                {error && <p className="text-center text-xs text-red-600">{error}</p>}
                 {msgs.map((m) => (
                   <div key={m.id} className={`flex ${m.senderId === me.id ? "justify-end" : "justify-start"}`}>
                     <div className={`max-w-[70%] px-4 py-2.5 rounded-2xl ${
@@ -111,11 +233,13 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
               <form onSubmit={send} className="p-4 border-t border-border flex items-center gap-2">
                 <input
                   value={input}
-                  onChange={(e) => setInput(e.target.value)}
+                  onChange={(e) => { setInput(e.target.value); if (error) setError(null); }}
                   placeholder={i.messages.typePh}
                   className="flex-1 px-3.5 py-2.5 rounded-lg border border-border"
                 />
-                <button className="px-5 py-2.5 rounded-lg brand-gradient text-white font-semibold">{i.messages.send}</button>
+                <button disabled={sending} className="px-5 py-2.5 rounded-lg brand-gradient text-white font-semibold disabled:opacity-60">
+                  {sending ? i.common.sending : i.messages.send}
+                </button>
               </form>
             </>
           ) : (

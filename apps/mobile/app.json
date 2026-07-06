@@ -4,6 +4,9 @@
     "slug": "nakhla",
     "scheme": "nakhla",
     "version": "0.1.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -39,8 +42,18 @@
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            { "scheme": "https", "host": "nakhla.dev" },
-            { "scheme": "https", "host": "www.nakhla.dev" }
+            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/orders" },
+            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/campaigns" },
+            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/creator" },
+            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/messages" },
+            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/notifications" },
+            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/saved" },
+            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/orders" },
+            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/campaigns" },
+            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/creator" },
+            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/messages" },
+            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/notifications" },
+            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/saved" }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
         }

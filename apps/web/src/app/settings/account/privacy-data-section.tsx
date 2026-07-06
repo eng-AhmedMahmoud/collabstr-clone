@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { useT } from "@/components/locale-provider";
+import { useT, useLocale } from "@/components/locale-provider";
+import { serverErrorMessage, msg } from "@/lib/validation";
 import { openConsentManager } from "@/components/cookie-consent";
 
 export function PrivacyDataSection() {
   const i = useT();
+  const locale = useLocale();
   const p = i.privacyData;
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -14,10 +16,14 @@ export function PrivacyDataSection() {
     setBusy(true);
     setErr(null);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/users/me/export`, {
+      const res = await fetch("/api/v1/users/me/export", {
         credentials: "include",
       });
-      if (!res.ok) throw new Error((await res.json())?.message ?? "Failed");
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        setErr(serverErrorMessage(res.status, body, locale));
+        return;
+      }
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -25,8 +31,8 @@ export function PrivacyDataSection() {
       a.download = "nakhla-data-export.json";
       a.click();
       URL.revokeObjectURL(url);
-    } catch (e) {
-      setErr(e instanceof Error ? e.message : "Failed");
+    } catch {
+      setErr(msg("network", locale));
     } finally {
       setBusy(false);
     }

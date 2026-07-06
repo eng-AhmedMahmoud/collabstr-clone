@@ -1,6 +1,10 @@
 import { cookies } from "next/headers";
 
-const BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+const ENV_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
+if (process.env.NODE_ENV === "production" && !ENV_BASE) {
+  throw new Error("API_URL must be set in production — refusing to fall back to localhost.");
+}
+const BASE = ENV_BASE || "http://localhost:4000";
 
 type FetchOpts = RequestInit & { cookieHeader?: string; auth?: boolean; locale?: string };
 

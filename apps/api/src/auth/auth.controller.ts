@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, Post, Req, Res, UnauthorizedException, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Get, HttpCode, Post, Req, Res, UnauthorizedException, UseGuards } from "@nestjs/common";
 import type { Request, Response } from "express";
 import { AuthService } from "./auth.service";
 import { JwtAuthGuard } from "./jwt-auth.guard";
@@ -44,8 +44,7 @@ export class AuthController {
 
   @Post("signup")
   @Throttle({ default: { ttl: 60_000, limit: 5 } })
-  @UsePipes(new ZodValidationPipe(SignupInput))
-  async signup(@Body() body: any, @Res({ passthrough: true }) res: Response) {
+  async signup(@Body(new ZodValidationPipe(SignupInput)) body: any, @Res({ passthrough: true }) res: Response) {
     const { user, accessToken, refreshToken } = await this.auth.signup(body);
     setAuthCookies(res, accessToken, refreshToken);
     setLocaleCookie(res, user.locale as any);
@@ -60,8 +59,7 @@ export class AuthController {
   @Post("login")
   @HttpCode(200)
   @Throttle({ default: { ttl: 60_000, limit: 10 } })
-  @UsePipes(new ZodValidationPipe(LoginInput))
-  async login(@Body() body: any, @Res({ passthrough: true }) res: Response) {
+  async login(@Body(new ZodValidationPipe(LoginInput)) body: any, @Res({ passthrough: true }) res: Response) {
     const { user, accessToken, refreshToken } = await this.auth.login(body);
     setAuthCookies(res, accessToken, refreshToken);
     setLocaleCookie(res, user.locale as any);
@@ -73,6 +71,7 @@ export class AuthController {
 
   @Post("refresh")
   @HttpCode(200)
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
   async refresh(@Req() req: Request, @Body() body: any, @Res({ passthrough: true }) res: Response) {
     // Accept refresh token from cookie (web) or JSON body (mobile).
     const token: string | undefined = req.cookies?.refresh_token ?? body?.refreshToken;
@@ -84,8 +83,11 @@ export class AuthController {
 
   @Post("logout")
   @HttpCode(204)
-  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    await this.auth.logout(req.cookies?.refresh_token);
+  @Throttle({ default: { ttl: 60_000, limit: 30 } })
+  async logout(@Req() req: Request, @Body() body: any, @Res({ passthrough: true }) res: Response) {
+    // Accept refresh token from cookie (web) or JSON body (mobile) so
+    // non-cookie clients can revoke their session server-side.
+    await this.auth.logout(req.cookies?.refresh_token ?? body?.refreshToken);
     clearAuthCookies(res);
   }
 
@@ -93,5 +95,16 @@ export class AuthController {
   @Get("me")
   me(@CurrentUser() user: AuthUser) {
     return this.auth.me(user.id);
+  }
+
+  // The web client keeps its access token in an httpOnly cookie on the web
+  // origin, so browser JS can't read it to authenticate a cross-origin socket.
+  // This authenticated endpoint (reached same-origin via the Next rewrite, so
+  // the cookie flows) hands the current access token back for the socket
+  // handshake. Mobile skips this — it already holds the token in secure store.
+  @UseGuards(JwtAuthGuard)
+  @Get("ws-token")
+  wsToken(@Req() req: Request) {
+    return { token: req.cookies?.access_token ?? null };
   }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards, UsePipes } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from "@nestjs/common";
 import { CreatorsService } from "./creators.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RolesGuard } from "../common/roles.guard";
@@ -12,8 +12,7 @@ export class CreatorsController {
   constructor(private creators: CreatorsService) {}
 
   @Get()
-  @UsePipes(new ZodValidationPipe(CreatorListQuery))
-  list(@Query() q: CreatorListQuery) {
+  list(@Query(new ZodValidationPipe(CreatorListQuery)) q: CreatorListQuery) {
     return this.creators.list(q);
   }
 
@@ -39,16 +38,14 @@ export class CreatorsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("creator")
   @Post("me/mawthooq")
-  @UsePipes(new ZodValidationPipe(MawthooqInput))
-  submitMawthooq(@CurrentUser() user: AuthUser, @Body() body: MawthooqInput) {
+  submitMawthooq(@CurrentUser() user: AuthUser, @Body(new ZodValidationPipe(MawthooqInput)) body: MawthooqInput) {
     return this.creators.submitMawthooq(user.id, body.licenseNo);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("creator")
   @Post("me/packages")
-  @UsePipes(new ZodValidationPipe(PackageInput))
-  addPackage(@CurrentUser() user: AuthUser, @Body() body: any) {
+  addPackage(@CurrentUser() user: AuthUser, @Body(new ZodValidationPipe(PackageInput)) body: any) {
     return this.creators.addPackage(user.id, body);
   }
 

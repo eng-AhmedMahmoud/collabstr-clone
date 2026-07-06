@@ -4,6 +4,7 @@ import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Screen } from "@/components/Screen";
 import { AppHeader } from "@/components/AppHeader";
+import { Button } from "@/components/Button";
 import { EmptyState } from "@/components/EmptyState";
 import { useThreadMessages, type ChatMessage } from "@/api/queries";
 import { useMarkThreadRead, useSendMessage } from "@/api/mutations";
@@ -21,10 +22,18 @@ export default function ThreadScreen() {
   const [text, setText] = useState("");
   const listRef = useRef<FlatList<ChatMessage>>(null);
 
+  // Mark the thread read on open, and again whenever new messages arrive
+  // while the screen stays open (the query polls every 8s).
+  const msgCount = q.data?.length ?? 0;
+  const lastMarkedCount = useRef(-1);
   useEffect(() => {
-    if (threadId) markRead.mutate();
+    if (!threadId) return;
+    if (lastMarkedCount.current === -1 || msgCount > lastMarkedCount.current) {
+      lastMarkedCount.current = msgCount;
+      markRead.mutate();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [threadId]);
+  }, [threadId, msgCount]);
 
   useEffect(() => {
     if ((q.data?.length ?? 0) > 0) {
@@ -43,6 +52,11 @@ export default function ThreadScreen() {
     <Screen padded={false} keyboard header={<AppHeader title={t.messages.title} />}>
       {q.isLoading ? (
         <View style={styles.center}><ActivityIndicator color={palette.brand} /></View>
+      ) : q.isError ? (
+        <View style={[styles.center, { gap: spacing.md, padding: spacing.lg }]}>
+          <Text style={{ color: palette.danger, textAlign: "center" }}>{t.common.error}</Text>
+          <Button title={t.common.retry} variant="outline" onPress={() => q.refetch()} />
+        </View>
       ) : (
         <FlatList
           ref={listRef}

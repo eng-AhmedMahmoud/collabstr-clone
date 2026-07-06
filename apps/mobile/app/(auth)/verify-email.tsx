@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { Stack, useLocalSearchParams, useRouter } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { Screen } from "@/components/Screen";
 import { Button } from "@/components/Button";
 import { BrandMark } from "@/components/BrandMark";
@@ -7,11 +7,12 @@ import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
 import { spacing } from "@/theme";
 
+// Honest state: the API has no email-verification endpoint yet, so this
+// screen says verification isn't required instead of pretending to verify.
 export default function VerifyEmail() {
   const { palette } = useTheme();
   const { t } = useI18n();
   const router = useRouter();
-  const params = useLocalSearchParams<{ token?: string }>();
 
   return (
     <>
@@ -20,12 +21,9 @@ export default function VerifyEmail() {
         <View style={styles.hero}>
           <BrandMark size={64} />
           <Text style={[styles.title, { color: palette.fg }]}>{t.auth.verifyTitle}</Text>
-          <Text style={[styles.sub, { color: palette.fgMuted }]}>{t.auth.verifySub}</Text>
-          {params.token ? (
-            <Text style={[styles.sub, { color: palette.fgMuted }]}>Token: {String(params.token).slice(0, 12)}…</Text>
-          ) : null}
+          <Text style={[styles.sub, { color: palette.fgMuted }]}>{t.auth.verifyNotRequired}</Text>
         </View>
-        <Button title={t.auth.loginCta} onPress={() => router.replace("/(auth)/login")} />
+        <Button title={t.auth.continueCta} onPress={() => router.replace("/(tabs)")} />
       </Screen>
     </>
   );

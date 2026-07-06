@@ -11,6 +11,7 @@ enum Role {
   brand
   creator
   admin
+  superadmin
 }
 
 enum Platform {
@@ -176,6 +177,9 @@ model CreatorProfile {
   threadsAsCreator Thread[]      @relation("ThreadCreatorProfile")
 
   @@index([username])
+  // Discovery browse: default sort + price filter of the public creators list.
+  @@index([rating(sort: Desc), reviewsCount(sort: Desc)])
+  @@index([startingPrice])
 }
 
 model Package {

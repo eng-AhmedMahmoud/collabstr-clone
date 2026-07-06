@@ -5,6 +5,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { EmptyState } from "@/components/EmptyState";
+import { Money } from "@/components/Money";
 import { useAdminCampaigns } from "@/api/queries";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -38,7 +39,12 @@ export default function AdminCampaigns() {
                 <Text style={{ color: palette.fg, fontWeight: "700" }} numberOfLines={1}>{item.title}</Text>
                 <Badge label={t.campaigns.status[item.status]} tone={item.status === "open" ? "success" : "neutral"} />
               </View>
-              <Text style={{ color: palette.fgMuted, fontSize: 12 }} numberOfLines={2}>{item.brand.name} · {item.budgetMin}-{item.budgetMax} {t.discover.sar}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{item.brand.name} · </Text>
+                <Money value={item.budgetMin} style={{ color: palette.fgMuted, fontSize: 12 }} />
+                <Text style={{ color: palette.fgMuted, fontSize: 12 }}>-</Text>
+                <Money value={item.budgetMax} style={{ color: palette.fgMuted, fontSize: 12 }} />
+              </View>
             </Card>
           </Pressable>
         )}

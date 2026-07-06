@@ -8,6 +8,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { Avatar } from "@/components/Avatar";
 import { Badge } from "@/components/Badge";
 import { EmptyState } from "@/components/EmptyState";
+import { Money } from "@/components/Money";
 import { useCreatorByUsername, useSavedCreators, useReviewsByCreator } from "@/api/queries";
 import { useToggleSaveCreator, useOpenThread } from "@/api/mutations";
 import { useAuth } from "@/auth/context";
@@ -123,7 +124,7 @@ export default function CreatorDetailScreen() {
               <Text style={[styles.pkgTitle, { color: palette.fg }]}>{p.title}</Text>
               {p.description ? <Text style={[styles.pkgDesc, { color: palette.fgMuted }]} numberOfLines={3}>{p.description}</Text> : null}
             </View>
-            <Text style={[styles.pkgPrice, { color: palette.brand }]}>{p.price} {t.discover.sar}</Text>
+            <Money value={p.price} style={[styles.pkgPrice, { color: palette.brand }]} />
           </Pressable>
         ))
       )}

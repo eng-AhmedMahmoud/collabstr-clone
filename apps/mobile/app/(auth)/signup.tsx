@@ -9,7 +9,7 @@ import { useAuth } from "@/auth/context";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
 import { spacing, radius } from "@/theme";
-import { ApiError } from "@/api/client";
+import { fieldErrorsFrom, apiErrorMessage } from "@/i18n/errors";
 
 export default function Signup() {
   const { signup, loading } = useAuth();
@@ -20,16 +20,27 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"brand" | "creator">("creator");
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
 
   const submit = async () => {
-    setError(null);
-    if (password.length < 8) { setError(t.auth.minPassword); return; }
+    setFormError(null);
+    const nextErrors: Record<string, string> = {};
+    if (name.trim().length < 2) nextErrors.name = t.errors.nameMin;
+    const em = email.trim();
+    if (!em) nextErrors.email = t.errors.emailRequired;
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em)) nextErrors.email = t.errors.emailInvalid;
+    if (!password) nextErrors.password = t.errors.passwordRequired;
+    else if (password.length < 8) nextErrors.password = t.errors.passwordMin;
+    if (Object.keys(nextErrors).length) { setErrors(nextErrors); return; }
+    setErrors({});
     try {
-      await signup({ name: name.trim(), email: email.trim(), password, role, locale });
+      await signup({ name: name.trim(), email: em, password, role, locale });
       router.replace("/(tabs)/account");
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : t.common.error);
+      const fe = fieldErrorsFrom(e);
+      if (fe) setErrors(fe);
+      setFormError(apiErrorMessage(e, t, { on409: t.errors.emailTaken }));
     }
   };
 
@@ -41,7 +52,7 @@ export default function Signup() {
           <BrandMark size={64} />
           <Text style={[styles.title, { color: palette.fg }]}>{t.auth.signupTitle}</Text>
         </View>
-        <TextField label={t.auth.name} value={name} onChangeText={setName} testID="signup-name" />
+        <TextField label={t.auth.name} value={name} onChangeText={setName} error={errors.name} testID="signup-name" />
         <TextField
           label={t.auth.email}
           value={email}
@@ -49,6 +60,7 @@ export default function Signup() {
           autoCapitalize="none"
           keyboardType="email-address"
           textContentType="emailAddress"
+          error={errors.email}
           testID="signup-email"
         />
         <TextField
@@ -57,6 +69,7 @@ export default function Signup() {
           onChangeText={setPassword}
           secureTextEntry
           autoCapitalize="none"
+          error={errors.password}
           testID="signup-password"
         />
         <Text style={[styles.roleLabel, { color: palette.fgMuted }]}>{t.auth.role}</Text>
@@ -72,7 +85,7 @@ export default function Signup() {
             label={t.auth.brand}
           />
         </View>
-        {error ? <Text style={{ color: palette.danger }}>{error}</Text> : null}
+        {formError ? <Text style={{ color: palette.danger }}>{formError}</Text> : null}
         <Button title={t.auth.signupCta} onPress={submit} loading={loading} testID="signup-submit" />
         <Pressable onPress={() => router.replace("/(auth)/login")}>
           <Text style={[styles.switch, { color: palette.brand }]}>{t.auth.switchToLogin}</Text>

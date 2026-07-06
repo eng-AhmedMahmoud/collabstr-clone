@@ -12,6 +12,7 @@ import { useReviewMawthooq } from "@/api/mutations";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
 import { useToast } from "@/components/Toast";
+import { fieldErrorsFrom, apiErrorMessage } from "@/i18n/errors";
 import { spacing } from "@/theme";
 
 export default function AdminMawthooq() {
@@ -48,8 +49,21 @@ function ReviewRow({ row }: { row: any }) {
   const review = useReviewMawthooq(row.creatorId);
   const [note, setNote] = useState("");
   const [expires, setExpires] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
 
   const decide = async (decision: "verified" | "rejected") => {
+    const next: Record<string, string> = {};
+    if (decision === "verified" && !expires.trim()) next.expires = t.errors.required;
+    if (expires.trim() && !/^\d{4}-\d{2}-\d{2}$/.test(expires.trim())) next.expires = t.errors.invalidDate;
+    if (decision === "rejected" && !note.trim()) next.note = t.errors.reasonRequired;
+    if (Object.keys(next).length) {
+      setErrors(next);
+      setFormError(null);
+      return;
+    }
+    setErrors({});
+    setFormError(null);
     try {
       await review.mutateAsync({
         decision,
@@ -57,7 +71,11 @@ function ReviewRow({ row }: { row: any }) {
         expiresAt: expires ? new Date(expires).toISOString() : undefined,
       });
       toast(t.common.done, "success");
-    } catch { toast(t.common.error, "error"); }
+    } catch (err) {
+      const fe = fieldErrorsFrom(err);
+      if (fe) setErrors(fe);
+      setFormError(apiErrorMessage(err, t));
+    }
   };
 
   return (
@@ -72,8 +90,9 @@ function ReviewRow({ row }: { row: any }) {
       <Text style={{ color: palette.fg }}>
         <Text style={{ color: palette.fgMuted }}>{t.admin.licenceNo}:</Text> {row.licenseNo}
       </Text>
-      <TextField label={t.admin.expiresAt} value={expires} onChangeText={setExpires} placeholder="YYYY-MM-DD" autoCapitalize="none" />
-      <TextField label={t.admin.note} value={note} onChangeText={setNote} multiline />
+      <TextField label={t.admin.expiresAt} value={expires} onChangeText={setExpires} placeholder="YYYY-MM-DD" autoCapitalize="none" error={errors.expires} />
+      <TextField label={t.admin.note} value={note} onChangeText={setNote} multiline error={errors.note} />
+      {formError ? <Text style={{ color: palette.danger, fontSize: 12 }}>{formError}</Text> : null}
       <View style={{ flexDirection: "row", gap: spacing.xs }}>
         <Button title={t.admin.approve} onPress={() => decide("verified")} loading={review.isPending} style={{ flex: 1 }} />
         <Button title={t.admin.reject} variant="outline" onPress={() => decide("rejected")} loading={review.isPending} style={{ flex: 1 }} />

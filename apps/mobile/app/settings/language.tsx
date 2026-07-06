@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Text } from "react-native";
 import { Screen } from "@/components/Screen";
 import { AppHeader } from "@/components/AppHeader";
@@ -13,8 +14,9 @@ import * as Updates from "expo-updates";
 
 export default function LanguageSettings() {
   const { palette } = useTheme();
-  const { t, locale, setLocale, restartRequired } = useI18n();
+  const { t, locale, setLocale, needsRestart } = useI18n();
   const mirror = useSetLocale();
+  const [restartFailed, setRestartFailed] = useState(false);
 
   const change = async (l: Locale) => {
     await setLocale(l);
@@ -22,7 +24,12 @@ export default function LanguageSettings() {
   };
 
   const restart = async () => {
-    try { await Updates.reloadAsync(); } catch { /* dev fallback */ }
+    try {
+      await Updates.reloadAsync();
+    } catch {
+      // Expo Go: updates are disabled — tell the user what to do instead.
+      setRestartFailed(true);
+    }
   };
 
   return (
@@ -40,10 +47,12 @@ export default function LanguageSettings() {
           onChange={change}
         />
       </Card>
-      {restartRequired ? (
+      {needsRestart ? (
         <Card>
-          <Text style={{ color: palette.fg }}>{t.settings.rtlBanner}</Text>
-          <Button title={t.settings.restartNow} onPress={restart} />
+          <Text style={{ color: palette.fg }}>
+            {restartFailed ? t.settings.restartFailed : t.settings.rtlBanner}
+          </Text>
+          {!restartFailed ? <Button title={t.settings.restartNow} onPress={restart} /> : null}
         </Card>
       ) : null}
       <Text style={{ color: palette.fgMuted, fontSize: 12, marginTop: spacing.sm }}>

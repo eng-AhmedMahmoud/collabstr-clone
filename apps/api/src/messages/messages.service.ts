@@ -57,4 +57,14 @@ export class MessagesService {
       data: { readAt: new Date() },
     });
   }
+
+  // Both sides of a thread (brand + creator user ids). Used to fan out realtime
+  // broadcasts to each participant's personal room after an HTTP send.
+  async threadParticipants(threadId: string): Promise<string[]> {
+    const thread = await this.prisma.thread.findUnique({
+      where: { id: threadId },
+      select: { brandId: true, creatorUserId: true },
+    });
+    return thread ? [thread.brandId, thread.creatorUserId] : [];
+  }
 }

@@ -4,6 +4,8 @@ import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RolesGuard } from "../common/roles.guard";
 import { Roles } from "../common/roles.decorator";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
+import { ZodValidationPipe } from "../common/zod-validation.pipe";
+import { ApplicationInput, ApplicationStatusInput } from "@collabstr/shared-types";
 
 @Controller()
 export class ApplicationsController {
@@ -15,7 +17,7 @@ export class ApplicationsController {
   apply(
     @CurrentUser() user: AuthUser,
     @Param("campaignId") campaignId: string,
-    @Body() body: { price: number; pitch: string }
+    @Body(new ZodValidationPipe(ApplicationInput)) body: ApplicationInput
   ) {
     return this.apps.apply(user.id, campaignId, body.price, body.pitch);
   }
@@ -33,9 +35,9 @@ export class ApplicationsController {
   setStatus(
     @CurrentUser() user: AuthUser,
     @Param("id") id: string,
-    @Body("status") status: "accepted" | "rejected"
+    @Body(new ZodValidationPipe(ApplicationStatusInput)) body: ApplicationStatusInput
   ) {
-    return this.apps.setStatus(user.id, id, status);
+    return this.apps.setStatus(user.id, id, body.status);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

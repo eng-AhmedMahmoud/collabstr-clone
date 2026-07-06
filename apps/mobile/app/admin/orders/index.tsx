@@ -7,6 +7,7 @@ import { Card } from "@/components/Card";
 import { Badge } from "@/components/Badge";
 import { Chip } from "@/components/Chip";
 import { EmptyState } from "@/components/EmptyState";
+import { Money } from "@/components/Money";
 import { useAdminOrders } from "@/api/queries";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -54,7 +55,10 @@ export default function AdminOrders() {
                 <Text style={{ color: palette.fg, fontWeight: "700" }} numberOfLines={1}>{item.package.title}</Text>
                 <Badge label={t.status[item.status]} tone="brand" />
               </View>
-              <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{item.creator.user.name} → {item.brand.name} · {item.total} {t.discover.sar}</Text>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 4, flexWrap: "wrap" }}>
+                <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{item.creator.user.name} → {item.brand.name} · </Text>
+                <Money value={item.total} style={{ color: palette.fgMuted, fontSize: 12 }} />
+              </View>
             </Card>
           </Pressable>
         )}

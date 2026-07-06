@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { serverApi } from "@/lib/api";
 import { t, getLocale } from "@/lib/i18n";
+import { getSession } from "@/lib/session";
 import type { ApiCampaign } from "@/lib/types";
-import { fmtMoney } from "@/lib/format";
+import { Money } from "@/components/money";
 
 export const metadata = { title: "Open campaigns — Nakhla" };
 export const dynamic = "force-dynamic";
@@ -11,6 +12,10 @@ export default async function CampaignsPage() {
   const i = await t();
   const locale = await getLocale();
   const moneyLocale = locale === "ar" ? "ar-SA" : "en-SA";
+  const me = await getSession();
+  // Posting campaigns is a brand action — creators use this page to browse and
+  // apply, so only show the "post" CTA to brands (or logged-out visitors).
+  const canPost = !me || me.role === "brand";
   const api = await serverApi();
   let campaigns: ApiCampaign[] = [];
   try { campaigns = await api.get<ApiCampaign[]>("/campaigns"); } catch {}
@@ -22,9 +27,11 @@ export default async function CampaignsPage() {
           <h1 className="text-3xl sm:text-4xl font-black">{i.campaigns.title}</h1>
           <p className="text-muted mt-1.5">{i.campaigns.sub}</p>
         </div>
-        <Link href="/campaigns/new" className="inline-flex px-5 py-3 rounded-xl brand-gradient text-white font-semibold whitespace-nowrap">
-          {i.campaigns.postCta}
-        </Link>
+        {canPost && (
+          <Link href="/campaigns/new" className="inline-flex px-5 py-3 rounded-xl brand-gradient text-white font-semibold whitespace-nowrap">
+            {i.campaigns.postCta}
+          </Link>
+        )}
       </div>
 
       {campaigns.length === 0 ? (
@@ -57,7 +64,7 @@ export default async function CampaignsPage() {
                   ))}
                 </div>
                 <div className="flex items-center justify-between mt-5">
-                  <p className="font-bold">{fmtMoney(c.budgetMin, { locale: moneyLocale })} – {fmtMoney(c.budgetMax, { locale: moneyLocale })}</p>
+                  <p className="font-bold inline-flex items-center gap-1.5"><Money value={c.budgetMin} locale={moneyLocale} /> – <Money value={c.budgetMax} locale={moneyLocale} /></p>
                   <Link href={`/campaigns/${c.id}`} className="text-sm font-bold px-4 py-2 rounded-lg brand-gradient text-white hover:opacity-95 transition">{i.campaigns.viewApply}</Link>
                 </div>
               </article>

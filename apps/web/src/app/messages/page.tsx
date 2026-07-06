@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { serverApi } from "@/lib/api";
 import { getSession } from "@/lib/session";
 import { MessagesUI } from "./messages-ui";
+import { OpenThread } from "./open-thread";
 
 type Thread = {
   id: string;
@@ -22,12 +23,13 @@ export default async function MessagesPage({
   const api = await serverApi();
   const { to } = await searchParams;
 
-  if (to && me.role === "brand") {
-    try { await api.post<{ id: string }>(`/threads/open/${encodeURIComponent(to)}`); } catch {}
-  }
-
   let threads: Thread[] = [];
   try { threads = await api.get<Thread[]>("/threads"); } catch {}
 
-  return <MessagesUI me={{ id: me.id, role: me.role }} threads={threads} />;
+  return (
+    <>
+      {to && me.role === "brand" && <OpenThread to={to} />}
+      <MessagesUI me={{ id: me.id, role: me.role }} threads={threads} />
+    </>
+  );
 }
