@@ -83,7 +83,8 @@ enum MawthooqStatus {
 model User {
   id              String           @id @default(cuid())
   email           String           @unique
-  passwordHash    String
+  // Null for social-login-only accounts (Google/Apple) — they have no password.
+  passwordHash    String?
   name            String
   role            Role
   avatarUrl       String?
@@ -98,6 +99,7 @@ model User {
   brandProfile    BrandProfile?
   creatorProfile  CreatorProfile?
   refreshTokens   RefreshToken[]
+  oauthAccounts   OAuthAccount[]
   notifications   Notification[]
   savedCreators   SavedCreator[]
   reviewsLeft     Review[]         @relation("ReviewsLeft")
@@ -106,6 +108,18 @@ model User {
   messages        Message[]
   campaigns       Campaign[]       @relation("CampaignBrand")
   ordersAsBrand   Order[]          @relation("OrderBrand")
+}
+
+model OAuthAccount {
+  id                String   @id @default(cuid())
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId            String
+  provider          String // "google" | "apple"
+  providerAccountId String // provider's stable user id ("sub" claim)
+  createdAt         DateTime @default(now())
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }
 
 model RefreshToken {

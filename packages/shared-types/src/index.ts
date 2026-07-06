@@ -60,6 +60,15 @@ export const LoginInput = z.object({
 });
 export type LoginInput = z.infer<typeof LoginInput>;
 
+export const GoogleAuthInput = z.object({
+  // Google ID token (JWT) from Google Identity Services on the client.
+  credential: z.string().min(1),
+  // Required only when the Google account has no Nakhla user yet.
+  role: Role.exclude(["admin", "superadmin"]).optional(),
+  locale: Locale.optional(),
+});
+export type GoogleAuthInput = z.infer<typeof GoogleAuthInput>;
+
 export const PackageInput = z.object({
   title: z.string().min(2).max(120),
   price: z.number().int().min(10).max(100_000),

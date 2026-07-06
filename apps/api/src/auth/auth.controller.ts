@@ -5,7 +5,7 @@ import { JwtAuthGuard } from "./jwt-auth.guard";
 import { CurrentUser, AuthUser } from "../common/current-user.decorator";
 import { ZodValidationPipe } from "../common/zod-validation.pipe";
 import { Throttle } from "@nestjs/throttler";
-import { LoginInput, SignupInput } from "@collabstr/shared-types";
+import { GoogleAuthInput, LoginInput, SignupInput } from "@collabstr/shared-types";
 
 const isProd = process.env.NODE_ENV === "production";
 
@@ -61,6 +61,19 @@ export class AuthController {
   @Throttle({ default: { ttl: 60_000, limit: 10 } })
   async login(@Body(new ZodValidationPipe(LoginInput)) body: any, @Res({ passthrough: true }) res: Response) {
     const { user, accessToken, refreshToken } = await this.auth.login(body);
+    setAuthCookies(res, accessToken, refreshToken);
+    setLocaleCookie(res, user.locale as any);
+    return {
+      id: user.id, email: user.email, name: user.name, role: user.role,
+      locale: user.locale ?? "en", accessToken, refreshToken,
+    };
+  }
+
+  @Post("google")
+  @HttpCode(200)
+  @Throttle({ default: { ttl: 60_000, limit: 10 } })
+  async google(@Body(new ZodValidationPipe(GoogleAuthInput)) body: any, @Res({ passthrough: true }) res: Response) {
+    const { user, accessToken, refreshToken } = await this.auth.googleLogin(body);
     setAuthCookies(res, accessToken, refreshToken);
     setLocaleCookie(res, user.locale as any);
     return {

@@ -50,6 +50,8 @@ export class UsersService {
   async changePassword(userId: string, current: string, next: string) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException();
+    // Social-login accounts have no password; there is nothing to "change".
+    if (!user.passwordHash) throw new BadRequestException("Account uses social login and has no password");
     const ok = await bcrypt.compare(current, user.passwordHash);
     if (!ok) throw new BadRequestException("Current password incorrect");
     const passwordHash = await bcrypt.hash(next, 11);

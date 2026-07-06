@@ -5,7 +5,7 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**"],
-      "env": ["API_URL", "NEXT_PUBLIC_API_URL", "CORS_ORIGIN", "DATABASE_URL", "JWT_*", "COOKIE_DOMAIN", "NODE_ENV"]
+      "env": ["API_URL", "NEXT_PUBLIC_API_URL", "NEXT_PUBLIC_GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_IDS", "CORS_ORIGIN", "DATABASE_URL", "JWT_*", "COOKIE_DOMAIN", "NODE_ENV"]
     },
     "dev": {
       "cache": false,

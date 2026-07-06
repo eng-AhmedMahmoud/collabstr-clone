@@ -2,8 +2,17 @@ import { ConflictException, ForbiddenException, Injectable, UnauthorizedExceptio
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import * as crypto from "crypto";
+import { OAuth2Client } from "google-auth-library";
 import { PrismaService } from "../prisma/prisma.service";
-import type { LoginInput, SignupInput } from "@collabstr/shared-types";
+import type { GoogleAuthInput, LoginInput, SignupInput } from "@collabstr/shared-types";
+
+const googleClient = new OAuth2Client();
+
+// Every client id (web / iOS / Android) whose ID tokens we accept, comma-separated.
+// Read lazily — module-level evaluation would race ConfigModule's dotenv load.
+function getGoogleClientIds(): string[] {
+  return (process.env.GOOGLE_CLIENT_IDS ?? "").split(",").map((s) => s.trim()).filter(Boolean);
+}
 
 type AuthTokens = { accessToken: string; refreshToken: string };
 
@@ -73,8 +82,90 @@ export class AuthService {
     const user = await this.prisma.user.findUnique({ where: { email: input.email } });
     if (!user) throw new UnauthorizedException("Invalid credentials");
     if (user.bannedAt) throw new ForbiddenException("Account disabled");
+    // Social-only accounts have no password to compare against.
+    if (!user.passwordHash) throw new UnauthorizedException("Invalid credentials");
     const ok = await bcrypt.compare(input.password, user.passwordHash);
     if (!ok) throw new UnauthorizedException("Invalid credentials");
+    const tokens = await this.issueTokens(user.id, user.email, user.role);
+    return { user, ...tokens };
+  }
+
+  async googleLogin(input: GoogleAuthInput) {
+    const googleClientIds = getGoogleClientIds();
+    if (googleClientIds.length === 0) throw new UnauthorizedException("Google login is not configured");
+
+    let payload;
+    try {
+      const ticket = await googleClient.verifyIdToken({ idToken: input.credential, audience: googleClientIds });
+      payload = ticket.getPayload();
+    } catch {
+      throw new UnauthorizedException("Invalid Google credential");
+    }
+    if (!payload?.sub || !payload.email) throw new UnauthorizedException("Invalid Google credential");
+
+    // 1) Already linked → straight login.
+    const linked = await this.prisma.oAuthAccount.findUnique({
+      where: { provider_providerAccountId: { provider: "google", providerAccountId: payload.sub } },
+      include: { user: true },
+    });
+    if (linked) {
+      if (linked.user.bannedAt) throw new ForbiddenException("Account disabled");
+      const tokens = await this.issueTokens(linked.user.id, linked.user.email, linked.user.role);
+      return { user: linked.user, ...tokens };
+    }
+
+    // 2) Existing email/password user → link the Google account to it.
+    //    Only safe when Google vouches for the address, otherwise it's an
+    //    account-takeover vector.
+    const byEmail = await this.prisma.user.findUnique({ where: { email: payload.email } });
+    if (byEmail) {
+      if (!payload.email_verified) throw new UnauthorizedException("Google email not verified");
+      if (byEmail.bannedAt) throw new ForbiddenException("Account disabled");
+      await this.prisma.user.update({
+        where: { id: byEmail.id },
+        data: {
+          emailVerifiedAt: byEmail.emailVerifiedAt ?? new Date(),
+          avatarUrl: byEmail.avatarUrl ?? payload.picture ?? null,
+          oauthAccounts: { create: { provider: "google", providerAccountId: payload.sub } },
+        },
+      });
+      const tokens = await this.issueTokens(byEmail.id, byEmail.email, byEmail.role);
+      return { user: byEmail, ...tokens };
+    }
+
+    // 3) Brand-new user. We can't guess brand vs creator — the client must
+    //    ask and retry with a role.
+    if (!input.role) throw new ConflictException({ code: "ROLE_REQUIRED", message: "Choose a role to finish signing up" });
+
+    const user = await this.prisma.user.create({
+      data: {
+        email: payload.email,
+        name: payload.name ?? payload.email.split("@")[0],
+        role: input.role,
+        passwordHash: null,
+        avatarUrl: payload.picture ?? null,
+        emailVerifiedAt: payload.email_verified ? new Date() : null,
+        locale: input.locale ?? null,
+        oauthAccounts: { create: { provider: "google", providerAccountId: payload.sub } },
+        ...(input.role === "brand"
+          ? { brandProfile: { create: { brandName: payload.name ?? payload.email.split("@")[0] } } }
+          : {
+              creatorProfile: {
+                create: {
+                  username: payload.email.split("@")[0].toLowerCase().replace(/[^a-z0-9_-]/g, "") + "-" + crypto.randomBytes(2).toString("hex"),
+                  headline: "New creator",
+                  bio: "Just joined.",
+                  city: "—",
+                  country: "—",
+                  platforms: [],
+                  categories: [],
+                  badges: [],
+                  portfolio: [],
+                },
+              },
+            }),
+      },
+    });
     const tokens = await this.issueTokens(user.id, user.email, user.role);
     return { user, ...tokens };
   }
