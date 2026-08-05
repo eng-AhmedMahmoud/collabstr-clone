@@ -16,7 +16,7 @@ export class OrdersController {
   @Roles("brand")
   @Post()
   create(@CurrentUser() user: AuthUser, @Body(new ZodValidationPipe(OrderInput)) body: any) {
-    return this.orders.create(user.id, body);
+    return this.orders.create(user, body);
   }
 
   @Get()
@@ -31,14 +31,14 @@ export class OrdersController {
 
   @Post(":id/pay")
   pay(@CurrentUser() user: AuthUser, @Param("id") id: string) {
-    return this.orders.pay(user.id, id);
+    return this.orders.pay(user, id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("creator")
   @Post(":id/accept")
   accept(@CurrentUser() user: AuthUser, @Param("id") id: string) {
-    return this.orders.accept(user.id, id);
+    return this.orders.accept(user, id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -49,7 +49,7 @@ export class OrdersController {
     @Param("id") id: string,
     @Body(new ZodValidationPipe(DeliveryInput)) body: DeliveryInput
   ) {
-    return this.orders.submit(user.id, id, body.url, body.note);
+    return this.orders.submit(user, id, body.url, body.note);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -60,26 +60,26 @@ export class OrdersController {
     @Param("id") id: string,
     @Body(new ZodValidationPipe(OrderNoteInput)) body: OrderNoteInput,
   ) {
-    return this.orders.requestRevision(user.id, id, body.note);
+    return this.orders.requestRevision(user, id, body.note);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("brand")
   @Post(":id/approve")
   approve(@CurrentUser() user: AuthUser, @Param("id") id: string) {
-    return this.orders.approve(user.id, id);
+    return this.orders.approve(user, id);
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles("brand")
   @Post(":id/release")
   release(@CurrentUser() user: AuthUser, @Param("id") id: string) {
-    return this.orders.release(user.id, id);
+    return this.orders.release(user, id);
   }
 
   @Post(":id/cancel")
   cancel(@CurrentUser() user: AuthUser, @Param("id") id: string) {
-    return this.orders.cancel(user.id, id);
+    return this.orders.cancel(user, id);
   }
 
   @Post(":id/dispute")
@@ -88,6 +88,6 @@ export class OrdersController {
     @Param("id") id: string,
     @Body(new ZodValidationPipe(OrderReasonInput)) body: OrderReasonInput,
   ) {
-    return this.orders.dispute(user.id, id, body.reason);
+    return this.orders.dispute(user, id, body.reason);
   }
 }

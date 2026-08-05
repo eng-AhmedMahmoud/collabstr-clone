@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Influencer Review &amp; Metric Verification — Implementation Plan</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:960px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  h1{font-size:25px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:10px;border-top:1px solid var(--line)}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--blue)}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+  a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  .info{background:rgba(76,159,254,.15);color:var(--blue)}
+  ul{margin:10px 0;padding-left:20px} li{margin:6px 0}
+  ol{margin:10px 0;padding-left:22px} ol li{margin:7px 0}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .flag{border-left:3px solid var(--amber);padding:8px 14px;background:rgba(240,169,43,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .win{border-left:3px solid var(--green);padding:8px 14px;background:rgba(46,194,107,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .phase{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:var(--card)}
+  .phase h4{margin:0 0 6px;font-size:14.5px;color:var(--ink)}
+  .cites{font-size:13px;color:var(--muted)}
+  .cites li{margin:5px 0}
+  sup{color:var(--blue);font-weight:600}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Influencer Review &amp; Metric Verification — Implementation Plan</h1>
+  <div class="sub">Status: Draft (2026-07-23) · Owner: Ahmed · Scope: Nakhla marketplace (KSA/GCC), platforms IG / TikTok / YouTube / Snapchat</div>
+</header>
+
+<p class="muted">Source: Deep-research report (29 sources, 20/25 claims verified 3-0). Citations inline as <code>[n]</code>, list at bottom.</p>
+
+<h2>1 · TL;DR / Recommendation</h2>
+<p>Validate creators in <b>two independent layers</b>:</p>
+<ol>
+  <li><b>Verified metrics (first-party, OAuth).</b> Real reach/impressions/engagement/follower stats can <b>only</b> be obtained by having the creator OAuth-connect their own account — they cannot be scraped from public profiles. This is true for Instagram, TikTok, and YouTube alike <sup>[F1]</sup>. → Gate a <b>"Verified Metrics" badge</b> behind account connection.</li>
+  <li><b>Authenticity / fraud score (audience quality).</b> A verified follower <i>count</i> is still self-reported by the platform and can be inflated with bought followers — "verified via API" means <b>tamper-proof source, not fraud-proof</b> <sup>[C]</sup>. → Layer a <b>fake-follower / audience-quality check</b> on top, run at onboarding and again before payout.</li>
+</ol>
+<div class="card">
+  <b>Build-vs-buy for a lean startup:</b> <b>BUY the fraud layer, self-integrate (or buy) the OAuth layer.</b>
+  <ul>
+    <li>Fraud detection in-house = reimplementing an ML feature taxonomy + graph neural nets (RF-GNN) — heavy: needs labeled data, graph infra, per-platform access the vendors already have <sup>[F10]</sup>. Don't build it.</li>
+    <li>Modash Discovery API prices an audience-authenticity report at <b>~$0.45/creator</b> (~$0.90 for a full vet), cheap enough to run at onboarding + payout gates — but note the <b>$16,200/yr floor</b> (annual contract) <sup>[F4][F5]</sup>.</li>
+    <li>OAuth/verified-metrics plumbing: self-integrate official APIs (free, but app-review lead time + per-platform work + Snapchat unknown), <b>or</b> buy <b>Phyllo</b>, which offloads OAuth, app approvals, normalization, and webhooks across 20+ platforms (quote-based) <sup>[F7]</sup>.</li>
+  </ul>
+</div>
+
+<h2>2 · What the current code has vs. what's missing</h2>
+<p>Current <code>CreatorProfile</code> (<code>apps/api/prisma/schema.prisma</code>):</p>
+<ul>
+  <li><code>followersIg / followersTt / followersYt : Int?</code> — <b>self-reported, unverified</b>, no source flag, no timestamp.</li>
+  <li><code>engagement : Float?</code>, <code>avgViews : Int?</code>, <code>audience : Json?</code> — <b>self-reported / freeform</b>.</li>
+  <li><code>platforms : Platform[]</code> where <code>enum Platform { instagram tiktok youtube }</code> — <b>Snapchat missing</b> (Snapchat is dominant in KSA — see §6).</li>
+  <li><code>badges : String[]</code> — free strings, no verification semantics.</li>
+  <li><b>Good template already in the repo:</b> the Mawthooq advertising-licence flow (<code>MawthooqStatus</code> enum + <code>mawthooqSubmittedAt / VerifiedAt / ExpiresAt / ReviewNote</code>) is exactly the shape we should mirror for social-account verification.</li>
+</ul>
+<div class="flag">Gaps to close: no OAuth/social-connection model, no verified-vs-self-reported distinction, no fraud/audience-quality score, no Snapchat, no badge gating, no link between verified reach and payout.</div>
+
+<h2>3 · Detection signals &amp; thresholds (ready to adopt)</h2>
+<p><b>Fake-follower detection technique used in production (Modash):</b> network-graph analysis scoring billions of accounts against normal-behaviour patterns, flagging outliers on concrete signals — missing/generic profile picture, unusual following-to-follower ratio (following 1,000+ with few followers), account age, post count/activity, incomplete bio, unnatural growth curve <sup>[F8]</sup>. Accuracy caveats: <b>degrades below ~10K followers, gaps on private profiles, false positives</b> — material for a micro-influencer-heavy KSA market <sup>[C]</sup>.</p>
+<p><b>Audience segmentation</b> to surface per creator: <code>fake</code> / <code>influencers</code> / <code>mass-followers</code> (people who follow 1,000–1,500+ accounts) / <code>real</code>, plus <b>reachability</b> (0–500 / 500–1k follows = good; &gt;1k = followers less likely to see posts) <sup>[F9]</sup>.</p>
+<p><b>Fake-follower thresholds (adopt directly, tune by size/niche/country):</b> <sup>[F9-thresholds]</sup></p>
+<ul>
+  <li><b>Badge-eligible:</b> &lt; 25% fake followers.</li>
+  <li><b>Block/flag:</b> &gt; 50% fake followers.</li>
+  <li>Expected baselines: ~20–30% fake for large creators, ~10–20% for sub-50K. 100% real is <i>unusual</i>.</li>
+</ul>
+<p><b>Engagement-rate red-flags</b> (secondary source, treat as heuristic, tune for MENA): &lt;0.5% = bought-follower red flag; 1–3% normal; 3–6% healthy; &gt;10% may indicate purchased engagement.</p>
+<p><b>Vendor scores if buying:</b> HypeAuditor <b>Audience Quality Score (AQS, 1–100)</b> = 15 metrics over 4 categories (engagement rate, % real audience, follower/following growth patterns, comment authenticity); <b>Channel Quality Score (CQS)</b> for YouTube adds demographics <sup>[F6]</sup>.</p>
+
+<h2>4 · Official API capabilities (the verified layer)</h2>
+<table>
+  <tr><th>Platform</th><th>What OAuth unlocks</th><th>Hard requirements</th></tr>
+  <tr><td><b>Instagram</b> (Graph / Insights API)</td><td>reach, impressions, profile views, follower demographics, engagement</td><td>OAuth token + <code>instagram_business_manage_insights</code> (or FB-login equiv.); <b>creator must have a professional/business account</b> — API returns <b>nothing</b> for personal accounts <sup>[F2]</sup></td></tr>
+  <tr><td><b>TikTok</b></td><td><code>user.info.stats</code> → follower/following/likes/video counts; <code>user.info.profile</code> → <code>is_verified</code>, links, bio <sup>[F3]</sup></td><td><b>App review/approval</b> for production; returns platform's self-reported counts (not fraud-proof) <sup>[F3]</sup></td></tr>
+  <tr><td><b>YouTube</b> (Analytics API)</td><td>views, watch time, subs gained/lost, engagement by date/geo/device</td><td><b>OAuth only — no service-account flow</b>; owner must explicitly consent <sup>[F1]</sup></td></tr>
+  <tr><td><b>Snapchat</b></td><td colspan="2"><i>Unconfirmed — see open question §6</i></td></tr>
+</table>
+<p>Key implication: <b>every creator connects individually</b>; there is no way to pull a third party's private analytics. This is the product lever — connection = the price of the "Verified" badge.</p>
+
+<h2>5 · Phased implementation</h2>
+<div class="phase">
+  <h4>Phase 0 — Data model (foundation)</h4>
+  <ul>
+    <li>Add <code>snapchat</code> to <code>enum Platform</code>.</li>
+    <li>New <code>SocialAccount</code> model: <code>creatorId</code>, <code>platform</code>, <code>externalId</code>, <code>handle</code>, <code>accessToken</code>/<code>refreshToken</code> (encrypted), <code>scopes</code>, <code>connectedAt</code>, <code>lastSyncAt</code>, <code>status</code> (<code>connected|expired|revoked</code>).</li>
+    <li>New verified-metrics fields (own model <code>VerifiedMetric</code> or columns on <code>CreatorProfile</code>): per-platform <code>verifiedFollowers</code>, <code>verifiedReach</code>, <code>verifiedImpressions</code>, <code>verifiedEngagementRate</code>, <code>fakeFollowerPct</code>, <code>audienceQualityScore</code>, <code>audienceSegmentation Json</code>, <code>metricSource</code> enum (<code>self_reported | oauth | vendor</code>), <code>verifiedAt</code>, <code>staleAfter</code>.</li>
+    <li>Badge semantics: replace free-string <code>badges</code> usage for trust with typed flags — <code>verifiedMetrics: bool</code>, <code>audienceChecked: bool</code> (keep alongside existing Mawthooq status for a combined trust signal).</li>
+  </ul>
+</div>
+<div class="phase">
+  <h4>Phase 1 — Verified-metrics (OAuth) layer</h4>
+  <ul>
+    <li>Build connect flows: Instagram (reuse existing Google-OAuth infra pattern from <code>apps/api/src/auth</code>), TikTok (start app review early — it gates production), YouTube.</li>
+    <li>Onboarding copy must instruct KSA creators to <b>convert to a professional IG account</b> before connecting <sup>[F2]</sup>.</li>
+    <li><b>Decision point:</b> self-integrate vs. Phyllo. Recommend self-integrate IG+TikTok+YouTube first (we already run Google OAuth), evaluate Phyllo specifically to (a) cover Snapchat and (b) skip TikTok/IG app-review lead time <sup>[F7]</sup>.</li>
+  </ul>
+</div>
+<div class="phase">
+  <h4>Phase 2 — Fraud / audience-quality layer</h4>
+  <ul>
+    <li>Wire <b>Modash Discovery API</b> (Audience report ~$0.45/creator) — run at onboarding, cache, re-run before payout <sup>[F4][F5]</sup>.</li>
+    <li>Store <code>fakeFollowerPct</code>, <code>audienceQualityScore</code>, segmentation; apply §3 thresholds. Alternative vendor: HypeAuditor (AQS) <sup>[F6]</sup>; interim cheap option: Collabstr-style public-username checker (no OAuth, classifies Suspicious vs Real) as a pre-connection teaser <sup>[F-collabstr]</sup>.</li>
+  </ul>
+</div>
+<div class="phase">
+  <h4>Phase 3 — Badges, display, payout gating</h4>
+  <ul>
+    <li>Two public badges: <b>"Verified Metrics"</b> (OAuth-connected) and <b>"Audience Checked"</b> (fraud vet passed, &lt;25% fake).</li>
+    <li>Show verified vs self-reported numbers distinctly in profile + search.</li>
+    <li>Tie <b>escrow release / payout eligibility to verified reach</b> for reach-based deliverables — with dispute handling (open question §6).</li>
+  </ul>
+</div>
+<div class="phase">
+  <h4>Phase 4 — KSA / MENA hardening</h4>
+  <ul>
+    <li>Snapchat support (confirm API capability first — see §6).</li>
+    <li>Arabic-language comment/spam authenticity tuning.</li>
+    <li>Region-tuned thresholds; combine with existing Mawthooq licence status into one trust score.</li>
+  </ul>
+</div>
+
+<h2>6 · Open questions / risks (do NOT ship blind)</h2>
+<ol>
+  <li><b>Snapchat</b> — dominant in KSA, but <i>no confirmed data</i> on what verified reach/engagement its API exposes, or whether Modash/HypeAuditor/Phyllo support it. <b>Blocking for KSA — resolve before committing the verified layer.</b></li>
+  <li><b>MENA specifics unconfirmed</b> — bought-follower prevalence in KSA/GCC, region engagement benchmarks, Arabic spam-detection quality. Needs dedicated regional research before locking thresholds.</li>
+  <li><b>Escrow-tied-to-reach viability</b> — dispute handling, reconciling promised vs delivered reach, and whether creators accept OAuth-as-payout-condition are untested product/business questions.</li>
+  <li><b>Vendor cost floor</b> — Modash API is $16,200/yr minimum (annual, bank transfer) <sup>[F4]</sup>; verify current pricing before contracting <sup>[C]</sup>. If pre-revenue, start with per-report HypeAuditor or the public-checker heuristic and upgrade.</li>
+  <li><b>Detection accuracy below 10K followers</b> is weak — most KSA micro-influencers fall here; expect false positives and keep a human-review appeal path (mirror Mawthooq's <code>reviewNote</code>).</li>
+</ol>
+
+<h2>7 · Vendor shortlist (for evaluation calls)</h2>
+<table>
+  <tr><th>Vendor</th><th>Role</th><th>Why meet</th><th>Pricing signal</th></tr>
+  <tr><td><b>Modash</b></td><td>Fraud/audience-quality API</td><td>Cheap per-creator vetting, published pricing, API-first</td><td>Discovery API from $16,200/yr, ~$0.45/report <sup>[F4][F5]</sup></td></tr>
+  <tr><td><b>HypeAuditor</b></td><td>Fraud/quality scores (AQS/CQS)</td><td>Alternative fraud vendor, 5 platforms</td><td>Sales-led / custom <sup>[F6]</sup></td></tr>
+  <tr><td><b>Phyllo</b></td><td>Unified OAuth aggregator</td><td>Offloads OAuth + app-approvals + normalization across 20+ platforms; may cover Snapchat</td><td>Quote-based <sup>[F7]</sup></td></tr>
+</table>
+
+<h2>Citations</h2>
+<ul class="cites">
+  <li><b>[F1]</b> Verified reach/engagement only via OAuth first-party — Meta IG Insights, TikTok scopes, YouTube Analytics docs (verified 3-0).</li>
+  <li><b>[F2]</b> IG Insights needs professional account, none for personal — Meta docs (3-0).</li>
+  <li><b>[F3]</b> TikTok <code>user.info.stats</code> / <code>user.info.profile</code> scopes + app-review + self-reported caveat — TikTok scopes doc (3-0).</li>
+  <li><b>[F4]</b> Modash tiered SaaS + Discovery API $16,200/yr / Raw API $10,000/yr — modash.io pricing (3-0).</li>
+  <li><b>[F5]</b> Modash per-endpoint credits, Audience report ~$0.45 — modash.io pricing (3-0).</li>
+  <li><b>[F6]</b> HypeAuditor AQS (15 metrics/4 categories) + CQS — Influencer Marketing Hub / HypeAuditor Help (3-0).</li>
+  <li><b>[F7]</b> Phyllo OAuth aggregator, 20+ platforms, quote-based — getphyllo.com/pricing (3-0).</li>
+  <li><b>[F8]</b> Modash network-graph detection signals — help.modash.io fake-followers-101 (3-0).</li>
+  <li><b>[F9]</b> Audience segmentation + reachability — Modash (3-0). <b>[F9-thresholds]</b> &lt;25% / &gt;50% fake — Modash (3-0).</li>
+  <li><b>[F10]</b> In-house ML taxonomy + RF-GNN is heavy — Springer / arXiv 2304.08239 (3-0).</li>
+  <li><b>[F-collabstr]</b> Collabstr free public-username fake-follower checker (Suspicious vs Real) — collabstr.com (secondary, unverified).</li>
+  <li><b>[C]</b> Caveats: verified = tamper-proof source not fraud-proof; detection degrades &lt;10K; thresholds proprietary; API app-review lead time.</li>
+</ul>
+
+<div class="foot">Converted from <code>docs/md/influencer-verification-plan.md</code>.</div>
+</div>
+</body>
+</html>

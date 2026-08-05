@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Nakhla — Smoke Test Accounts</title>
+<style>
+  :root {
+    --bg: #0a1410;
+    --panel: #0f1d17;
+    --elev: #13251c;
+    --border: #1f3a2c;
+    --fg: #e7f5ed;
+    --muted: #8fae9d;
+    --brand: #34d399;
+    --brand-2: #10b981;
+    --danger: #f87171;
+    --amber: #fbbf24;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font: 15px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--fg);
+    background: radial-gradient(1200px 600px at 80% -10%, #12281d 0%, var(--bg) 60%);
+    padding: 40px 20px 80px;
+  }
+  .wrap { max-width: 900px; margin: 0 auto; }
+  header { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+  .logo {
+    width: 40px; height: 40px; border-radius: 11px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    display: grid; place-items: center; font-size: 22px;
+  }
+  h1 { font-size: 26px; margin: 0; font-weight: 800; }
+  .sub { color: var(--muted); margin: 2px 0 28px; }
+  h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .08em; color: var(--brand); margin: 34px 0 12px; }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+  .grid .card { padding: 14px 16px; }
+  .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+  a { color: var(--brand); text-decoration: none; font-weight: 600; }
+  a:hover { text-decoration: underline; }
+  code, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  table { width: 100%; border-collapse: collapse; overflow: hidden; border-radius: 14px; border: 1px solid var(--border); }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); }
+  th { background: var(--elev); font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+  tr:last-child td { border-bottom: 0; }
+  tbody tr:hover { background: #10201880; }
+  .pill { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+  .pill.super { background: #7c3aed22; color: #c4b5fd; border: 1px solid #7c3aed55; }
+  .pill.admin { background: #34d39922; color: var(--brand); border: 1px solid #34d39955; }
+  .pill.brand { background: #38bdf822; color: #7dd3fc; border: 1px solid #38bdf855; }
+  .pill.creator { background: #fbbf2422; color: var(--amber); border: 1px solid #fbbf2455; }
+  .copy { cursor: pointer; user-select: all; }
+  .copy:hover { color: var(--brand); }
+  ol { padding-left: 20px; }
+  ol li { margin: 8px 0; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+  .chip { background: var(--elev); border: 1px solid var(--border); border-radius: 999px; padding: 5px 12px; font-size: 13px; }
+  .note { color: var(--muted); font-size: 13px; margin-top: 10px; }
+  .warn { border-left: 3px solid var(--amber); background: #2a230f55; padding: 12px 16px; border-radius: 10px; color: #f8e9c2; }
+  .riyal { font-weight: 700; }
+  footer { color: var(--muted); font-size: 12px; margin-top: 40px; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">🌴</div>
+    <div>
+      <h1>Nakhla — Smoke Test Accounts</h1>
+    </div>
+  </header>
+  <p class="sub">Local development environment · KSA influencer marketplace · all passwords are demo-only.</p>
+
+  <h2>Environment URLs</h2>
+  <div class="grid">
+    <div class="card">
+      <div class="label">Web app</div>
+      <a href="https://collabstr-web.localhost" target="_blank">collabstr-web.localhost</a>
+    </div>
+    <div class="card">
+      <div class="label">Admin console</div>
+      <a href="https://collabstr-admin.localhost" target="_blank">collabstr-admin.localhost</a>
+    </div>
+    <div class="card">
+      <div class="label">Mobile</div>
+      <span>Expo Go on iOS simulator</span>
+      <div class="note">API: <code>http://localhost:4572</code></div>
+    </div>
+  </div>
+
+  <h2>Accounts</h2>
+  <table>
+    <thead>
+      <tr><th>Role</th><th>Email</th><th>Password</th><th>Use for</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="pill super">super admin</span></td>
+        <td class="mono copy">admin@nakhla.sa</td>
+        <td class="mono copy">Admin1234!</td>
+        <td>Admin console — everything: promote/demote admins, force-release escrow</td>
+      </tr>
+      <tr>
+        <td><span class="pill admin">admin</span></td>
+        <td class="mono copy">admin2@nakhla.sa</td>
+        <td class="mono copy">Admin1234!</td>
+        <td>Admin console — moderation only (no promote/demote controls)</td>
+      </tr>
+      <tr>
+        <td><span class="pill brand">brand</span></td>
+        <td class="mono copy">brand@example.dev</td>
+        <td class="mono copy">Password123!</td>
+        <td>Aseel KSA — post campaigns, hire, checkout, message, review</td>
+      </tr>
+      <tr>
+        <td><span class="pill creator">creator</span></td>
+        <td class="mono copy">barmz@example.dev</td>
+        <td class="mono copy">Password123!</td>
+        <td>Ibrahim Al-Hajjaj — has packages + an existing thread with the brand</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>Other creators <span style="text-transform:none;color:var(--muted);font-weight:400;">— all password <code>Password123!</code></span></h2>
+  <div class="card">
+    <div class="chips">
+      <span class="chip mono">misho@example.dev</span>
+      <span class="chip mono">nouf@example.dev</span>
+      <span class="chip mono">emad@example.dev</span>
+      <span class="chip mono">bashar@example.dev</span>
+      <span class="chip mono">saleh@example.dev</span>
+      <span class="chip mono">doaa@example.dev</span>
+      <span class="chip mono">nojoud@example.dev</span>
+      <span class="chip mono">layali@example.dev</span>
+      <span class="chip mono">daim@example.dev</span>
+      <span class="chip mono">osama@example.dev</span>
+      <span class="chip mono">hattan@example.dev</span>
+    </div>
+  </div>
+
+  <h2>Suggested smoke path</h2>
+  <div class="card">
+    <ol>
+      <li><strong>Brand</strong> (<code>brand@example.dev</code>) on web → browse creators → open a profile → <strong>Save</strong> (button should show “Saved”) → <strong>Book now</strong> → checkout → pay. Then <code>/dashboard/campaigns</code>: post a campaign, edit / close / delete it.</li>
+      <li><strong>Creator</strong> (<code>barmz@example.dev</code>) → accept the order → submit delivery. Edit profile from the creator dashboard.</li>
+      <li><strong>Realtime chat:</strong> as the brand, open Messages → send to Ibrahim; the “live” dot should be green. Full two-party needs a second browser / incognito for the creator.</li>
+      <li><strong>Super admin</strong> (<code>admin@nakhla.sa</code>) → Users: role badges + “Make admin” / “Remove admin” on <code>admin2</code>; Orders → force-release. Then log in as <strong>admin2</strong> and confirm those controls are hidden.</li>
+      <li><strong>Mobile</strong> (simulator): browse, open a creator, toggle AR/EN in Settings → Language (applies live, no restart), confirm prices show the <span class="riyal">﷼</span> symbol.</li>
+    </ol>
+  </div>
+
+  <div class="warn" style="margin-top:22px;">
+    Mobile login on the simulator has a known secure-field typing quirk — auth flows are easier to smoke-test on web. The mobile app shares the same accounts and API.
+  </div>
+
+  <footer>Nakhla · local dev · demo credentials only — not for production</footer>
+</div>
+</body>
+</html>

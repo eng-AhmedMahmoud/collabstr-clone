@@ -69,6 +69,23 @@ enum NotificationKind {
   system
 }
 
+// Double-entry-ish escrow ledger. The platform NEVER holds funds itself —
+// money lives at a licensed PSP (Tap Payments); these rows mirror movements
+// there via providerRef. Invariant per fully-closed order:
+//   charge - refund - payout - commission = 0
+enum LedgerEntryType {
+  charge      // brand paid: order.amount + order.serviceFee into PSP escrow
+  refund      // full charge returned to brand (cancellation of a paid order)
+  payout      // order.amount released to creator
+  commission  // order.serviceFee retained by the platform
+  adjustment  // manual correction (reconciliation follow-up)
+}
+
+enum PaymentProviderKind {
+  mock // dev/demo gateway — instant success, no real money
+  tap  // Tap Payments (KSA-licensed PSP) — pending sandbox due diligence
+}
+
 // Saudi advertising-licence (Mawthooq / موثوق, issued by GAMR) verification state
 // for a creator. Required before a creator can take paid orders — firms face
 // fines up to SAR 5M for contracting unlicensed advertisers.
@@ -277,20 +294,83 @@ model Order {
   events       OrderEvent[]
   deliveries   Delivery[]
   review       Review?
+  ledger       LedgerEntry[]
 
   @@index([brandId, status])
   @@index([creatorId, status])
 }
 
 model OrderEvent {
-  id        String      @id @default(cuid())
-  order     Order       @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  orderId   String
-  status    OrderStatus
-  note      String?
-  createdAt DateTime    @default(now())
+  id         String       @id @default(cuid())
+  order      Order        @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId    String
+  status     OrderStatus
+  // Structured audit trail: who moved the order, from where. Legacy rows
+  // (pre-ledger) have all of these null and encode admin actions via the
+  // "[ADMIN]" note prefix — AdminService.auditLog() matches both.
+  fromStatus OrderStatus?
+  actorId    String?
+  actorRole  String?
+  meta       Json?
+  note       String?
+  createdAt  DateTime     @default(now())
 
   @@index([orderId])
+}
+
+// One row per money movement at the PSP. amount is in whole SAR (matches
+// Order.amount / serviceFee). orderId is optional so manual adjustments can
+// exist without an order, and rows survive order deletion (SetNull).
+model LedgerEntry {
+  id          String              @id @default(cuid())
+  order       Order?              @relation(fields: [orderId], references: [id])
+  orderId     String?
+  type        LedgerEntryType
+  amount      Int
+  currency    String              @default("SAR")
+  provider    PaymentProviderKind @default(mock)
+  providerRef String?
+  actorId     String?
+  meta        Json?
+  createdAt   DateTime            @default(now())
+
+  @@index([orderId])
+  @@index([type, createdAt])
+}
+
+// Raw inbound PSP webhook log. Persisted BEFORE processing so replays are
+// idempotent (@@unique dedupe) and failures stay debuggable (error column).
+model WebhookEvent {
+  id             String              @id @default(cuid())
+  provider       PaymentProviderKind
+  eventId        String
+  eventType      String
+  payload        Json
+  signatureValid Boolean             @default(false)
+  processedAt    DateTime?
+  error          String?
+  createdAt      DateTime            @default(now())
+
+  @@unique([provider, eventId])
+  @@index([provider, createdAt])
+}
+
+// Daily (03:00 Asia/Riyadh) escrow reconciliation snapshot:
+// escrowOutstanding (from ledger) vs expected escrow (from open orders).
+// ok == false (delta != 0) means the ledger and the order book disagree.
+model ReconciliationRun {
+  id                String   @id @default(cuid())
+  rangeStart        DateTime
+  rangeEnd          DateTime
+  moneyIn           Int
+  refunds           Int
+  payouts           Int
+  commission        Int
+  escrowOutstanding Int
+  delta             Int
+  ok                Boolean
+  detail            Json?
+  createdAt         DateTime @default(now())
 }
 
 model Delivery {

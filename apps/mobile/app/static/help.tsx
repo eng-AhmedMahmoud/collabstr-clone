@@ -21,14 +21,15 @@ const FAQ_AR = [
 
 export default function Help() {
   const { palette } = useTheme();
-  const { t, locale } = useI18n();
+  const { t, locale, isRTL } = useI18n();
   const faqs = locale === "ar" ? FAQ_AR : FAQ_EN;
+  const align = isRTL ? "right" : "left";
   return (
     <Screen scroll padded header={<AppHeader title={t.settings.help} />}>
       {faqs.map((f, i) => (
         <Card key={i}>
-          <Text style={{ color: palette.fg, fontWeight: "700" }}>{f.q}</Text>
-          <Text style={{ color: palette.fgMuted }}>{f.a}</Text>
+          <Text style={{ color: palette.fg, fontWeight: "700", textAlign: align }}>{f.q}</Text>
+          <Text style={{ color: palette.fgMuted, textAlign: align }}>{f.a}</Text>
         </Card>
       ))}
       <View style={{ height: spacing.md }} />

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Compliance Gaps Addendum — Nakhla</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1000px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  h1{font-size:24px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:40px 0 12px;padding-top:10px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 8px;color:var(--blue)}
+  h4{font-size:14.5px;margin:18px 0 8px}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+  a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  .info{background:rgba(76,159,254,.15);color:var(--blue)}
+  ul{margin:10px 0;padding-left:20px} li{margin:6px 0}
+  ol{margin:10px 0;padding-left:22px} ol li{margin:7px 0}
+  ul.check{list-style:none;padding-left:0}
+  ul.check li{padding-left:26px;position:relative}
+  ul.check li::before{content:"☐";position:absolute;left:0;color:var(--muted)}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .flag{border-left:3px solid var(--amber);padding:8px 14px;background:rgba(240,169,43,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .win{border-left:3px solid var(--green);padding:8px 14px;background:rgba(46,194,107,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .bad-block{border-left:3px solid var(--red);padding:8px 14px;background:rgba(242,88,91,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .finding{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;background:var(--card)}
+  .finding .conf{font-size:12px;color:var(--muted);margin-bottom:8px}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--line);background:var(--card2);border-radius:0 8px 8px 0;color:var(--ink);font-size:13.5px}
+  .evi{font-size:13px;color:var(--muted);margin-top:8px}
+  .evi b{color:var(--ink)}
+  .doto{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin:12px 0}
+  .doto h5{margin:0 0 8px;font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Compliance Gaps Addendum — PDPL, E-Commerce Law, AML/CTF, PCI-DSS</h1>
+  <div class="sub">Addendum to <a href="compliance-monitoring-blueprint.html">compliance-monitoring-blueprint.html</a> · Research date: 2026-07-13</div>
+</header>
+
+<p>This document covers the five tracks where <b>no claims survived verification in the first research round</b>: PDPL, MoC E-Commerce Law (M/126), AML/CTF residual duties, PCI-DSS scope, and promoted-listing/ad-disclosure. The prior round's verified findings (SAMA licensing, ZATCA e-invoicing, Mawthooq duties) live in the main blueprint.</p>
+<div class="card"><b>Method:</b> Deep-research harness — 106 agents, 24 sources fetched, 115 claims extracted, 25 adversarially verified (3-verifier vote per claim), 24 confirmed, 1 refuted. Research date: 2026-07-13.</div>
+
+<h2>1 · Executive Summary</h2>
+<p>Four of the five tracks produced unanimous (3-0), primary-source-verified findings; the fifth — promoted-listing/ad-disclosure norms — produced zero surviving claims for the second consecutive round and is pending targeted re-research.</p>
+<ul>
+  <li><b>PDPL:</b> SDAIA has <b>not</b> published an adequacy list (the claim that one exists was refuted 0-3), so Nakhla's US/EU hosting on Neon/Vercel must run through the Article 4 safeguards route — practically, <b>SDAIA-form Standard Contractual Clauses</b> — plus a <b>mandatory pre-transfer risk assessment</b> (Transfer Regulation Art. 7). Controller registration, 72-hour breach e-filing, and DPO appointment are all conditional, criteria-based processes on SDAIA's National Data Governance Platform, each requiring a documented assessment.</li>
+  <li><b>E-Commerce Law (M/126):</b> The 7-day consumer withdrawal right lapses once the service is benefited from; all-in VAT-inclusive pricing is mandatory both pre-contract and on the post-contract invoice; merchant identity/CR disclosure and e-store Commercial Register registration apply; platform-intermediary duties flow from MoC instruments under Art. 16, with penalties up to <b>SAR 1,000,000</b> plus suspension/blocking.</li>
+  <li><b>AML/CTF:</b> Nakhla is <b>not</b> an obligated entity under the AML Law's FI/DNFBP definitions. KYC/CDD ownership, 10-year record retention, and STR filing to the Saudi FIU sit legally with the licensed PSP (Tap) and <b>cannot be contractually shifted</b> — but Nakhla should mirror the 10-year retention benchmark and build escalation/data-feed plumbing for the PSP's monitoring.</li>
+  <li><b>PCI-DSS:</b> SAQ A remains available under v4.0.1 SAQ A r1. The new script-safety eligibility criterion applies <b>only if Tap's payment page is embedded (iframe/SDK)</b> — a full redirect flow avoids it entirely, making <b>redirect the architecturally safest choice</b>.</li>
+  <li><b>Promoted-listing/ad-disclosure:</b> No verified findings after two rounds. See <a href="#track5">Section 6</a>.</li>
+</ul>
+
+<h2>2 · Track 1 — PDPL (Saudi Personal Data Protection Law)</h2>
+
+<div class="finding">
+  <h4>Finding 1.1 — No adequacy list exists; cross-border hosting requires Article 4 safeguards (SCCs)</h4>
+  <div class="conf">Confidence: High · Vote: 3-0 (×2 merged claims; the competing adequacy-list claim was refuted 0-3)</div>
+  <p>SDAIA has <b>not</b> published an adequacy list, so hosting Saudi personal data on Neon/Vercel (US/EU regions) must proceed under the Article 4 exemption route of the Transfer Regulation (v2.0, Aug 2024), which requires implementing one of three appropriate safeguards: standard contractual clauses, binding common rules, or a certificate of accreditation. For a single-entity platform, <b>SDAIA-form SCCs (C2P template) are the only practically available safeguard</b> — BCRs are group-of-companies-only, and Neon/Vercel hold no SDAIA accreditation certificates. Article 2 supplies the purpose basis: "central processing to enable the controller to conduct its activities" and "providing a service or benefit to the data subject" map directly onto cloud hosting of marketplace data.</p>
+  <div class="evi"><b>Evidence</b> (verifiers downloaded and read the full official SDAIA PDF, all 11 pages; corroborated by Baker McKenzie, Mayer Brown, King &amp; Spalding):
+    <blockquote>Article 4(1): "the controller shall implement the following appropriate safeguards: A. Standard contractual clauses. B. Binding common rules. C. Certificate of accreditation."</blockquote>
+    <blockquote>Article 2 lists "Performing necessary operations for central processing to enable the controller to conduct its activities" and "To provide a service or benefit to the subject of the personal data" as permitted Article 29(1)(d) purposes.</blockquote>
+    King &amp; Spalding (2025) confirms "SDAIA has not disclosed the list of approved jurisdictions." Nuance: SCC availability technically depends on which Article 4(2) exemption case is relied on (SCCs are expressly permitted under cases B, C, E).
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://dgp.sdaia.gov.sa/wps/wcm/connect/e5bbede0-1119-4f70-b4ef-f043ce58d780/Regulation+on+Personal+Data+Transfer+Outside+the+Kingdom..pdf">SDAIA — Regulation on Personal Data Transfer Outside the Kingdom (official PDF)</a> · <a href="https://sdaia.gov.sa/Documents/StandardContractualClausesForPersonalDataTransferEN.pdf">SDAIA — Standard Contractual Clauses (EN)</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 1.2 — Transfer risk assessment is mandatory BEFORE production data touches US/EU hosting</h4>
+  <div class="conf">Confidence: High · Vote: 3-0</div>
+  <p>Article 7(1) of the Transfer Regulation requires a risk assessment before any transfer relying on Article 4 (i.e., any non-adequate destination — which is currently <b>every</b> destination) or any continuous/widespread transfer of sensitive data. Article 7(2)(A–F) prescribes exactly six elements: purpose/legal basis; nature of transfer incl. processing activities and geographic scope; safeguards and their adequacy; data-minimization measures; potential material/moral effects and likelihood; mitigating controls.</p>
+  <div class="evi"><b>Evidence</b> (verifier read the official PDF directly; SDAIA's Feb-2025 Risk Assessment Guideline corroborates a formal documented process — "documented" is inferred from the guideline and record-keeping duties rather than Article 7's literal wording):
+    <blockquote>Article 7(1): "The controller shall conduct a risk assessment before transferring or disclosing personal data to a party outside the Kingdom in the following cases: A. Transfer or disclosure ... in accordance with Article (4) of the Regulation. B. Transferring or disclosing sensitive data ... on a continuous or widespread basis."</blockquote>
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://dgp.sdaia.gov.sa/wps/wcm/connect/e5bbede0-1119-4f70-b4ef-f043ce58d780/Regulation+on+Personal+Data+Transfer+Outside+the+Kingdom..pdf">SDAIA — Regulation on Personal Data Transfer Outside the Kingdom (official PDF)</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 1.3 — Registration, breach notification, and DPO are conditional SDAIA-operated processes</h4>
+  <div class="conf">Confidence: High · Vote: 3-0 (×3 merged claims)</div>
+  <p>None of the three is automatic; all require a documented assessment:</p>
+  <ol>
+    <li><b>Controller registration</b> — SDAIA's National Registry of Personal Data Protection has distinct tracks for private organizations and external (outside-Kingdom) organizations. Registration is mandatory only for public entities, controllers whose <b>main activity</b> is data processing, and sensitive-data processors. Nakhla must run and document this assessment.</li>
+    <li><b>Breach notification</b> — filed through a dedicated e-service on the National Data Governance Platform, <b>within no more than 72 hours of awareness</b> per Article 24 of the Implementing Regulations (deadline confirmed on the service page itself).</li>
+    <li><b>DPO appointment</b> — conditional. SDAIA publishes an official "DPO Appointment Guiding Tool"; mandatory cases are public entities at scale, core activities involving regular systematic large-scale monitoring, or core activities centered on sensitive data.</li>
+  </ol>
+  <div class="evi"><b>Evidence</b> (live fetches 2026-07-13, corroborated by Bird &amp; Bird, Morgan Lewis, Baker McKenzie, IAPP, CMS): the registry tracks "Government organizations, Private organizations, External organizations, Non-Profit Entities" with dedicated registration pages; the breach e-service page (title "إشعار تسرب بيانات شخصية") with Start Service button states reporting
+    <blockquote>"within no more than (72) hours of awareness per Article 24 of the PDPL Implementing Regulations"</blockquote>
+    The DPO tool's Arabic label "أداة للتعرف على مدى إلزامية تعيين مسؤول حماية البيانات الشخصية" presupposes conditionality, and SDAIA's Rules for Appointing Personal Data Protection Officer (under PDPL Art. 30(2) / IR Art. 32) enumerate the mandatory cases.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://dgp.sdaia.gov.sa/wps/portal/pdp/Registration/evidences/Rulesandguidelines/">SDAIA — Registration rules and guidelines</a> · <a href="https://dgp.sdaia.gov.sa/wps/portal/pdp/services/personaldatabreachnotification">SDAIA — Breach notification e-service</a> · <a href="https://sdaia.gov.sa/en/SDAIA/about/Documents/RulesforAppointingPersonalDataProtectionOfficer.pdf">SDAIA — Rules for Appointing a DPO (PDF)</a></p>
+</div>
+
+<div class="doto">
+  <h5>Do this in the product — PDPL</h5>
+  <ul class="check">
+    <li><b>Execute SDAIA-form SCCs</b> with (or annexed to the DPAs of) Neon, Vercel, and the VPS/socket host <b>before production launch</b>.</li>
+    <li><b>Document which Article 4(2) exemption case</b> each transfer relies on.</li>
+    <li><b>Inventory every offshore data flow</b> — DB, blob storage, logs, email, analytics.</li>
+    <li><b>Produce a written Transfer Risk Assessment</b> covering all six Art. 7(2)(A–F) elements for the Neon/Vercel/VPS stack, keyed to SDAIA's Feb-2025 Risk Assessment Guideline. Treat creator IBANs and any ID documents as elevating risk. Refresh the TRA when regions or vendors change.</li>
+    <li><b>Run SDAIA's registry-obligation and DPO tools; archive the outputs</b> as the documented assessments.</li>
+    <li><b>Build an incident-response runbook</b> with the 72-hour SDAIA e-filing step. Note: the portal login currently requires a Saudi national ID/Iqama (per Baker McKenzie) — <b>assign a Saudi-resident owner</b> for the filing step.</li>
+    <li><b>Schema:</b> add breach-clock fields to an <code>incidents</code> table — <code>detected_at</code>, <code>sdaia_notified_at</code>, <code>subjects_notified_at</code>.</li>
+    <li><b>Revisit the DPO assessment</b> if follower-analytics processing scales toward "systematic large-scale monitoring".</li>
+  </ul>
+</div>
+
+<h2>3 · Track 2 — MoC E-Commerce Law (Royal Decree M/126)</h2>
+
+<div class="finding">
+  <h4>Finding 2.1 — 7-day withdrawal right lapses on benefit; custom-services mapping unsettled</h4>
+  <div class="conf">Confidence: High · Vote: 3-0 (×2 merged claims)</div>
+  <p>Under Art. 13, consumers may rescind within 7 days of product receipt or service-contract date, but <b>only while they have not used the product, benefited from the service, or obtained any benefit</b> — and the consumer bears rescission costs unless agreed otherwise. Art. 13(2)(a) separately excludes products made to the consumer's request/specifications (except defective/non-conforming ones), and Art. 13(2)(ز) lets the Implementing Regulations add exceptions "as the nature of the products or services requires". For Nakhla: the withdrawal right effectively lapses once creator work is delivered/consumed, <b>but mapping the custom-made exception to bespoke content-creation services is not textually settled</b> (the clause says منتجات/products) — KSA counsel must bless the refund policy.</p>
+  <div class="evi"><b>Evidence</b> (Art. 13(1) Arabic confirmed letter-for-letter across the BOE text, the nezams.com mirror, and alrashidi.law; the official English translation matches):
+    <blockquote dir="rtl" style="text-align:right">"فسخ العقد خلال الأيام السبعة التالية ... ما دام أنه لم يستخدم منتج موفر الخدمة أو لم يستفد من خدمته أو لم يحصل على منفعة من أيّ منهما"</blockquote>
+    Art. 13(2)'s exception list runs أ–ز (7 items), ending with the regulatory catch-all. The Implementing Regulations' added non-cancellation cases (perishables, hotel/travel/vehicle-rental/event services) do <b>not</b> clearly cover custom content creation — hence the counsel flag. No amendment to Art. 13 found through 2026; a public consultation on amending the Implementing Regulations is open on istitlaa.ncc.gov.sa.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://laws.boe.gov.sa/Files/Download/?attId=be4eef55-50be-44e3-b94d-adbb011b5736">Bureau of Experts (BOE) — E-Commerce Law official text</a> · <a href="https://alrashidi.law/e-commerce-law/">Al Rashidi Law — commentary/mirror</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 2.2 — All-in VAT-inclusive pricing, pre-contract and on the invoice</h4>
+  <div class="conf">Confidence: High · Vote: 3-0</div>
+  <p>Under Arts. 7(d) and 8, the service provider must disclose the <b>total price inclusive of all fees, taxes (VAT), and delivery-related amounts</b> both in the pre-contract statement <b>and</b> in a post-contract invoice (which must also state per-item costs and delivery date/place). Implementing Regulations Art. 8 additionally requires the invoice to show the tax value with a price breakdown. No exceptions exist in either article.</p>
+  <div class="evi"><b>Evidence</b> (verified verbatim against the MoC official publication of M/126):
+    <blockquote dir="rtl" style="text-align:right">Art. 7(د): "إجمالي السعر شاملاً جميع الرسوم أو الضرائب أو المبالغ الإضافية المتعلقة بالتسليم إن وجدت"</blockquote>
+    <blockquote dir="rtl" style="text-align:right">Art. 8 requires a post-contract invoice with the same all-in total plus "تاريخ التسليم ومكانه"</blockquote>
+    Verifier note: the statutory duty-holder is the service provider (موفر الخدمة) — the creator for gigs — but Nakhla operates the checkout and is itself the service provider for commissions/subscriptions/featuring, so implementing it platform-wide is the sound application.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://laws.boe.gov.sa/Files/Download/?attId=be4eef55-50be-44e3-b94d-adbb011b5736">BOE — E-Commerce Law official text</a> · <a href="https://mc.gov.sa/ar/ECC/ECC_Docs/E-commerce-system.pdf">Ministry of Commerce — official PDF</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 2.3 — Identity disclosure and e-store Commercial Register registration</h4>
+  <div class="conf">Confidence: High · Vote: 3-0</div>
+  <p>Under Arts. 6 and 15, every service provider must disclose in its e-store: (a) its name or distinctive identifier and address — <b>unless</b> registered with an MoC-licensed e-store authentication body (جهات توثيق المحلات الإلكترونية); (b) means of contact; and (c) its commercial-register name and number if registered. Art. 15 obliges merchants (تاجر, CR-registered persons) to record the e-store itself in the Commercial Register. <b>Important:</b> these MoC-licensed e-store authentication bodies (the historical Maroof/توثيق regime, moved to the Saudi Business Center in 2023) are legally <b>distinct</b> from GAMR's Mawthooq influencer permit — do not conflate them in policy docs.</p>
+  <div class="evi"><b>Evidence</b> (Art. 6 verified verbatim from the MoC official PDF p.5, with the authentication-body exception attaching only to item (a) name/address; Art. 1 p.3 defines the authentication bodies as Ministry-licensed):
+    <blockquote dir="rtl" style="text-align:right">Art. 15 (p.8): "على التاجر أن يُقيِّد محله الإلكتروني في السجل التجاري وفقاً لنظام السجل التجاري"</blockquote>
+    The claim omits Art. 6(d)'s catch-all ("other data specified by the Regulations") — check the Implementing Regulations' extended disclosure list during implementation.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://laws.boe.gov.sa/Files/Download/?attId=be4eef55-50be-44e3-b94d-adbb011b5736">BOE — E-Commerce Law official text</a> · <a href="https://mc.gov.sa/ar/ECC/ECC_Docs/E-commerce-system.pdf">Ministry of Commerce — official PDF</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 2.4 — Who owes what: Nakhla wears both hats; penalties up to SAR 1M</h4>
+  <div class="conf">Confidence: High · Vote: 3-0</div>
+  <p>The Law's substantive duties fall on the <b>"service provider"</b> (موفر الخدمة = registered merchant or unregistered practitioner, Art. 1), <b>not</b> on marketplace platforms as such. Platform-operator duties derive from MoC instruments under Art. 16, which empowers the Ministry to regulate (a) e-store authentication bodies and (b) "electronic platforms that perform an intermediary role between the service provider and the consumer" — operationalized in the Executive Regulations (Ministerial Decision 200/1441), whose Art. 18 defines intermediary platforms as sites/apps that advertise, promote, take orders or process payments. Penalties (Law Art. 18): warning, <b>fines up to SAR 1,000,000</b>, temporary/permanent suspension of e-commerce activity, and partial/total blocking of the e-store. <b>Nakhla wears both hats:</b> intermediary platform for creator gigs, and direct service provider for its own subscriptions, commissions, and paid featuring.</p>
+  <div class="evi"><b>Evidence:</b> Art. 1 definitions verified verbatim:
+    <blockquote dir="rtl" style="text-align:right">"موفر الخدمة: التاجر أو الممارس"</blockquote>
+    Art. 16 Arabic text and official English translation confirmed ("electronic platforms acting as intermediaries between a service provider and a consumer"); the penalty menu confirmed identically across lawyerkhalid.com, Saudipedia, Baker McKenzie, and Schlüter Graf ("warning; fine not exceeding 1 Million SAR; temporary or permanent suspension; blocking"). Verifier caveat: platform-facing rules live chiefly in the Executive Regulations plus MoC rules under Art. 16 — "derives from Art. 16" is a slight simplification of the instrument chain, and <b>the Executive Regulations' intermediary articles were not read directly this round</b>.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://laws.boe.gov.sa/Files/Download/?attId=be4eef55-50be-44e3-b94d-adbb011b5736">BOE — E-Commerce Law official text</a></p>
+</div>
+
+<div class="doto">
+  <h5>Do this in the product — E-Commerce Law</h5>
+  <ul class="check">
+    <li><b>Order state machine:</b> allow no-questions cancellation within 7 days of contracting <b>only while</b> <code>status &lt; creator-work-benefited</code>.</li>
+    <li><b>Refund-policy copy</b> quoting the Art. 13(1) conditions, in AR/EN.</li>
+    <li><b>Record benefit-consumption timestamps</b> as evidence: draft delivered, content approved, content published.</li>
+    <li><b>Separate defect/non-conformity dispute path</b> with its own cost allocation (distinct from voluntary withdrawal).</li>
+    <li><b>Checkout summary shows the all-in SAR total</b> — VAT and platform fees included — before payment confirmation. No drip pricing.</li>
+    <li><b>Auto-generate a post-order invoice</b> showing per-item cost, VAT value, total, and delivery date (dovetails with the ZATCA e-invoicing duties in the main blueprint).</li>
+    <li><b>Apply the same all-in display</b> to brand SaaS subscription checkout and creator featuring purchases, where Nakhla itself is the service provider.</li>
+    <li><b>Site footer + About page</b> with legal name, address, CR number, and contact channels in AR/EN.</li>
+    <li><b>Register Nakhla's e-store in the Commercial Register</b> (the 2024 unified Commercial Register Law changes mechanics, not the duty).</li>
+    <li><b>Creator storefront pages:</b> surface each creator's disclosed identity / CR-or-practitioner status as collected at onboarding.</li>
+    <li><b>Evaluate Saudi Business Center e-store documentation</b> to use the Art. 6(a) address-disclosure exemption.</li>
+    <li><b>Terms of service must explicitly separate Nakhla's two roles</b> (intermediary platform vs direct service provider).</li>
+    <li><b>Obtain and review the Executive Regulations' intermediary-platform articles</b> (Ministerial Decision 200/1441, esp. Art. 18) with KSA counsel — the text was not independently verified this round.</li>
+    <li><b>Build merchant-disclosure enforcement into creator onboarding</b> — platform rules typically push service-provider disclosure duties down through the platform.</li>
+  </ul>
+</div>
+
+<h2>4 · Track 3 — AML/CTF</h2>
+
+<div class="finding">
+  <h4>Finding 3.1 — Nakhla is NOT automatically an AML-obligated entity</h4>
+  <div class="conf">Confidence: High · Vote: 3-0 (×3 merged claims)</div>
+  <p>The AML Law (Royal Decree M/20) attaches its preventive duties (CDD, record-keeping, STR filing) only to Financial Institutions and DNFBPs, both defined by reference to activity lists in the Implementing Regulation, not in the Law itself. The IR's FI list (deposit-taking, lending, money or value transfer services, issuing/managing means of payment, securities, FX, portfolio management, safekeeping, life insurance, managing funds for others) and DNFBP list (real-estate brokerage, precious-metals dealers ≥ SAR 50k cash, attorneys/accountants in specified transactions) <b>do not capture a marketplace that never holds or moves funds</b>. The SAMA AML/CTF Guide (Circular 18318/486 of 17/11/2019, canonical text on rulebook.sama.gov.sa) is binding as a minimum standard on SAMA-licensed FIs only — i.e., on <b>Tap Payments, not Nakhla</b>.</p>
+  <div class="bad-block"><b>HARD COUNSEL FLAG:</b> this holds <b>only while the PSP-held-escrow model is airtight</b>. If Nakhla's flow were ever deemed money/value transfer or a licensable payment service under the Payments Law, Nakhla becomes an FI itself.</div>
+  <div class="evi"><b>Evidence</b> (AML Law Art. 1(7)-(8) verified on both SAMA Rulebook and MoJ portals):
+    <blockquote>FI = "Any conduct as a business one or more of the financial activities or operations specified in the Implementing Regulation ... for or on behalf of a customer"</blockquote>
+    DNFBP likewise defers to the IR. IR paras 1/2 (A–L) and 1/3 enumerate the activity lists — none covers a non-fund-handling marketplace. The Guide's purpose text, verified verbatim on the Rulebook:
+    <blockquote>"help financial institutions operating in Saudi Arabia and licensed by SAMA ... The requirements stated in this Guide are obligatory and are the minimum requirements"</blockquote>
+    Zero occurrences of "marketplace" or "unlicensed" in the Guide. SAMA's Rules for E-Commerce Payment Service Providers place merchant KYC on the licensed PSP. Note: the legacy sama.gov.sa PDF URL now returns an error page — cite the Rulebook URL in docs.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://rulebook.sama.gov.sa/en/anti-money-laundering-law">SAMA Rulebook — AML Law</a> · <a href="https://rulebook.sama.gov.sa/en/implementing-regulation-anti-money-laundering-law-0">Implementing Regulation of the AML Law</a> · <a href="https://laws.moj.gov.sa/en/legislation/zVhz8SdpnY4VthFalSYDlA">MoJ Laws Portal — AML Law (official EN)</a> · <a href="https://rulebook.sama.gov.sa/en/entiresection/1704">SAMA Rulebook — AML/CTF Guide</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 3.2 — KYC/CDD ownership sits with the PSP and cannot be shifted</h4>
+  <div class="conf">Confidence: High · Vote: 3-0 (×2 merged claims)</div>
+  <p>Legal ownership of creator/brand KYC sits with the licensed PSP and <b>cannot</b> be shifted to the platform — under the SAMA AML/CTF Guide's third-party-reliance section (implementing IR Arts. 7/10–7/13) and SAMA's outsourcing instructions, the FI relying on another party "is fully responsible" for CDD compliance, even where Nakhla collects identity data or IBANs as the PSP's agent. Separately, AML Law Art. 7 puts CDD on a risk-based footing with mandatory enhanced due diligence for higher-risk customers, so the PSP must risk-rate marketplace users and Nakhla should expect to feed it the data needed.</p>
+  <div class="evi"><b>Evidence</b> (Guide Section C verified verbatim on the in-force SAMA Rulebook; corroborated by CMA's parallel AML rules and FATF R.17):
+    <blockquote>"the responsibility for implementing due diligence measures shall rest with the financial institution seeking assistance from another party as such financial institution is fully responsible for complying with the regulatory requirements relating to due diligence and SAMA's Instructions for Outsourcing."</blockquote>
+    <blockquote>AML Law Art. 7: "Where a higher risk of money laundering was identified, they shall apply enhanced due diligence measures."</blockquote>
+    Nuance: the formal reliance regime covers reliance on another FI/DNFBP; a marketplace is neither, so Nakhla acts as an outsourced agent under SAMA outsourcing rules — either framing leaves ownership with the PSP. The April 2026 AML Law amendments did not touch Art. 7.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://rulebook.sama.gov.sa/en/c-reliance-third-party-implement-due-diligence-measures">SAMA Rulebook — Reliance on a Third Party</a> · <a href="https://rulebook.sama.gov.sa/en/anti-money-laundering-law">SAMA Rulebook — AML Law</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 3.3 — Record retention is TEN years (double the FATF floor)</h4>
+  <div class="conf">Confidence: High · Vote: 3-0 (×3 merged claims)</div>
+  <p>AML Law Art. 12 requires FIs/DNFBPs to keep all transaction records ≥ 10 years from transaction conclusion or account closure, and all CDD records (account files, business correspondence, ID copies, analysis results) ≥ 10 years after the business relationship ends — extendable by the Public Prosecution for criminal investigations. Guide Section 6.1 mirrors this (also citing CTF Law Art. 65), including occasional customers. The formal duty sits with the PSP, but Nakhla should mirror the benchmark for records that support the PSP's obligations.</p>
+  <div class="evi"><b>Evidence</b> (Art. 12(1)-(3) verified verbatim on the SAMA Rulebook and cross-confirmed via the MoJ gateway API official English text):
+    <blockquote>"no less than ten years from the date of concluding the transaction or closure of account"; CDD records "at least ten years after the business relationship has ended" (Public Prosecution extension applies)</blockquote>
+    Guide Section 6.1 fetched live (2026-07-13) with an identical 10-year floor plus extension "according to the regulatory requirements". FATF R.11's floor confirmed at 5 years. The 17 April 2026 Council of Ministers amendments (per CMS legal update) touched Arts. 14/15/16/18/28/33/50 — <b>Art. 12 untouched</b>.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://rulebook.sama.gov.sa/en/anti-money-laundering-law">SAMA Rulebook — AML Law</a> · <a href="https://rulebook.sama.gov.sa/en/section-6-record-keeping">Section 6: Record Keeping</a> · <a href="https://laws.moj.gov.sa/en/legislation/zVhz8SdpnY4VthFalSYDlA">MoJ Laws Portal — AML Law (official EN)</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 3.4 — STR path runs through the PSP to the Saudi FIU; monitoring and tipping-off rules</h4>
+  <div class="conf">Confidence: High · Vote: 3-0 (×3 merged claims)</div>
+  <p>The national FIU is the <b>General Directorate of Financial Intelligence</b> (formerly SAFIU; MoJ translation: "General Administration of Financial Investigations"), under the President of State Security (AML Law Art. 17) — the single central agency receiving suspicious transaction reports. Obligated entities (<b>the PSP, not Nakhla</b>) must notify it "immediately and directly" with a detailed report on suspicion, including attempted transactions (Art. 15), and the Directorate can demand additional information even from institutions that have not filed (Art. 18, routed via the supervisory authority for non-filing FIs). The SAMA Guide adds: continuous transaction monitoring (Section 7, per AML Law Art. 13 / CTF Law Art. 69), documented board-approved internal escalation procedures with a designated reporting officer, tipping-off prohibitions, and retention of all STR copies plus internal reports on cases investigated but not filed (Section 8, per AML Law Arts. 15–16).</p>
+  <div class="evi"><b>Evidence</b> (verified verbatim on the SAMA Rulebook and MoJ gateway API):
+    <blockquote>Art. 17: "national central agency to receive suspicious transaction reports ... under the oversight of the President of the State Security"</blockquote>
+    <blockquote>Art. 15: "Immediately and directly notify the General Administration of Financial Investigations ... provide it with a detailed report"</blockquote>
+    Art. 18's information-demand power verified, including the supervisory-authority routing nuance for non-filers. Guide Sections 7, 8.1 (board-approved escalation procedures, non-alerting), and 8.11 (keep STR copies + internal reports on unreported investigations) verified verbatim. <b>Note:</b> influencer-marketplace-specific red-flag typologies were <b>not</b> found in any primary source — the red-flag list in the actions below is analytical, not regulator-issued.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://rulebook.sama.gov.sa/en/anti-money-laundering-law">SAMA Rulebook — AML Law</a> · <a href="https://laws.moj.gov.sa/en/legislation/zVhz8SdpnY4VthFalSYDlA">MoJ Laws Portal</a> · <a href="https://rulebook.sama.gov.sa/en/section-7-monitoring-transactions-and-activities">Section 7: Monitoring Transactions</a> · <a href="https://rulebook.sama.gov.sa/en/section-8-reporting-suspicious-transactions">Section 8: Reporting Suspicious Transactions</a></p>
+</div>
+
+<div class="doto">
+  <h5>Do this in the product — AML/CTF</h5>
+  <ul class="check">
+    <li><b>Contractually document</b> that all funds flow through the PSP with Nakhla never in the settlement chain.</li>
+    <li><b>Have counsel confirm the Tap escrow structure</b> against SAMA's payment-service activity lists <b>before launch</b>.</li>
+    <li><b>Schema (per user):</b> <code>kyc_status</code>, <code>kyc_provider_ref</code>, <code>risk_tier</code>, <code>pep_flag</code> / <code>sanctions_flag</code> (PSP-sourced, read-only), <code>iban_verified_at</code>.</li>
+    <li><b>Data-sharing/agency annex in the PSP contract</b> defining exactly which fields Nakhla collects on the PSP's behalf and how they transit (this feeds the PDPL processor analysis too).</li>
+    <li><b>Payout gating on <code>kyc_status</code></b> — never release escrow to an unverified creator.</li>
+    <li><b>Expose monitoring signals to the PSP</b> via API/webhook: account age, order velocity, dispute rate, payout-destination changes.</li>
+    <li><b>Retention policy:</b> orders, payout records, disputes, KYC-adjacent metadata, and chat threads attached to transactions retained <b>10 years</b> from order completion or account closure — soft-delete/archive, never hard-delete inside the window.</li>
+    <li><b>Reconcile with PDPL data minimization</b> in the retention schedule (legal-obligation / legitimate-interest basis for the 10-year hold).</li>
+    <li><b>Matching retention/audit-support clauses in the PSP contract.</b></li>
+    <li><b>Internal SOP:</b> suspicious-activity flags (fake-follower monetization, circular brand-creator payments, rapid IBAN changes, order values inconsistent with audience size, split payments) escalate to a <b>named compliance owner who reports to the PSP</b> — never directly to the FIU and <b>never disclosed to the user</b> (tipping-off prohibition). <i>(Red-flag list is analytical, not regulator-issued.)</i></li>
+    <li><b>Admin tooling:</b> a case log storing what was flagged, when, the decision, and the PSP handoff reference — retained 10 years.</li>
+    <li><b>Contractually define the PSP escalation channel and SLA.</b></li>
+  </ul>
+</div>
+
+<h2>5 · Track 4 — PCI-DSS</h2>
+
+<div class="finding">
+  <h4>Finding 4.1 — SAQ A is achievable; the decisive fork is embed vs redirect</h4>
+  <div class="conf">Confidence: High · Vote: 3-0 (×2 merged claims)</div>
+  <p>PCI DSS v4.0.1 SAQ A r1 (effective 31 Mar 2025, after removing Requirements 6.4.3/11.6.1) added an e-commerce eligibility criterion: <i>"The merchant has confirmed that their site is not susceptible to attacks from scripts that could affect the merchant's e-commerce system(s)."</i> Per PCI SSC <b>FAQ 1588</b>, this criterion applies <b>only</b> when the merchant's page embeds the TPSP's payment page/form (e.g., iframe); it does <b>not</b> apply when the merchant redirects to the TPSP (HTTP 30x, meta refresh, or JavaScript redirect) or fully outsources payment (e.g., emailed payment links). If embedded, it can be satisfied either via 6.4.3/11.6.1-style script-integrity controls or via <b>written confirmation from the PCI-compliant TPSP</b> that its embedded solution protects against script attacks.</p>
+  <div class="evi"><b>Evidence</b> (FAQ 1588 fetched live 2026-07-13; both the eligibility criterion and the embedded-vs-redirect scoping verified verbatim; corroborated by the PCI SSC blog — FAQ published 2025-02-28 for SAQ A r1 — and QSA analyses from TrustedSec, SecurityMetrics, Jscrambler, HUMAN, and Adyen docs):
+    <blockquote>"does not apply to e-commerce merchants with a webpage that redirects customers ... (for example ... an HTTP 30x redirect, a meta redirect tag, or a JavaScript redirect) or ... that fully outsource payment functions"</blockquote>
+    Caveats: acquirers/payment brands may impose stricter requirements than SAQ A; a JavaScript redirect still executes script on the merchant page and QSAs flag it as a residual risk even though formally out of the criterion's scope. Note: the original question's premise "webhooks do NOT expand scope, JS on checkout does" is directionally confirmed by the FAQ's script focus, <b>but no primary source this round addressed webhooks explicitly</b>.
+  </div>
+  <p class="muted"><b>Sources:</b> <a href="https://www.pcisecuritystandards.org/faqs/1588/">PCI SSC — FAQ 1588</a> · <a href="https://blog.pcisecuritystandards.org">PCI SSC Blog</a></p>
+</div>
+
+<div class="doto">
+  <h5>Do this in the product — PCI-DSS</h5>
+  <ul class="check">
+    <li><b>Prefer Tap's full-redirect hosted checkout</b> over an embedded iframe/Card SDK — it sidesteps the script criterion entirely.</li>
+    <li><b>If the iframe/SDK route is chosen for UX:</b> obtain Tap's <b>written script-attack-protection attestation</b> AND minimize/inventory all JS on the checkout page (CSP, SRI, script allowlist).</li>
+    <li><b>Annual evidence:</b> completed SAQ A + Attestation of Compliance filed with the acquirer, plus quarterly ASV scans if the acquirer requires them.</li>
+    <li><b>Keep webhooks/server-side order APIs out of CDE scope</b> by never accepting PANs — tokens and webhook payloads without card data do not expand scope, but any script running on the payment page does.</li>
+    <li><b>Re-check SAQ A eligibility whenever marketing/analytics scripts are added near checkout.</b></li>
+    <li><b>Open question to resolve with Tap:</b> does the KSA checkout for this integration render as a full redirect or an embedded iframe/Card SDK — and if embedded, will Tap issue the written confirmation FAQ 1588 contemplates?</li>
+  </ul>
+</div>
+
+<h2 id="track5">6 · Track 5 — Promoted-Listing / Ad-Disclosure</h2>
+<div class="win"><b>Status: RESOLVED via targeted primary-source re-run (2026-07-13).</b> The two workflow rounds produced zero surviving claims; a focused agent then fetched and quoted the primary documents directly. Findings below are sourced from regulator texts unless flagged otherwise.</div>
+
+<h3>6.1 FTC Endorsement Guides — 16 CFR Part 255 (2023 revision) — <i>primary: regulation text</i></h3>
+<p class="muted">Source: <a href="https://www.govinfo.gov/content/pkg/CFR-2025-title16-vol1/xml/CFR-2025-title16-vol1-part255.xml">16 CFR 255, govinfo 2025 edition</a> (88 FR 48102, July 26, 2023); <a href="https://www.ftc.gov/business-guidance/resources/disclosures-101-social-media-influencers">FTC Disclosures 101</a>; <a href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking">FTC Endorsement FAQ</a>.</p>
+<ul>
+  <li><b>§ 255.0(f) "clear and conspicuous"</b> (verbatim): <i>"a disclosure is difficult to miss (i.e., easily noticeable) and easily understandable by ordinary consumers. If a communication's representation necessitating a disclosure is made through visual means, the disclosure should be made in at least the communication's visual portion; if the representation is made through audible means, the disclosure should be made in at least the communication's audible portion."</i></li>
+  <li>Disclosures hidden behind a <b>"more" link, in comments, or in hashtag clumps fail</b>: <i>"If the endorsement is visible without having to click on the link labeled 'more,' but the disclosure is not visible without doing so, then the disclosure is not unavoidable and thus is not clear and conspicuous."</i> Platform built-in disclosure tools are <b>not a safe harbor</b>.</li>
+  <li><b>§ 255.1(d) advertiser monitoring duty</b> — guidance → monitoring → remediation: advertisers should <i>"take action sufficient to remedy non-compliance and prevent future non-compliance. While not a safe harbor, good faith and effective guidance, monitoring, and remedial action... reduce an advertiser's odds of facing a Commission enforcement action."</i></li>
+  <li><b>Material connection</b> includes <i>"a personal, family, or employment relationship or a financial relationship – such as the brand paying you or giving you free or discounted products or services."</i> Wording like <i>"Thanks to Acme brand for the free product"</i> suffices; <code>#ad</code> / <code>#sponsored</code> fine. Video → disclosure <b>in the video</b>, not just description; live streams → <b>repeated periodically</b>.</li>
+  <li>Responsibility allocation (FAQ, verbatim): <i>"the ultimate responsibility for clearly and conspicuously disclosing a material connection rests with the influencer and the brand – not the platform"</i> — but advertisers running networks <i>"need to have reasonable programs in place to train and monitor members of their network."</i></li>
+</ul>
+
+<h3>6.2 FTC — paid placement in search results / native ads — <i>primary: FTC guidance</i></h3>
+<p class="muted">Source: <a href="https://www.ftc.gov/news-events/news/press-releases/2013/06/ftc-consumer-protection-staff-updates-agencys-guidance-search-engine-industry-need-distinguish">2013 search-engine guidance press release</a>; <a href="https://www.ftc.gov/business-guidance/resources/native-advertising-guide-businesses">Native Advertising: A Guide for Businesses</a>.</p>
+<ul>
+  <li><i>"Failing to clearly and prominently distinguish advertising from natural search results could be a deceptive practice"</i> — applies to <i>"paid search results and other forms of advertising"</i> in any search UI, including marketplace verticals.</li>
+  <li><b>Label wording</b> (Native Ad Guide, verbatim): <i>"Terms likely to be understood include 'Ad,' 'Advertisement,' 'Paid Advertisement,' 'Sponsored Advertising Content'... Advertisers should not use terms such as 'Promoted' or 'Promoted Stories,' which in this context are at best ambiguous."</i></li>
+  <li><b>Proximity</b>: <i>"Place disclosures in front of or above the headline of the native ad"</i>; on focal images if the image is the hook; <i>"in the same language as the predominant language in which the ad is presented."</i></li>
+  <li>Liability reaches <b>everyone who participates in presenting</b> the ad — the FTC has acted against ad agencies and network operators, not just advertisers.</li>
+  <li>⚠️ <i>Unverified</i>: the 2013 letter's specific shading/border techniques (PDF not retrievable this session) — directionally consistent with the press release; quote the letter before citing specifics in policy.</li>
+</ul>
+
+<h3>6.3 UK — CAP Code + CMA platform principles — <i>primary: code + GOV.UK guidance</i></h3>
+<p class="muted">Source: <a href="https://www.asa.org.uk/type/non_broadcast/code_section/02.html">CAP Code Section 2</a>; <a href="https://www.gov.uk/government/publications/reviews-and-endorsements-principles-for-social-media-platforms/hidden-ads-principles-for-social-media-platforms">CMA "Hidden ads: principles for social media platforms" (Nov 2022)</a>.</p>
+<ul>
+  <li>CAP 2.1: <i>"Marketing communications must be obviously identifiable as such."</i> Advertorials must be headed e.g. <i>"advertisement feature."</i></li>
+  <li>CMA timing standard (verbatim): <i>"the law requires content to be clearly recognisable as advertising as soon as the reader starts to engage with it."</i></li>
+  <li>CMA six platform principles: publish a labeling policy (payment, free product, <b>or own commercial interest</b> all trigger it); <b>one-click labeling tool</b> + algorithmic prompts for suspected unlabeled ads; <b>proactive detection</b> (brand tags, embedded/affiliate links, image recognition) with removal and creator accountability; <b>public reporting mechanism</b> for hidden ads; facilitate brand compliance; enforce via T&amp;Cs sanctions.</li>
+  <li>⚠️ <i>Partially unverified</i>: ASA influencer-guide PDF specifics ("#ad upfront") — same standard as the CMA timing quote above, but the PDF itself wasn't parsed.</li>
+</ul>
+
+<h3>6.4 Saudi Arabia — GAMR (ex-GCAM) Mawthooq — <i>near-primary</i></h3>
+<p class="muted">Source: <a href="https://saudipedia.com/en/what-is-the-mawthooq-license">Saudipedia — Mawthooq license</a> (Ministry of Media initiative); <a href="https://gmedia.gov.sa/ar/services/licensing-for-providing-advertising-content-through-social-media-platforms-trusted">GAMR service page</a>; <a href="https://www.spa.gov.sa/2373584">SPA announcement</a>.</p>
+<ul>
+  <li>Mawthooq license is <b>mandatory</b> for anyone advertising via social media <i>"about a brand, product, service, event, or commercial activity offered or located within the Kingdom"</i> — sponsorships count. (Nakhla already gates orders on <code>mawthooqStatus</code> — aligned.)</li>
+  <li>Licensee disclosure obligation (verbatim, Saudipedia): <i>"Clearly indicating that the content being displayed is an advertisement or promotional material, whether paid or unpaid, to avoid any confusion."</i> Ads may only run from the account registered with the Authority.</li>
+  <li>Arabic wording via SPA (⚠️ <i>treat exact phrasing as unverified</i> — regulation PDF on gmedia.gov.sa geo/bot-blocked; fetch from a KSA IP or via counsel): <span dir="rtl">"وجوب التنويه قبل الإعلان بالإشارة إلى أنه محتوى إعلاني سواء بالكتابة أو شفهيًا، على أن يكون ذلك بشكل واضح للمتلقي"</span> — the ad must be flagged <b>before it runs</b>, in writing or verbally, clearly to the recipient.</li>
+</ul>
+
+<h3>6.5 Do this in the product</h3>
+<div class="doto">
+  <h5>Featured-slot UI labeling (search + homepage)</h5>
+  <ul class="check">
+    <li>Badge every paid slot: EN <b>"Ad"</b> or <b>"Sponsored"</b> — never "Promoted" or "Featured" alone (FTC calls "Promoted" ambiguous). AR: <b>"إعلان"</b> (safest given Mawthooq's wording; "مُموَّل" is the Meta-style "Sponsored" equivalent).</li>
+    <li>Badge placement: on the card, before/above the creator name; distinct shading/border on the whole card; never tooltip/hover/below-fold. Same contrast rules in dark mode + mobile.</li>
+    <li>Label renders in the viewer's UI language (FTC same-language rule) — EN + AR strings in web i18n and mobile <code>dict.ts</code>.</li>
+    <li>Label decided <b>server-side</b>: <code>isSponsored</code> + <code>sponsoredCampaignId</code> on every search/homepage API row, so no client can drop it.</li>
+  </ul>
+</div>
+<div class="doto">
+  <h5>Schema</h5>
+  <ul class="check">
+    <li><code>FeaturedSlot</code>/listing flag: <code>isSponsored: boolean</code>, <code>sponsoredCampaignId</code> (ties into the planned featuring revenue stream).</li>
+    <li><code>Order</code>/deal: <code>disclosureRequired</code> (default true). Mawthooq fields already exist on <code>CreatorProfile</code>.</li>
+  </ul>
+</div>
+<div class="doto">
+  <h5>Creator policy + tooling (CMA P1/P2)</h5>
+  <ul class="check">
+    <li>Published hidden-ads policy: disclosure for payment, free product, or own-brand interest; upfront placement (#ad / "إعلان" at caption start, superimposed on Stories, in-video + verbal, repeated in live streams; never buried in hashtags/comments/"more").</li>
+    <li>Delivery flow: creator must confirm the published content carries the disclosure label before a deal can be marked delivered.</li>
+  </ul>
+</div>
+<div class="doto">
+  <h5>Admin monitoring (FTC 255.1(d) + CMA P3/P4)</h5>
+  <ul class="check">
+    <li>Admin queue over delivered orders with automated disclosure check (brand tags, links, missing "إعلان"/#ad) → prompt → escalate → suspend on repeat; log every step (documented good-faith programs weigh in enforcement).</li>
+    <li>Public "report hidden ad" affordance routed to admin.</li>
+  </ul>
+</div>
+<p class="flag"><b>Still to close out:</b> 2013 FTC letter PDF specifics; ASA influencer-guide PDF; exact Arabic text of GAMR's "ضوابط تقديم المحتوى الإعلاني" (fetch from KSA IP / counsel).</p>
+
+<h2>7 · Where KSA Counsel Remains Mandatory</h2>
+<p>Collected from all counsel flags across the findings and caveats:</p>
+<ol>
+  <li><b>Tap escrow structure vs SAMA payment-service licensing</b> <i>(hard flag)</i> — confirm the PSP-held-escrow model keeps Nakhla outside SAMA's payment-service activity lists / the Payments Law. The entire AML non-obligated-entity conclusion holds only while this model is airtight; if payout-instruction authority or the contractual construction (merchant of record, who instructs payouts) makes Nakhla a payment-service participant, Nakhla becomes an FI itself.</li>
+  <li><b>E-Commerce Art. 13(2)(a) custom-products exception</b> — whether the "made to the consumer's specifications" withdrawal exception (which textually says منتجات/products) maps onto bespoke content-creation <b>services</b>. The refund policy needs counsel sign-off.</li>
+  <li><b>SDAIA SCC execution mechanics with US vendors</b> — Neon/Vercel are unlikely to countersign Saudi-form clauses; counsel must structure how the SDAIA-form SCCs attach (e.g., annexed to existing DPAs) to be valid.</li>
+  <li><b>GAMR/GCAM Mawthooq labeling terms in Arabic</b> — the exact disclosure vocabulary KSA regulators expect for promoted placement and sponsored content. The targeted re-run (§6.4) surfaced SPA-reported wording, but GAMR's regulation PDF ("ضوابط تقديم المحتوى الإعلاني") was geo/bot-blocked — obtain the official text from a KSA IP or via counsel before finalizing policy copy.</li>
+  <li><b>E-Commerce Executive Regulations (Ministerial Decision 200/1441)</b> — the intermediary-platform articles (esp. Art. 18) most directly relevant to Nakhla were cited by verifiers but <b>not read end-to-end this round</b>; direct review with counsel is required, along with monitoring the open Implementing-Regulations amendment consultation on istitlaa.ncc.gov.sa.</li>
+</ol>
+
+<div class="flag">
+  <b>Time-sensitive monitoring items</b> (from the research caveats):
+  <ul>
+    <li><b>April 2026 AML Law amendments</b> (Council of Ministers, 17 Apr 2026) changed Arts. 14/15/16/18/28/33/50 — verified as not touching the articles cited here (per CMS update), but re-check before relying on this addendum externally.</li>
+    <li><b>SDAIA proposed PDPL Implementing Regulation amendments</b> in April 2025 — monitor for adoption.</li>
+    <li><b>SDAIA adequacy list</b> — none exists today; if published, the cross-border analysis in Track 1 simplifies materially.</li>
+    <li><b>BOE canonical URLs</b> — several Arabic statutes were verified via official mirrors (MoC PDF, nezams.com, MoJ gateway API) because laws.boe.gov.sa geo-blocks/times out from outside KSA; text confidence is high, but re-cite the BOE canonical URLs from a KSA network.</li>
+    <li><b>SDAIA breach portal login requires a Saudi national ID/Iqama</b> (per Baker McKenzie) — constrains who at Nakhla can file within the 72-hour window; keep the assigned owner current.</li>
+  </ul>
+</div>
+
+<h2>8 · Appendix — Sources &amp; Verification Stats</h2>
+<h3>Verification stats</h3>
+<table>
+  <tr><th>Metric</th><th>Value</th></tr>
+  <tr><td>Research angles</td><td>5</td></tr>
+  <tr><td>Agents dispatched</td><td>106</td></tr>
+  <tr><td>Sources fetched</td><td>24</td></tr>
+  <tr><td>Claims extracted</td><td>115</td></tr>
+  <tr><td>Claims adversarially verified</td><td>25</td></tr>
+  <tr><td>Confirmed</td><td>24</td></tr>
+  <tr><td>Refuted (killed)</td><td>1</td></tr>
+  <tr><td>Findings after synthesis</td><td>13 (12 verified + 1 Track 5 absence finding, since resolved by the targeted re-run in §6)</td></tr>
+  <tr><td>Budget-dropped claims</td><td>6</td></tr>
+</table>
+<p>All surviving findings carry unanimous 3-0 verifier votes (several are merges of 2–3 independently verified claims). The single refuted claim — the SDAIA adequacy list — was killed 0-3 against the <a href="https://dgp.sdaia.gov.sa/wps/wcm/connect/e5bbede0-1119-4f70-b4ef-f043ce58d780/Regulation+on+Personal+Data+Transfer+Outside+the+Kingdom..pdf">official SDAIA Transfer Regulation PDF</a>.</p>
+
+<h3>Source list</h3>
+<h4>PDPL — primary-source obligations &amp; cross-border hosting</h4>
+<table>
+  <tr><th>Quality</th><th>Source</th></tr>
+  <tr><td>Primary</td><td><a href="https://dgp.sdaia.gov.sa/wps/wcm/connect/e5bbede0-1119-4f70-b4ef-f043ce58d780/Regulation+on+Personal+Data+Transfer+Outside+the+Kingdom..pdf">SDAIA — Regulation on Personal Data Transfer Outside the Kingdom (PDF)</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://dgp.sdaia.gov.sa/wps/portal/pdp/Registration/evidences/Rulesandguidelines/">SDAIA National Data Governance Platform — Registration rules and guidelines</a></td></tr>
+  <tr><td>Secondary</td><td><a href="https://www.kslaw.com/news-and-insights/international-personal-data-transfers-under-saudi-arabias-data-protection-law">King &amp; Spalding — International personal data transfers under Saudi Arabia's data protection law</a></td></tr>
+  <tr><td>Secondary</td><td><a href="https://www.dlapiperdataprotection.com/?c=SA">DLA Piper Data Protection — Saudi Arabia</a></td></tr>
+</table>
+<h4>E-Commerce Law — platform-operator duties &amp; refund exceptions</h4>
+<table>
+  <tr><th>Quality</th><th>Source</th></tr>
+  <tr><td>Primary</td><td><a href="https://laws.boe.gov.sa/Files/Download/?attId=be4eef55-50be-44e3-b94d-adbb011b5736">Bureau of Experts (BOE) — E-Commerce Law official text</a></td></tr>
+  <tr><td>Secondary</td><td><a href="https://www.mondaq.com/saudiarabia/new-technology/936424/call-to-action-the-new-executive-regulations-of-the-saudi-e-commerce-law">Mondaq — The New Executive Regulations of the Saudi E-Commerce Law</a></td></tr>
+  <tr><td>Secondary</td><td><a href="https://www.schlueter-graf.com/fileadmin/user_upload/220209_Key_Legal_Aspects_of_E-Commerce_in_KSA--.pdf">Schlüter Graf — Key Legal Aspects of E-Commerce in KSA (PDF)</a></td></tr>
+</table>
+<h4>AML/CTF — residual duties for marketplaces using a licensed PSP</h4>
+<table>
+  <tr><th>Quality</th><th>Source</th></tr>
+  <tr><td>Primary</td><td><a href="https://rulebook.sama.gov.sa/en/anti-money-laundering-law">SAMA Rulebook — Anti-Money Laundering Law</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.sama.gov.sa/en-US/Laws/BankingRules/The%20Anti-Money%20Laundering%20and%20Counter-Terrorism%20Financing%20AML%20-%20CTF%20Guide.pdf">SAMA — AML/CTF Guide (legacy PDF; URL now errors — cite Rulebook instead)</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://laws.moj.gov.sa/en/legislation/zVhz8SdpnY4VthFalSYDlA">MoJ Laws Portal — AML Law (official EN)</a></td></tr>
+  <tr><td>Blog</td><td><a href="https://sumsub.com/blog/aml-kyc-saudi-arabia/">Sumsub — AML/KYC in Saudi Arabia</a></td></tr>
+  <tr><td>Blog</td><td><a href="https://www.fluxforce.ai/jurisdictions/saudi-arabia">FluxForce — Saudi Arabia jurisdiction overview</a></td></tr>
+  <tr><td>Unreliable (0 claims used)</td><td><a href="https://globalregulatoryinsights.com/insight/anti-money-laundering-comprehensive-analysis-in-saudi-arabia-2024/">Global Regulatory Insights — AML analysis Saudi Arabia 2024</a></td></tr>
+</table>
+<h4>PCI-DSS — v4 SAQ A eligibility &amp; scope-creep pitfalls</h4>
+<table>
+  <tr><th>Quality</th><th>Source</th></tr>
+  <tr><td>Primary</td><td><a href="https://www.pcisecuritystandards.org/faqs/1588/">PCI SSC — FAQ 1588</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://blog.pcisecuritystandards.org/faq-clarifies-new-saq-a-eligibility-criteria-for-e-commerce-merchants">PCI SSC Blog — FAQ clarifies new SAQ A eligibility criteria</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://listings.pcisecuritystandards.org/documents/PCI-DSS-v4-0-SAQ-A.pdf">PCI SSC — SAQ A v4.0 (PDF)</a></td></tr>
+  <tr><td>Secondary</td><td><a href="https://www.schellman.com/blog/pci-compliance/important-pci-dss-v4.0.1-update-for-e-commerce-merchants">Schellman — Important PCI DSS v4.0.1 update</a></td></tr>
+  <tr><td>Blog</td><td><a href="https://trustedsec.com/blog/the-hidden-trap-in-the-pci-dss-saq-a-changes">TrustedSec — The hidden trap in the PCI DSS SAQ A changes</a></td></tr>
+  <tr><td>Blog</td><td><a href="https://www.feroot.com/blog/saq-a-ep-requirements-6-4-3-11-6-1/">Feroot — SAQ A-EP Requirements 6.4.3 / 11.6.1</a></td></tr>
+</table>
+<h4>Promoted-listing &amp; ad-disclosure (Track 5 — resolved by the targeted primary-source re-run in §6)</h4>
+<table>
+  <tr><th>Quality</th><th>Source</th></tr>
+  <tr><td>Primary</td><td><a href="https://www.govinfo.gov/content/pkg/CFR-2025-title16-vol1/xml/CFR-2025-title16-vol1-part255.xml">16 CFR Part 255, 2023 revision (govinfo XML)</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.ecfr.gov/current/title-16/chapter-I/subchapter-B/part-255">eCFR — 16 CFR Part 255</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.ftc.gov/business-guidance/resources/disclosures-101-social-media-influencers">FTC — Disclosures 101 for Social Media Influencers</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.ftc.gov/business-guidance/resources/ftcs-endorsement-guides-what-people-are-asking">FTC — Endorsement Guides: What People Are Asking</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.ftc.gov/business-guidance/resources/native-advertising-guide-businesses">FTC — Native Advertising: A Guide for Businesses</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.ftc.gov/news-events/news/press-releases/2013/06/ftc-consumer-protection-staff-updates-agencys-guidance-search-engine-industry-need-distinguish">FTC — 2013 search-engine guidance press release</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.asa.org.uk/type/non_broadcast/code_section/02.html">CAP Code Section 2 (ASA)</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.gov.uk/government/publications/reviews-and-endorsements-principles-for-social-media-platforms/hidden-ads-principles-for-social-media-platforms">CMA — Hidden ads: principles for social media platforms</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.gov.uk/government/news/cma-tackles-undisclosed-advertising-online">GOV.UK — CMA tackles undisclosed advertising online</a></td></tr>
+  <tr><td>Primary</td><td><a href="https://www.acm.nl/sites/default/files/documents/sponsored-ranking-study-acm.pdf">ACM — Sponsored ranking study (PDF)</a></td></tr>
+  <tr><td>Near-primary</td><td><a href="https://saudipedia.com/en/what-is-the-mawthooq-license">Saudipedia — What is the Mawthooq License</a></td></tr>
+  <tr><td>Near-primary</td><td><a href="https://gmedia.gov.sa/ar/services/licensing-for-providing-advertising-content-through-social-media-platforms-trusted">GAMR — advertising-content licensing service page</a></td></tr>
+  <tr><td>Secondary</td><td><a href="https://www.spa.gov.sa/2373584">SPA announcement (Arabic wording — JS-rendered, partially verified)</a></td></tr>
+  <tr><td>Secondary</td><td><a href="https://www.clydeco.com/en/insights/2022/09/new-social-media-requirements-for-saudi-arabia">Clyde &amp; Co — New social media requirements for Saudi Arabia</a></td></tr>
+</table>
+
+<div class="foot">Converted from <code>docs/md/compliance-gaps-addendum.md</code>. Generated 2026-07-13 from the deep-research verification run (106 agents, 5.19M tokens, 1,028 tool calls). Nothing in this document is legal advice; the counsel flags in Section 7 are mandatory gates before launch.</div>
+</div>
+</body>
+</html>

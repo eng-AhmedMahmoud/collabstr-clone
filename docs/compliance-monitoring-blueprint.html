@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nakhla — Compliance &amp; Monitoring Blueprint</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1000px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  h1{font-size:25px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:40px 0 12px;padding-top:10px;border-top:1px solid var(--line)}
+  h3{font-size:16px;margin:22px 0 8px;color:var(--blue)}
+  h4{font-size:14.5px;margin:18px 0 8px}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+  a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  .info{background:rgba(76,159,254,.15);color:var(--blue)}
+  ul{margin:10px 0;padding-left:20px} li{margin:6px 0}
+  ol{margin:10px 0;padding-left:22px} ol li{margin:7px 0}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .flag{border-left:3px solid var(--amber);padding:8px 14px;background:rgba(240,169,43,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .win{border-left:3px solid var(--green);padding:8px 14px;background:rgba(46,194,107,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .bad-block{border-left:3px solid var(--red);padding:8px 14px;background:rgba(242,88,91,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .finding{border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0;background:var(--card)}
+  .finding .conf{font-size:12px;color:var(--muted);margin-bottom:8px}
+  blockquote{margin:10px 0;padding:8px 14px;border-left:3px solid var(--line);background:var(--card2);border-radius:0 8px 8px 0;color:var(--ink);font-size:13.5px}
+  .evi{font-size:13px;color:var(--muted);margin-top:8px}
+  .evi b{color:var(--ink)}
+  .toc{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:14px 18px;font-size:13.5px}
+  .toc a{display:block;padding:3px 0}
+  nav.toc{margin:16px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Nakhla — Compliance &amp; Monitoring Blueprint (KSA Influencer Marketplace)</h1>
+  <div class="sub">Deep-research output, adversarially verified · Research date: 2026-07-12</div>
+</header>
+
+<p class="muted">Scope: escrow order flow (brand pays → platform holds → creator delivers → brand approves → payout minus commission; disputes freeze for admin arbitration; pre-approval cancellation refunds the brand) across regulatory compliance, PSP selection, and monitoring/observability.</p>
+
+<div class="card">
+  <b>Verification stats:</b> 5 research angles, 24 sources fetched, 120 claims extracted, 25 adversarially verified (24 confirmed, 1 killed), synthesized into 10 findings.
+</div>
+
+<h2>1 · Executive Summary</h2>
+<p><b>Nakhla must never take custody of escrow funds itself.</b> Saudi payments law (Royal Decree M/26 Art. 4 + Implementing Regulations Art. 6) reserves receiving, holding, and transferring funds for SAMA-licensed PSPs/banks. The Art. 7(2) commercial-agent carve-out is an unsafe fit for a dual-sided arbitrating marketplace, and SAMA's e-commerce circular confines unlicensed platforms to linkage/technical support only. The escrow hold must therefore live in a licensed PSP's safeguarded bank account (the Art. 93 regime), with the PSP executing splits, payouts, and payee KYC.</p>
+<p><b>PSP choice:</b> Stripe is definitively ruled out (no KSA or Kuwait support; UAE is the only supported GCC country). <b>Tap Payments is the recommended primary PSP</b> — SAMA-licensed since 2020, mada/Apple Pay/STC Pay coverage, a marketplaces product (split funds, deduct commissions, manage payouts), and a GCC-wide footprint including Kuwait for the Diwaniya fork — <i>pending direct due diligence on its escrow-hold window and fees</i>, since comparative claims for Moyasar/HyperPay/PayTabs did not survive verification.</p>
+<p><b>Compliance overlay on the flow:</b> ZATCA FATOORA e-invoicing on commission/subscription/featuring invoices, with electronic credit notes (not internal ledger entries) for refunds and commission adjustments on cancelled/disputed orders; Mawthooq (GCAM, now GAMR) licence verification at creator onboarding; and ad-disclosure flagging for sponsored content and paid featuring.</p>
+<p><b>Monitoring:</b> the event-sourced order/escrow audit trail plus PSP-webhook capture and a daily <i>money-in = payouts + commission</i> reconciliation directly mirrors SAMA's own safeguarding-reconciliation duty. Sentry provides out-of-the-box distributed tracing across Next.js web/admin (client/server/edge) and NestJS (Node SDK v8+); only the VPS socket.io gateway needs manual <code>sentry-trace</code>/<code>baggage</code> propagation via <code>Sentry.getTraceData()</code>.</p>
+<div class="flag"><b>Major gaps:</b> PDPL, MoC e-commerce law duties, AML law specifics, PCI-DSS, and FTC/ASA promoted-listing baselines produced <b>no surviving verified claims</b> and need follow-up research (see §6). <span class="muted">These five gaps are since covered by the companion <a href="compliance-gaps-addendum.html">Compliance Gaps Addendum</a>.</span></div>
+
+<h2>2 · Track 1 — Regulatory Compliance (KSA-first)</h2>
+<h3>2.1 SAMA payments licensing &amp; escrow</h3>
+
+<div class="finding">
+  <h4>Finding 1 — Nakhla cannot lawfully hold escrow funds itself</h4>
+  <div class="conf">Confidence: high · Vote: 3-0 on each of 4 merged claims (0, 3, 4, 8)</div>
+  <p>SAMA licensing perimeter: Nakhla cannot lawfully receive, hold, or disburse brand-to-creator escrow funds itself. The Law of Payments and Payment Services (Royal Decree M/26, Art. 4) prohibits providing payment services in KSA without a SAMA license; its Art. 1 definition of payment services expressly covers management of transfer transactions and payment wallets/electronic accounts, and Implementing Regulations Art. 6 makes fund deposit on payment accounts, execution of payment transactions, acquiring, payment aggregation, and e-money issuance licensable activities — exactly what a platform-run escrow performs. The 2020 PSP Regulations (Art. 4(a)) say the same. <b>Nakhla must route all escrow money through a SAMA-licensed PSP or bank.</b></p>
+  <div class="evi"><b>Evidence:</b> Verified verbatim against primary regulator texts: "A person may not operate a payment system or provide payment services in the Kingdom unless licensed by SAMA" (Law, Art. 4); Art. 6 of the Implementing Regulations lists "Services enabling Funds to be deposited on a Payment Account... Execution of Payment Transactions... Payment Aggregation Services... Issuing Electronic Money"; PSP Regulations Art. 4(a): "No person is permitted to carry on a Payment Service by way of business unless that person is: (i) a Payment Service Provider; or (ii) a Licensed Bank." The Money Remittance definition (funds received from a payer solely to transfer to a payee) maps exactly onto the brand-pays/platform-holds/creator-paid flow. Penalties up to SAR 25M.</div>
+  <p class="muted"><b>Sources:</b> <a href="https://rulebook.sama.gov.sa/en/law-payments-and-payment-services">SAMA Rulebook — Law of Payments and Payment Services</a> · <a href="https://rulebook.sama.gov.sa/en/implementing-regulations-payments-and-payment-services-law">Implementing Regulations</a> · <a href="https://sama.gov.sa/en-US/payment/Documents/PSPs%20Regulations%20111.pdf">PSP Regulations (2020, PDF)</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 2 — The Art. 7(2) "commercial agent" exclusion is not a safe harbor</h4>
+  <div class="conf">Confidence: high · Vote: 3-0 (claim 1); related claim on the 2020-regs exhaustive list refuted 0-3 due to supersession</div>
+  <p>The Art. 7(2) "commercial agent" exclusion exists but is not a safe harbor for Nakhla: a payment made through a commercial agent authorized to negotiate/conclude the sale of goods or services is excluded from payment services, but per international analogues (PSD2 Art. 3(b), EBA Q&amp;As) the exclusion holds only when the agent acts for one side of the transaction — a dual-sided escrow marketplace with discretionary hold/release/refund and dispute arbitration is a poor fit and should not rely on it without KSA counsel/SAMA confirmation.</p>
+  <div class="evi"><b>Evidence:</b> Art. 7(2) verified verbatim: "The payment that is made from the Payer to the Payee through a commercial agent authorized via an agreement to negotiate or conclude the sale or purchase of goods or services on behalf of any person" does not constitute a payment service. Verifiers noted SAMA's wording is broader (PSD1-style, "on behalf of any person") than the EU one-side-only rule, making the restrictive reading an interpretive gloss — but the PSD2 analogue was explicitly narrowed to stop marketplaces relying on it, and no KSA authority endorses marketplace reliance. Note: the 2020 PSP Regulations contained no such carve-out at all; the exclusion exists only in the 2023 Implementing Regulations.</div>
+  <blockquote><b>Refuted claim (0-3):</b> "Money remittance is an in-scope regulated Payment Service, and the Regulations' exhaustive out-of-scope list (Article 5.2, items (a)–(i)) contains no commercial-agent or marketplace exemption equivalent to EU PSD2 Art. 3(b)." — killed because it relied solely on the 2020 PSP Regulations, which are superseded: the current 2023 Implementing Regulations <i>do</i> contain the Art. 7(2) exclusion. Cite the 2023 regulations as operative.</blockquote>
+  <p class="muted"><b>Sources:</b> <a href="https://rulebook.sama.gov.sa/en/implementing-regulations-payments-and-payment-services-law">SAMA Rulebook — Implementing Regulations</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 3 — The safeguarding regime (Art. 93) defines the escrow fund-flow architecture</h4>
+  <div class="conf">Confidence: high · Vote: 3-0 (claim 2) + 2-1 (claim 9, verifier confirmed via current Art. 93)</div>
+  <p>The safeguarding regime defines the escrow fund-flow architecture the PSP partner must run — and that Nakhla's reconciliation monitoring should mirror: client funds must be safeguarded immediately upon receipt in a separate account at a licensed bank; if still held at end of the business day after receipt they must sit in a dedicated account named "Deposit and Safeguard of Funds of a Payment Service Provider's Clients" (or SAMA-approved secure liquid investments); the account may hold only safeguarded funds (no fees/operating money), is insolvency-remote, and fees/commissions payable to the provider are excluded from safeguarded funds. <b>SAMA also mandates a daily reconciliation mechanism — the regulatory template for Nakhla's money-in = payouts + commission reconciliation job.</b></p>
+  <div class="evi"><b>Evidence:</b> Art. 93 verified verbatim (In-Force, 13/6/2023): safeguard "immediately upon receipt"; dedicated named account rule; 93(3)(c) exclusive use; 93(3)(d) no third-party interest; 93(3)(e) daily reconciliation. SAMA Circular 46004465 (24/7/2024) reinforces Art. 93 with non-objection + daily reconciliation. The 2020 PSP Regulations Art. 14 (one-business-day deposit, no fees in account, insolvency-remote, fees/commissions excluded from Safeguarded Funds definition) is preserved and strengthened by Art. 93. Escrowed order funds between brand payment and creator payout fall squarely within "Funds received from, or for the benefit of, a Payment Service User for the execution of Payment Transactions."</div>
+  <p class="muted"><b>Sources:</b> <a href="https://rulebook.sama.gov.sa/en/implementing-regulations-payments-and-payment-services-law">Implementing Regulations</a> · <a href="https://rulebook.sama.gov.sa/en/article-93-2">Article 93</a> · <a href="https://rulebook.sama.gov.sa/en/safeguarding-safeguarded-funds">Safeguarding Safeguarded Funds</a> · <a href="https://sama.gov.sa/en-US/payment/Documents/PSPs%20Regulations%20111.pdf">PSP Regulations (2020, PDF)</a></p>
+</div>
+
+<div class="finding">
+  <h4>Finding 4 — Unlicensed-platform boundary: Nakhla stays strictly on the technical side</h4>
+  <div class="conf">Confidence: high · Vote: 3-0 on each of 3 merged claims (5, 6, 7)</div>
+  <p>Without a SAMA license Nakhla must stay strictly on the technical side of the payment flow. SAMA classifies linkage/technical support for e-commerce payments as unlicensed supporting services (requiring technical permits from Saudi Payments), but explicitly excludes from that scope (1) finalizing financial settlement and depositing funds into merchant/payee bank accounts and (2) directly contracting with/registering merchants and performing KYC/AML-CFT/counter-fraud verification for payment purposes — both are reserved for the licensed PSP or bank. Banks must deal only with licensed payment companies and report unlicensed ones to SAMA. <b>Consequence: creator-payout KYC/AML is the PSP's regulated duty; Nakhla layers its own business-level verification (Mawthooq, identity for platform ToS) on top rather than performing payment-KYC.</b></p>
+  <div class="evi"><b>Evidence:</b> Circular No. 46004436 (24/7/2024, In-Force, superseding Circular 42080528) verified verbatim: services "must be limited to linkage and technical support only, without including... Directly contracting with merchants, registering them, and carrying out matching procedures and verifying the validity of the merchant's data... to fulfill KYC requirements and requirements related to AML/CFT and Counter-Fraud" and "Finalizing the financial settlement procedures and depositing funds into the merchant's bank account." Also: "Banks must comply with dealing only with licensed companies providing payment services."</div>
+  <p class="muted"><b>Sources:</b> <a href="https://rulebook.sama.gov.sa/en/rules-dealing-e-commerce-payment-service-and-support-providers">SAMA Rulebook — Rules for Dealing with E-Commerce Payment Service and Support Providers</a></p>
+</div>
+
+<h3>2.2 ZATCA VAT e-invoicing (FATOORA)</h3>
+<div class="finding">
+  <h4>Finding 5 — E-invoicing applies to all Nakhla revenue streams; refunds need electronic credit notes</h4>
+  <div class="conf">Confidence: high · Vote: 3-0 on each of 2 merged claims (10, 11)</div>
+  <p>ZATCA VAT e-invoicing (FATOORA) applies to all of Nakhla's revenue streams: Phase 1 (generation, from 4 Dec 2021) requires commissions, SaaS subscriptions, and featuring fees to be invoiced from a compliant e-invoicing solution; Phase 2 (integration with ZATCA, from 1 Jan 2023 in waves) applicability must be tracked — waves now reach the SAR 375,000 VAT-registration threshold (Wave 24 deadline 30 Jun 2026), so Nakhla will almost certainly be in scope. Scope covers credit and debit notes in structured electronic format: <b>escrow refunds of invoiced amounts and commission adjustments on cancelled/disputed orders must be documented with electronic credit notes cryptographically linked to the original invoice (UBL 2.1, type 381, BillingReference + previous invoice hash) — internal ledger entries alone are non-compliant.</b> Pure escrow-principal refunds where no tax invoice was ever issued need no credit note.</p>
+  <div class="evi"><b>Evidence:</b> ZATCA pages verified live: "implemented in two phases. Phase 1 (4 Dec 2021)... Phase 2 (1 Jan 2023)"; "allows the exchange and processing of invoices, credit notes &amp; debit notes in a structured electronic format... through an integrated electronic solution." Verifiers corroborated Art. 40 KSA VAT Implementing Regulations (credit note obligatory on adjustment of an issued tax invoice), Phase 2 wave notices (Wave 23: &gt;SAR 750k, deadline 31 Mar 2026; Wave 24: &gt;SAR 375k, deadline 30 Jun 2026), and validation rule BR-KSA-09 requiring reference to the original invoice. Obligation attaches to resident VAT-registered taxpayers.</div>
+  <p class="muted"><b>Sources:</b> <a href="https://zatca.gov.sa/en/E-Invoicing/Pages/default.aspx">ZATCA — E-Invoicing</a> · <a href="https://zatca.gov.sa/en/E-Invoicing/Introduction/Pages/Roll-out-phases.aspx">Roll-out Phases</a></p>
+</div>
+
+<h3>2.3 Mawthooq / GCAM (now GAMR) influencer licensing</h3>
+<div class="finding">
+  <h4>Finding 6 — Mawthooq licensing maps onto creator onboarding and paid-placement disclosure</h4>
+  <div class="conf">Confidence: medium · Vote: 3-0 on each of 4 merged claims (20, 21, 22, 23)</div>
+  <p>Since 1 Oct 2022, social media advertisers and influencers earning from promotional content in KSA must hold a Mawthooq licence from GCAM (functions since moved to the General Authority for Media Regulation, GAMR/GMedia) — SAR 15,000, valid three years, applied for on the regulator's site, ads publishable only via an account registered with the Authority. Licensed account holders must flag advertising content and verify promoted products/services are themselves properly licensed, across all formats (image, video, audio, text). Organisations engaging influencers are expected to verify the influencers hold valid licences — so <b>Nakhla should build Mawthooq licence verification into creator onboarding and brand-side matching, gate KSA sponsored deals on it, and apply disclosure labels to sponsored content and its own paid featuring/promoted placements</b> (the latter also resting on e-commerce/consumer-protection rules). Non-Saudi residents cannot hold the licence individually and must work via licensed agencies; verifiers note 2025 MoC updates report fines up to SAR 500,000 for unlicensed practice and SAR 300,000 for non-disclosure.</p>
+  <div class="evi"><b>Evidence:</b> Clyde &amp; Co (14 Sep 2022) verified verbatim on all four elements (deadline, SAR 15,000/3 years, registered-account rule, flagging + product-licensing duty, all-formats scope, "Organisations... should ensure that the individuals they work with are duly licensed"). Verifiers independently corroborated via the regulator's own portal (gmedia.gov.sa lists "Licensing for providing advertising content through social media platforms (mothoq)" as an active e-service in 2026), Saudi Gazette, Arab News, Chambers Media &amp; Entertainment 2025, and Hammad &amp; Al-Mehdar (Sep 2025). Medium rather than high because the cited source is secondary, GCAM has been renamed, and fee/process details should be re-confirmed against gmedia.gov.sa; the brand-side verification duty is prudential law-firm advice, not quoted statute.</div>
+  <p class="muted"><b>Sources:</b> <a href="https://www.clydeco.com/en/insights/2022/09/new-social-media-requirements-for-saudi-arabia">Clyde &amp; Co (Sep 2022)</a> · <a href="https://gmedia.gov.sa">GAMR / GMedia</a> · <a href="https://my.gov.sa/en/services/698238">my.gov.sa — Mawthooq licensing e-service</a></p>
+</div>
+
+<h2>3 · Track 2 — PSP Recommendation</h2>
+<h3>Recommendation: Tap Payments (primary PSP)</h3>
+<div class="conf muted">Confidence: medium · Vote: 3-0 on each of 2 merged claims (14, 15)</div>
+<p>Tap Payments is the strongest <b>verified</b> fit:</p>
+<ul>
+  <li><b>SAMA-licensed</b> — regulator-announced licensing in June 2020 after sandbox graduation; currently a Major Payment Institution; mada gateway certification with Saudi Payments July 2023. (This element is high-confidence, independently confirmed via the archived SAMA announcement.)</li>
+  <li><b>Local rails</b> — mada, Apple Pay, STC Pay, and cards through one integration; payment acceptance + payouts + reporting across Saudi Arabia and GCC markets from one setup.</li>
+  <li><b>Marketplaces product</b> — "accept buyer payments, onboard retailers, split funds, deduct commissions, and manage payouts through one regional setup," with coverage spanning KSA, Kuwait, UAE, Bahrain, Qatar, Oman — directly serving both the escrow/split-payout flow and Diwaniya's Kuwait expansion.</li>
+</ul>
+<div class="flag"><b>Caveats (why medium):</b> capability statements are vendor marketing; the homepage contains no detail on escrow-hold windows (a scan confirmed zero instances of "split"/"marketplace"/"escrow" on the main page — marketplace capabilities come only from Tap's product page), and "licensed across the GCC" mixes central-bank licenses (SAMA, Bahrain CBB) with mere commercial registrations (UAE, Kuwait, Oman). <b>Direct due diligence on Tap's hold/release mechanics, payout SLAs to Saudi IBANs, subscription billing, webhook quality, and fees is required before contract.</b></div>
+<p class="muted"><b>Sources:</b> <a href="https://www.tap.company/en-sa">Tap Payments — Saudi Arabia</a> · <a href="https://www.tap.company/en-sa/products/marketplaces">Tap Payments — Marketplaces product</a> · <a href="https://web.archive.org/web/20200811214340/http://www.sama.gov.sa:80/en-US/News/Pages/News-578.aspx">SAMA News-578 (archived, 09/06/2020)</a></p>
+
+<h3>Ruled out: Stripe</h3>
+<div class="conf muted">Confidence: high · Vote: 3-0 on each of 2 merged claims (12, 13)</div>
+<div class="bad-block">Stripe is ruled out for both Nakhla (KSA) and the Diwaniya Kuwait fork: Saudi Arabia and Kuwait are both absent from Stripe's supported-country list (the alphabetical list jumps Romania→Singapore and Kenya→Latvia), and the UAE is the only GCC country supported. A KSA-incorporated platform cannot open a local Stripe account or use Stripe Connect; the foreign-entity (Atlas) workaround would lack mada acceptance, SAR local acquiring, and Saudi IBAN payouts while creating SAMA exposure. Stripe's Dec 2025 addition of <code>kw_bank_account</code> as a Global Payouts destination softens only the Kuwait payout leg — it enables no Kuwait platform entity, merchant acceptance, or KNET.</div>
+<div class="evi"><b>Evidence:</b> Live fetch on 2026-07-12: zero occurrences of "Saudi" or "Kuwait" anywhere on stripe.com/global including Preview and Extended-network tiers; UAE present. Corroborated by multiple 2026 third-party guides stating Stripe is unavailable to KSA-incorporated businesses. Programmatic GCC check: only UAE found among the six GCC states.</div>
+<p class="muted"><b>Sources:</b> <a href="https://stripe.com/global">Stripe — Global availability</a></p>
+
+<h3>Comparative claims that did NOT survive verification — direct due diligence required</h3>
+<p>The PSP comparison is <b>asymmetric</b>: only Tap (positive) and Stripe (negative) survived adversarial verification. Claims about the following did <b>not</b> survive and must not be treated as evaluated:</p>
+<ul>
+  <li><b>Moyasar</b> — no surviving verified claims.</li>
+  <li><b>HyperPay</b> — no surviving verified claims.</li>
+  <li><b>PayTabs</b> — no surviving verified claims.</li>
+  <li><b>Checkout.com</b> — no surviving verified claims.</li>
+</ul>
+<p>The Tap recommendation therefore rests on Tap's verified strengths plus Stripe's elimination rather than a full verified head-to-head. Tap's split-payout/escrow-hold mechanics, fees, subscription billing, and webhook quality are vendor-stated or unexamined — <b>run a real sandbox evaluation and contract review, and benchmark Moyasar/HyperPay/PayTabs directly</b> (see open question in §6).</p>
+
+<h2>4 · Track 3 — Monitoring / Observability Blueprint</h2>
+<h3>4.1 Audit trail (event-sourced order/escrow ledger)</h3>
+<p>From the blueprint synthesis (Finding 10, §5): the platform state machine is recorded in an <b>append-only, event-sourced order/escrow ledger</b> — every state transition captured with event type, actor, timestamp, and previous-state hash. Admin arbitration decisions (dispute release/refund) are logged immutably. Nakhla holds only a <i>ledger claim</i> on funds; the actual money sits in the PSP's safeguarded account.</p>
+
+<h3>4.2 PSP webhook capture</h3>
+<p>A <b>raw PSP-webhook capture table</b> — idempotent and replayable — feeds the reconciliation job (P1 in the implementation plan, §7). Every webhook is persisted before processing so financial state can always be rebuilt from source events.</p>
+
+<h3>4.3 Financial reconciliation</h3>
+<p>A <b>daily money-in = payouts + commission + refunds reconciliation job with alerting on breaks</b>, reconciling Nakhla's ledger against PSP reports. This directly mirrors SAMA's own Art. 93(3)(e) daily-reconciliation duty imposed on the PSP (Finding 3) — the regulator's safeguarding template is the design template for Nakhla's monitoring.</p>
+
+<h3>4.4 Error/APM: Sentry across the exact stack</h3>
+<div class="conf muted">Confidence: high · Vote: 3-0 on each of 4 merged claims (16, 17, 18, 19)</div>
+<p>Sentry fits the exact stack for APM/distributed tracing with near-zero custom instrumentation, except the socket gateway:</p>
+<ol>
+  <li>The current <b>Next.js SDK</b> gives distributed tracing out of the box across client, server, and edge runtimes (only App Router on Next.js 14 needs an extra <code>generateMetadata</code> step).</li>
+  <li>The <b>NestJS/Node SDK v8.0.0+</b> gives it out of the box with just DSN + <code>tracesSampleRate</code>.</li>
+  <li>Traces propagate via <code>sentry-trace</code> and <code>baggage</code> HTTP headers auto-attached to outgoing requests (<code>browserTracingIntegration</code> client-side, Node HTTP instrumentation server-side), so web/admin → NestJS API calls trace end-to-end without custom code — and this repo's same-origin Next.js rewrites match the SDK's default propagation targets.</li>
+  <li><b>WebSocket channels get no automatic propagation:</b> Nakhla's VPS socket.io gateway needs manual propagation via <code>Sentry.getTraceData()</code> embedding <code>sentry-trace</code>/<code>baggage</code> in message payloads (or OTel socket.io instrumentation wired into Sentry) to appear in end-to-end traces.</li>
+</ol>
+<div class="evi"><b>Evidence:</b> Both Sentry doc pages verified live (2026-07-12), quotes verbatim: "distributed tracing will work out of the box for the client, server, and edge runtimes"; "In version 8.0.0 and above of the Sentry Node SDK, distributed tracing will work out of the box" with a code sample containing only dsn + tracesSampleRate; "Sentry automatically attaches these headers to outgoing HTTP requests when using the browserTracingIntegration. For other communication channels like WebSockets, you can manually propagate trace information" followed by the exact getTraceData() payload pattern. Qualifiers on the same pages: cross-origin targets need <code>tracePropagationTargets</code> + CORS allowlisting of the two headers; all services must run Sentry SDKs.</div>
+<p class="muted"><i>Caveat (from research caveats):</i> Sentry claims come from vendor documentation — "out of the box" presumes SDKs installed with tracing enabled, and <b>no comparative evaluation vs alternatives (Datadog, Highlight, self-hosted GlitchTip) was verified.</b></p>
+<p class="muted"><b>Sources:</b> <a href="https://docs.sentry.io/platforms/javascript/guides/nextjs/tracing/distributed-tracing/">Sentry — Next.js distributed tracing</a> · <a href="https://docs.sentry.io/platforms/javascript/guides/nestjs/tracing/distributed-tracing/">Sentry — NestJS distributed tracing</a></p>
+
+<h3>4.5 Business dashboards &amp; admin ops</h3>
+<p>Derived from the event ledger (P5, §7): order funnel, dispute rate, payout latency, SLA breaches — plus admin ops surfaces for subscription management, featuring-slot inventory, and managed-campaign operations.</p>
+
+<h2>5 · Compliance Checklist Mapped to Escrow Flow Steps</h2>
+<p class="muted">Synthesized from the blueprint finding (confidence: medium · vote: derived from all confirmed claims). The regulatory spine (no platform custody, safeguarding accounts, daily reconciliation, e-invoicing incl. credit notes, technical-only platform scope) is high-confidence primary-sourced; Tap-specific execution details and Mawthooq operational details are medium-confidence.</p>
+<table>
+  <tr><th>Step</th><th>Flow event</th><th>Compliance &amp; monitoring actions</th></tr>
+  <tr><td>1</td><td><b>Order placed / brand pays</b></td><td>PSP-hosted checkout (Tap: mada/Apple Pay/STC Pay). Funds land <b>directly in the PSP's SAMA-safeguarded bank account — never a Nakhla account</b>. ZATCA e-invoice issued for brand-side commission / subscription / featuring fees.</td></tr>
+  <tr><td>2</td><td><b>Funds held (escrow window)</b></td><td>Funds sit in the PSP's dedicated safeguarding account (Art. 93). Nakhla holds <b>only a ledger claim</b> and reconciles daily against PSP reports.</td></tr>
+  <tr><td>3</td><td><b>Creator delivers → brand reviews</b></td><td>Platform state machine recorded in the append-only, event-sourced order/escrow ledger (event type, actor, timestamp, previous-state hash). Mawthooq licence verified at creator onboarding; disclosure flags applied to sponsored content and paid featuring slots.</td></tr>
+  <tr><td>4</td><td><b>Approval → release / payout</b></td><td>Nakhla signals the PSP via API; <b>PSP splits commission and pays the creator's Saudi IBAN</b> (PSP performs payee KYC/AML). Creator-side commission e-invoiced.</td></tr>
+  <tr><td>5</td><td><b>Dispute → freeze → admin arbitration</b></td><td>Admin decision logged immutably; PSP executes release or refund. Refunds/adjustments of invoiced amounts get <b>electronic credit notes linked to the original invoice</b>.</td></tr>
+  <tr><td>6</td><td><b>Cancellation before approval → refund</b></td><td>Same as disputes: PSP executes the refund; credit notes for any invoiced amounts; pure escrow-principal refunds (no tax invoice ever issued) need no credit note.</td></tr>
+</table>
+
+<h2>6 · Research Gaps (no surviving verified claims — do NOT treat as cleared)</h2>
+<div class="win">These five gaps were subsequently researched and resolved in the companion <a href="compliance-gaps-addendum.html">Compliance Gaps Addendum</a> (2026-07-13).</div>
+<p>The following sub-questions from the brief produced <b>no surviving verified claims</b> and were absent from this report:</p>
+<ol>
+  <li><b>PDPL (Saudi data protection)</b> — obligations for this exact data model (creator KYC-adjacent data, brand billing data, message content on the VPS socket gateway, Neon Postgres + Vercel hosting regions): cross-border transfer, registration, and consent obligations; whether anything forces KSA data residency.</li>
+  <li><b>MoC E-Commerce Law duties</b> — platform obligations under the Ministry of Commerce e-commerce regime.</li>
+  <li><b>KSA AML/CTF law specifics</b> — beyond the PSP-scope allocation established in Finding 4.</li>
+  <li><b>PCI-DSS scoping via PSP</b> — not verified; assumed reduced via PSP-hosted checkout but unconfirmed.</li>
+  <li><b>Global FTC/ASA promoted-listing disclosure baselines</b> — the global-baseline track for paid featuring/promoted placement disclosure produced nothing verified.</li>
+</ol>
+<p><b>Open questions flagged by the research for follow-up:</b></p>
+<ul>
+  <li>PDPL compliance for this exact data model — what are the cross-border transfer, registration, and consent obligations, and does anything force KSA data residency?</li>
+  <li>Does Tap's marketplaces product actually support the multi-day escrow-hold window (brand pays → creator delivers → brand approves) with platform-triggered release/refund and dispute freezes, and how do its fees, payout SLAs to Saudi IBANs, and subscription-billing support compare to Moyasar, HyperPay, and PayTabs in a real sandbox evaluation?</li>
+  <li>Could Nakhla lawfully restructure as a single-side commercial agent under Implementing Regulations Art. 7(2) (e.g., agent of the creator only, collecting on the creator's behalf) with SAMA comfort/no-action — or is the dual-sided arbitration model categorically outside the exclusion?</li>
+  <li>Under the current GAMR regime, does the platform itself (as a broker of advertising deals and seller of promoted placements) need its own advertising-agency-type licence in addition to verifying creators' Mawthooq licences, and what are the current fees/process post-2025 MoC updates?</li>
+</ul>
+<div class="flag"><b>Regulatory currency caveats:</b> the 2020 PSP Regulations are partially superseded by the 2023 Implementing Regulations — cite the latter as operative. GCAM has merged into GAMR, so Mawthooq fees/process from the 2022 Clyde &amp; Co article should be re-confirmed on gmedia.gov.sa. ZATCA Phase 2 wave applicability depends on Nakhla's VAT registration and revenue, and waves are still rolling out (Wave 24 deadline 30 Jun 2026). All regulatory statements verified as of 2026-07-12; SAMA can and does adjust the licensing perimeter — <b>validate the final structure with KSA counsel before build, especially any reliance on the Art. 7(2) exclusion.</b></div>
+
+<h2>7 · Prioritized Implementation Plan</h2>
+<table>
+  <tr><th>Priority</th><th>Workstream</th><th>Detail</th></tr>
+  <tr><td><span class="pill bad">P0</span></td><td><b>PSP integration keeping funds out of Nakhla's hands</b></td><td>Legal blocker for launch. PSP-hosted checkout; funds flow into the PSP's SAMA-safeguarded account; PSP executes splits, payouts, and payee KYC. Run Tap sandbox due diligence (hold/release mechanics, payout SLAs, fees, webhooks, subscription billing) before contract.</td></tr>
+  <tr><td><span class="pill warn">P1</span></td><td><b>Immutable order-event ledger + PSP-webhook capture + reconciliation</b></td><td>Append-only event-sourced order/escrow ledger (event type, actor, timestamp, previous-state hash). Raw PSP-webhook capture table (idempotent, replayable) feeding a daily <i>money-in = payouts + commission + refunds</i> reconciliation job with alerting on breaks — mirroring SAMA's Art. 93(3)(e) daily-reconciliation duty.</td></tr>
+  <tr><td><span class="pill warn">P2</span></td><td><b>ZATCA-compliant invoicing + credit-note automation</b></td><td>On the commission/subscription/featuring billing paths; electronic credit notes linked to original invoices for refunds/adjustments; track Phase 2 wave applicability (Wave 24: &gt;SAR 375k, deadline 30 Jun 2026).</td></tr>
+  <tr><td><span class="pill info">P3</span></td><td><b>Mawthooq gating + disclosure labeling</b></td><td>Licence verification in creator onboarding; gate KSA sponsored deals; disclosure labels on sponsored content and paid featuring/promoted placements.</td></tr>
+  <tr><td><span class="pill info">P4</span></td><td><b>Sentry rollout</b></td><td>Across web/admin/API/mobile, plus manual <code>sentry-trace</code>/<code>baggage</code> propagation (<code>Sentry.getTraceData()</code>) on the socket.io gateway.</td></tr>
+  <tr><td><span class="pill ok">P5</span></td><td><b>Business dashboards + admin ops surfaces</b></td><td>Derived from the event ledger: order funnel, dispute rate, payout latency, SLA breaches; admin surfaces for subscriptions, featuring-slot inventory, managed-campaign operations.</td></tr>
+</table>
+
+<h2>Appendix A — All Sources Consulted (24)</h2>
+<h3>Primary</h3>
+<table>
+  <tr><th>Source</th><th>Angle</th></tr>
+  <tr><td><a href="https://rulebook.sama.gov.sa/en/implementing-regulations-payments-and-payment-services-law">SAMA — Implementing Regulations, Payments and Payment Services Law</a></td><td>KSA payments law / SAMA escrow authority</td></tr>
+  <tr><td><a href="https://rulebook.sama.gov.sa/en/law-payments-and-payment-services">SAMA — Law of Payments and Payment Services</a></td><td>KSA payments law / SAMA escrow authority</td></tr>
+  <tr><td><a href="https://rulebook.sama.gov.sa/en/rules-dealing-e-commerce-payment-service-and-support-providers">SAMA — Rules for Dealing with E-Commerce Payment Service and Support Providers</a></td><td>KSA payments law / SAMA escrow authority</td></tr>
+  <tr><td><a href="https://sama.gov.sa/en-US/payment/Documents/PSPs%20Regulations%20111.pdf">SAMA — PSP Regulations 2020 (PDF)</a></td><td>KSA payments law / SAMA escrow authority</td></tr>
+  <tr><td><a href="https://zatca.gov.sa/en/E-Invoicing/Pages/default.aspx">ZATCA — E-Invoicing</a></td><td>KSA influencer, data, e-commerce and tax obligations</td></tr>
+  <tr><td><a href="https://stripe.com/global">Stripe — Global availability</a></td><td>PSP bake-off for Saudi marketplaces</td></tr>
+  <tr><td><a href="https://www.tap.company/en-sa">Tap Payments — Saudi Arabia</a></td><td>PSP bake-off for Saudi marketplaces</td></tr>
+  <tr><td><a href="https://docs.sentry.io/platforms/javascript/guides/nextjs/tracing/distributed-tracing/">Sentry — Next.js distributed tracing</a></td><td>Observability on this exact stack</td></tr>
+  <tr><td><a href="https://docs.sentry.io/platforms/javascript/guides/nestjs/tracing/distributed-tracing/">Sentry — NestJS distributed tracing</a></td><td>Observability on this exact stack</td></tr>
+</table>
+<h3>Secondary</h3>
+<table>
+  <tr><th>Source</th><th>Angle</th></tr>
+  <tr><td><a href="https://www.clydeco.com/en/insights/2022/09/new-social-media-requirements-for-saudi-arabia">Clyde &amp; Co — New social media requirements for Saudi Arabia</a></td><td>KSA influencer, data, e-commerce and tax obligations</td></tr>
+  <tr><td><a href="https://www.grantthornton.sa/en/insights/articles-and-publications/vat_and_electronic_marketplace_in_saudi_arabia/">Grant Thornton — VAT and electronic marketplace in Saudi Arabia</a></td><td>KSA influencer, data, e-commerce and tax obligations</td></tr>
+</table>
+<h3>Blog / forum (lower quality — not load-bearing for verified findings)</h3>
+<table>
+  <tr><th>Source</th><th>Angle</th></tr>
+  <tr><td><a href="https://miqwal.com/en/blog/saudi-mawthooq-influencer-certification">Miqwal — Saudi Mawthooq influencer certification</a></td><td>KSA influencer obligations</td></tr>
+  <tr><td><a href="https://gulfsaasreview.com/guide/best-payment-gateways-saudi-arabia-2026">Gulf SaaS Review — Best payment gateways Saudi Arabia 2026</a></td><td>PSP bake-off</td></tr>
+  <tr><td><a href="https://gulfsaasreview.com/article/tap-payments-vs-paytabs-gcc-2026">Gulf SaaS Review — Tap Payments vs PayTabs GCC 2026</a></td><td>PSP bake-off</td></tr>
+  <tr><td><a href="https://logiolegion.com/blogs/tap-payments-vs-hyperpay-vs-moyasar-saudi-arabia-2026">Logio Legion — Tap vs HyperPay vs Moyasar Saudi Arabia 2026</a></td><td>PSP bake-off</td></tr>
+  <tr><td><a href="https://kuwaitdev.com/en/insights/myfatoorah-vs-knet-vs-tap-comparison/">KuwaitDev — MyFatoorah vs KNET vs Tap comparison</a></td><td>PSP bake-off (Kuwait)</td></tr>
+  <tr><td><a href="https://www.blnkfinance.com/blog/developer-guide-to-building-a-marketplace-with-open-source-ledger-blnk">Blnk — Building a marketplace with an open-source ledger</a></td><td>Escrow ledger / reconciliation engineering</td></tr>
+  <tr><td><a href="https://www.formance.com/blog/financial-operations/account-reconciliation-patterns-for-high-volume-fintech">Formance — Account reconciliation patterns for high-volume fintech</a></td><td>Escrow ledger / reconciliation engineering</td></tr>
+  <tr><td><a href="https://naya.finance/learn/marketplace-payment-reconciliation-guide">Naya Finance — Marketplace payment reconciliation guide</a></td><td>Escrow ledger / reconciliation engineering</td></tr>
+  <tr><td><a href="https://w.pitula.me/fintech-engineering-handbook/">Fintech Engineering Handbook</a></td><td>Escrow ledger / reconciliation engineering</td></tr>
+  <tr><td><a href="https://www.moderntreasury.com/journal/enforcing-immutability-in-your-double-entry-ledger">Modern Treasury — Enforcing immutability in your double-entry ledger</a></td><td>Escrow ledger / reconciliation engineering</td></tr>
+  <tr><td><a href="https://lobste.rs/s/9sxdp3/ledger_implementation_postgresql">Lobste.rs — Ledger implementation in PostgreSQL</a></td><td>Escrow ledger / reconciliation engineering</td></tr>
+  <tr><td><a href="https://betterstack.com/community/comparisons/sentry-alternatives/">Better Stack — Sentry alternatives</a></td><td>Observability</td></tr>
+  <tr><td><a href="https://origami-marketplace.com/en-gb/multi-vendor-marketplace-kpis/">Origami — Multi-vendor marketplace KPIs</a></td><td>Observability / dashboards</td></tr>
+</table>
+<p class="muted">Additional finding-level sources: <a href="https://rulebook.sama.gov.sa/en/article-93-2">SAMA Rulebook Art. 93</a>, <a href="https://rulebook.sama.gov.sa/en/safeguarding-safeguarded-funds">SAMA Rulebook — Safeguarding</a>, <a href="https://zatca.gov.sa/en/E-Invoicing/Introduction/Pages/Roll-out-phases.aspx">ZATCA roll-out phases</a>, <a href="https://www.tap.company/en-sa/products/marketplaces">Tap Marketplaces product</a>, <a href="https://web.archive.org/web/20200811214340/http://www.sama.gov.sa:80/en-US/News/Pages/News-578.aspx">archived SAMA News-578</a>, <a href="https://gmedia.gov.sa">GAMR portal</a>, <a href="https://my.gov.sa/en/services/698238">my.gov.sa Mawthooq service</a>.</p>
+
+<h2>Appendix B — Verification Stats</h2>
+<table>
+  <tr><th>Metric</th><th>Value</th></tr>
+  <tr><td>Research angles</td><td>5</td></tr>
+  <tr><td>Sources fetched</td><td>24</td></tr>
+  <tr><td>Claims extracted</td><td>120</td></tr>
+  <tr><td>Claims verified</td><td>25</td></tr>
+  <tr><td>Confirmed</td><td>24</td></tr>
+  <tr><td>Killed (refuted)</td><td>1</td></tr>
+  <tr><td>Findings after synthesis</td><td>10</td></tr>
+  <tr><td>Budget-dropped claims</td><td>6</td></tr>
+  <tr><td>Agent calls</td><td>106</td></tr>
+</table>
+
+<div class="foot">Converted from <code>docs/md/compliance-monitoring-blueprint.md</code>. Nothing in this document is legal advice.</div>
+</div>
+</body>
+</html>

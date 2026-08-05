@@ -1,10 +1,28 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import { OrdersService } from "../orders/orders.service";
+import { ESCROW_STATUSES } from "../reconciliation/reconciliation.service";
+import type { AuthUser } from "../common/current-user.decorator";
 import type { OrderStatus, Role } from "@prisma/client";
+
+const ALL_STATUSES: OrderStatus[] = [
+  "pending_payment",
+  "awaiting_creator",
+  "in_progress",
+  "submitted",
+  "revision_requested",
+  "approved",
+  "released",
+  "cancelled",
+  "disputed",
+];
 
 @Injectable()
 export class AdminService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private orders: OrdersService,
+  ) {}
 
   async overview() {
     const [users, creators, brands, campaigns, orders, gmvAgg, escrowAgg, disputes, recentOrders, recentUsers] =
@@ -223,34 +241,33 @@ export class AdminService {
     disputed: ["submitted", "revision_requested", "approved"],
   };
 
-  async forceRelease(orderId: string, note: string) {
-    return this.transition(orderId, "released", note || "Admin force release");
+  // Force actions run through OrdersService so PSP calls, ledger rows and the
+  // structured OrderEvent land exactly like user-initiated transitions — the
+  // "[ADMIN]" note prefix stays for back-compat with older audit rows.
+  async forceRelease(me: AuthUser, orderId: string, note: string) {
+    return this.orders.releaseEscrow(orderId, AdminService.ADMIN_TRANSITIONS.released!, {
+      actorId: me.id,
+      actorRole: me.role,
+      note: `[ADMIN] ${note || "Admin force release"}`,
+    });
   }
 
-  async forceCancel(orderId: string, reason: string) {
+  async forceCancel(me: AuthUser, orderId: string, reason: string) {
     if (!reason) throw new BadRequestException("Reason required");
-    return this.transition(orderId, "cancelled", `Admin cancel: ${reason}`);
+    return this.orders.cancelWithRefund(orderId, AdminService.ADMIN_TRANSITIONS.cancelled!, {
+      actorId: me.id,
+      actorRole: me.role,
+      note: `[ADMIN] Admin cancel: ${reason}`,
+    });
   }
 
-  async forceDispute(orderId: string, reason: string) {
+  async forceDispute(me: AuthUser, orderId: string, reason: string) {
     if (!reason) throw new BadRequestException("Reason required");
-    return this.transition(orderId, "disputed", `Admin dispute: ${reason}`);
-  }
-
-  private async transition(orderId: string, to: OrderStatus, note: string) {
-    const order = await this.prisma.order.findUnique({ where: { id: orderId } });
-    if (!order) throw new NotFoundException();
-    const allowed = AdminService.ADMIN_TRANSITIONS[to];
-    if (!allowed || !allowed.includes(order.status)) {
-      throw new BadRequestException(
-        `Admin cannot move order from "${order.status}" to "${to}". Allowed sources: ${(allowed ?? []).join(", ") || "none"}.`
-      );
-    }
-    const [updated] = await this.prisma.$transaction([
-      this.prisma.order.update({ where: { id: orderId }, data: { status: to } }),
-      this.prisma.orderEvent.create({ data: { orderId, status: to, note: `[ADMIN] ${note}` } }),
-    ]);
-    return updated;
+    return this.orders.transition(orderId, AdminService.ADMIN_TRANSITIONS.disputed!, "disputed", {
+      actorId: me.id,
+      actorRole: me.role,
+      note: `[ADMIN] Admin dispute: ${reason}`,
+    });
   }
 
   async listReviews() {
@@ -270,11 +287,92 @@ export class AdminService {
 
   async auditLog() {
     return this.prisma.orderEvent.findMany({
-      where: { note: { startsWith: "[ADMIN]" } },
+      // Structured actorRole covers new rows; the "[ADMIN]" note prefix keeps
+      // rows written before the audit columns existed.
+      where: {
+        OR: [{ actorRole: { in: ["admin", "superadmin"] } }, { note: { startsWith: "[ADMIN]" } }],
+      },
       orderBy: { createdAt: "desc" },
       take: 200,
       include: { order: { include: { brand: { select: { name: true } } } } },
     });
+  }
+
+  /** Contract consumed by the admin app's overview widgets — see apps/admin. */
+  async metrics() {
+    const now = Date.now();
+    const d90 = new Date(now - 90 * 24 * 3600_000);
+    const h72 = new Date(now - 72 * 3600_000);
+    const d7 = new Date(now - 7 * 24 * 3600_000);
+    const [byStatus, gmvAgg, escrowAgg, releasedEvents, slaSubmitted, slaDisputed] = await Promise.all([
+      this.prisma.order.groupBy({ by: ["status"], _count: true }),
+      this.prisma.order.aggregate({ where: { status: "released" }, _sum: { amount: true } }),
+      this.prisma.order.aggregate({
+        where: { status: { in: ESCROW_STATUSES } },
+        _sum: { amount: true, serviceFee: true },
+      }),
+      this.prisma.orderEvent.findMany({
+        where: { status: "released", createdAt: { gte: d90 } },
+        select: { orderId: true, createdAt: true },
+      }),
+      this.prisma.order.count({ where: { status: "submitted", updatedAt: { lt: h72 } } }),
+      this.prisma.order.count({ where: { status: "disputed", updatedAt: { lt: d7 } } }),
+    ]);
+
+    // Payout latency = approved → released gap. Force-releases from disputed
+    // have no approved event and drop out of the sample.
+    const approvedEvents = releasedEvents.length
+      ? await this.prisma.orderEvent.findMany({
+          where: { status: "approved", orderId: { in: releasedEvents.map((e) => e.orderId) } },
+          select: { orderId: true, createdAt: true },
+          orderBy: { createdAt: "asc" },
+        })
+      : [];
+    const approvedAt = new Map<string, Date>();
+    for (const e of approvedEvents) if (!approvedAt.has(e.orderId)) approvedAt.set(e.orderId, e.createdAt);
+    const latencies = releasedEvents
+      .map((e) => {
+        const a = approvedAt.get(e.orderId);
+        return a ? (e.createdAt.getTime() - a.getTime()) / 3600_000 : null;
+      })
+      .filter((v): v is number => v !== null && v >= 0)
+      .sort((x, y) => x - y);
+    const avgHours = latencies.length
+      ? Math.round((latencies.reduce((a, b) => a + b, 0) / latencies.length) * 10) / 10
+      : null;
+    const p90Hours = latencies.length
+      ? Math.round(latencies[Math.min(latencies.length - 1, Math.floor(latencies.length * 0.9))] * 10) / 10
+      : null;
+
+    const counts = new Map(byStatus.map((s) => [s.status, s._count]));
+    const total = byStatus.reduce((acc, s) => acc + s._count, 0);
+    return {
+      funnel: ALL_STATUSES.map((status) => ({ status, count: counts.get(status) ?? 0 })),
+      disputeRate: total ? (counts.get("disputed") ?? 0) / total : 0,
+      payoutLatency: { avgHours, p90Hours, sampled: latencies.length },
+      gmvReleased: gmvAgg._sum.amount ?? 0,
+      escrowHeld: (escrowAgg._sum.amount ?? 0) + (escrowAgg._sum.serviceFee ?? 0),
+      slaBreaches: { submittedOver72h: slaSubmitted, disputedOver7d: slaDisputed },
+    };
+  }
+
+  async webhookEvents(take = 50) {
+    const events = await this.prisma.webhookEvent.findMany({
+      orderBy: { createdAt: "desc" },
+      take: Math.min(Math.max(take, 1), 200),
+      // payload deliberately excluded — raw PSP bodies stay out of list views.
+      select: {
+        id: true,
+        provider: true,
+        eventId: true,
+        eventType: true,
+        signatureValid: true,
+        processedAt: true,
+        error: true,
+        createdAt: true,
+      },
+    });
+    return { events };
   }
 
   async payouts() {

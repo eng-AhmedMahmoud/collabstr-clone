@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Roadmap · Nakhla (KSA) + Diwaniya (Kuwait)</title>
+<title>Roadmap · Nakhla (KSA) + Kuwait</title>
 <style>
   :root {
     --bg: #0c0f1f; --fg: #fefaf2; --muted: #b3afc7; --border: #232c69;
     --surface: #131a3c; --elevated: #1a234f;
-    --nakhla: #34d399; --diwaniya: #f59e0b; --brand: #5b67c4;
+    --nakhla: #34d399; --kuwait: #f59e0b; --brand: #5b67c4;
     --crit: #f87171; --pages: #5b67c4; --comp: #34d399;
     --schema: #ffc454; --integ: #c084fc; --polish: #94a3b8;
     --shipped: #34d399;
@@ -102,7 +102,7 @@
     border-radius: 18px; padding: 20px; border: 1px solid var(--border);
     background: linear-gradient(135deg, rgba(91,103,196,0.10), rgba(46,58,135,0.20));
   }
-  .product-card.diwaniya {
+  .product-card.kuwait {
     background: linear-gradient(135deg, rgba(245,158,11,0.10), rgba(46,58,135,0.20));
     border-color: rgba(245,158,11,0.4);
   }
@@ -114,13 +114,23 @@
     .product-row { grid-template-columns: 1fr; }
     .item { grid-template-columns: 1fr; }
   }
+  .langbar{display:flex;justify-content:flex-end;gap:6px;margin-bottom:14px}
+  .langbtn{border-radius:8px;padding:6px 14px;font:600 13px/1 inherit;cursor:pointer;border:1px solid #232c69;background:#131a3c;color:#b3afc7}
+  .langbtn.active{background:#5b67c4;color:#fff;border-color:#5b67c4}
+  .lang[hidden]{display:none}
+  #ar{direction:rtl}
+  #ar ul{padding-left:0;padding-right:20px}
+  #ar th,#ar td{text-align:right}
+  #ar .langbar{justify-content:flex-start}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="langbar"><button class="langbtn active" id="btn-en" onclick="setLang('en')">English</button><button class="langbtn" id="btn-ar" onclick="setLang('ar')">العربية</button></div>
+  <div class="lang" id="en">
   <header class="hero">
     <h1>Production Roadmap</h1>
-    <p>Shared roadmap for <strong>Nakhla</strong> (KSA market) and <strong>Diwaniya</strong> (Kuwait market). Both stacks run on the same monorepo shape; items apply to both unless noted. Items marked <em>shipped</em> are committed to both repos.</p>
+    <p>Shared roadmap for <strong>Nakhla</strong> (KSA market) and <strong>Kuwait</strong> (the next GCC market). Both stacks run on the same monorepo shape; items apply to both unless noted. Items marked <em>shipped</em> are committed to both repos.</p>
   </header>
 
   <div class="product-row">
@@ -130,11 +140,11 @@
       <a href="https://nakhla-admin.vercel.app/" target="_blank">nakhla-admin.vercel.app</a>
       <a href="https://github.com/eng-AhmedMahmoud/collabstr-clone" target="_blank">github.com/eng-AhmedMahmoud/collabstr-clone</a>
     </div>
-    <div class="product-card diwaniya">
-      <h3>Diwaniya · ديوانية <span class="pill">🇰🇼 Kuwait</span></h3>
-      <a href="https://diwaniya-web-sigma.vercel.app/" target="_blank">diwaniya-web-sigma.vercel.app</a>
-      <a href="https://diwaniya-admin.vercel.app/" target="_blank">diwaniya-admin.vercel.app</a>
-      <a href="https://github.com/eng-AhmedMahmoud/diwaniya-app" target="_blank">github.com/eng-AhmedMahmoud/diwaniya-app</a>
+    <div class="product-card kuwait">
+      <h3>Kuwait · الكويت <span class="pill">🇰🇼 Kuwait</span></h3>
+      <a href="https://kuwait-web-sigma.vercel.app/" target="_blank">kuwait-web-sigma.vercel.app</a>
+      <a href="https://kuwait-admin.vercel.app/" target="_blank">kuwait-admin.vercel.app</a>
+      <a href="https://github.com/eng-AhmedMahmoud/kuwait-app" target="_blank">github.com/eng-AhmedMahmoud/kuwait-app</a>
     </div>
   </div>
 
@@ -177,7 +187,7 @@
 
   <section class="bucket">
     <h2><span class="dot" style="background:var(--crit)"></span> Critical fixes <span class="badge" style="background:var(--surface); color:var(--muted);">17 total</span></h2>
-    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <p class="sub">Applies to both Nakhla and Kuwait repos unless the file path is product-specific.</p>
     <div class="items">
       <div class="item shipped">
         <div class="id">CF01</div>
@@ -353,7 +363,7 @@
   </section>
   <section class="bucket">
     <h2><span class="dot" style="background:var(--pages)"></span> New pages <span class="badge" style="background:var(--surface); color:var(--muted);">13 total</span></h2>
-    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <p class="sub">Applies to both Nakhla and Kuwait repos unless the file path is product-specific.</p>
     <div class="items">
       <div class="item">
         <div class="id">NP01</div>
@@ -489,7 +499,7 @@
   </section>
   <section class="bucket">
     <h2><span class="dot" style="background:var(--comp)"></span> Missing components <span class="badge" style="background:var(--surface); color:var(--muted);">13 total</span></h2>
-    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <p class="sub">Applies to both Nakhla and Kuwait repos unless the file path is product-specific.</p>
     <div class="items">
       <div class="item">
         <div class="id">MC01</div>
@@ -625,7 +635,7 @@
   </section>
   <section class="bucket">
     <h2><span class="dot" style="background:var(--schema)"></span> Schema additions <span class="badge" style="background:var(--surface); color:var(--muted);">12 total</span></h2>
-    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <p class="sub">Applies to both Nakhla and Kuwait repos unless the file path is product-specific.</p>
     <div class="items">
       <div class="item">
         <div class="id">SA01</div>
@@ -751,7 +761,7 @@
   </section>
   <section class="bucket">
     <h2><span class="dot" style="background:var(--integ)"></span> Integrations <span class="badge" style="background:var(--surface); color:var(--muted);">14 total</span></h2>
-    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <p class="sub">Applies to both Nakhla and Kuwait repos unless the file path is product-specific.</p>
     <div class="items">
       <div class="item">
         <div class="id">IN01</div>
@@ -897,7 +907,7 @@
   </section>
   <section class="bucket">
     <h2><span class="dot" style="background:var(--polish)"></span> Polish <span class="badge" style="background:var(--surface); color:var(--muted);">16 total</span></h2>
-    <p class="sub">Applies to both Nakhla and Diwaniya repos unless the file path is product-specific.</p>
+    <p class="sub">Applies to both Nakhla and Kuwait repos unless the file path is product-specific.</p>
     <div class="items">
       <div class="item">
         <div class="id">PL01</div>
@@ -1066,6 +1076,962 @@
     Generated from <code>docs/production-roadmap.json</code> · 85 items total · 8 shipped this session
     <br>Synthesized by multi-agent workflow run wf_37b748d5-729 (2026-06-29)
   </div>
+  </div>
+
+  <div class="lang" id="ar" dir="rtl" hidden>
+  <header class="hero">
+    <h1>خارطة طريق الإنتاج</h1>
+    <p>خارطة طريق مشتركة لـ <strong>Nakhla</strong> (سوق المملكة العربية السعودية) و<strong>الكويت</strong> (السوق الخليجي التالي). يعمل النظامان على البنية ذاتها للمستودع الأحادي؛ وتنطبق البنود على الاثنين ما لم يُذكر خلاف ذلك. البنود المعلَّمة بـ <em>تم الشحن</em> مُودعة في كلا المستودعين.</p>
+  </header>
+
+  <div class="product-row">
+    <div class="product-card">
+      <h3>Nakhla · نخلة <span class="pill">🇸🇦 السعودية</span></h3>
+      <a href="https://collabstr-clone.vercel.app/" target="_blank">collabstr-clone.vercel.app</a>
+      <a href="https://nakhla-admin.vercel.app/" target="_blank">nakhla-admin.vercel.app</a>
+      <a href="https://github.com/eng-AhmedMahmoud/collabstr-clone" target="_blank">github.com/eng-AhmedMahmoud/collabstr-clone</a>
+    </div>
+    <div class="product-card kuwait">
+      <h3>الكويت · Kuwait <span class="pill">🇰🇼 الكويت</span></h3>
+      <a href="https://kuwait-web-sigma.vercel.app/" target="_blank">kuwait-web-sigma.vercel.app</a>
+      <a href="https://kuwait-admin.vercel.app/" target="_blank">kuwait-admin.vercel.app</a>
+      <a href="https://github.com/eng-AhmedMahmoud/kuwait-app" target="_blank">github.com/eng-AhmedMahmoud/kuwait-app</a>
+    </div>
+  </div>
+
+  <div class="legend">
+    <span><span class="dot" style="background:var(--shipped)"></span>تم الشحن (كلا المستودعين)</span>
+    <span><span class="dot" style="background:var(--crit)"></span>إصلاح حرج</span>
+    <span><span class="dot" style="background:var(--pages)"></span>صفحة جديدة</span>
+    <span><span class="dot" style="background:var(--comp)"></span>مكوّن</span>
+    <span><span class="dot" style="background:var(--schema)"></span>مخطط البيانات</span>
+    <span><span class="dot" style="background:var(--integ)"></span>تكامل</span>
+    <span><span class="dot" style="background:var(--polish)"></span>تحسينات</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="n" style="color: var(--crit)">11<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 17</span></div>
+      <div class="l">إصلاحات حرجة متبقية</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--pages)">13<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 13</span></div>
+      <div class="l">صفحات جديدة متبقية</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--comp)">11<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 13</span></div>
+      <div class="l">مكوّنات ناقصة متبقية</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--schema)">12<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 12</span></div>
+      <div class="l">إضافات مخطط البيانات المتبقية</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--integ)">14<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 14</span></div>
+      <div class="l">تكاملات متبقية</div>
+    </div>
+    <div class="stat">
+      <div class="n" style="color: var(--polish)">16<span style="color:var(--muted); font-size:14px; font-weight:500;"> / 16</span></div>
+      <div class="l">تحسينات متبقية</div>
+    </div>
+  </div>
+
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--crit)"></span> إصلاحات حرجة <span class="badge" style="background:var(--surface); color:var(--muted);">17 إجمالاً</span></h2>
+    <p class="sub">ينطبق على مستودعي Nakhla والكويت معاً ما لم يكن مسار الملف خاصاً بمنتج بعينه.</p>
+    <div class="items">
+      <div class="item shipped">
+        <div class="id">CF01</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/filter-bar.tsx</div>
+          <div class="desc">نقل جميع تسميات FILTERS وخياراتها إلى i.filters.* (خريطة التسمية + الخيارات) مفهرسة بحسب اللغة. عرض تسميات أحادية اللغة فقط (إسقاط دمج 'City · المدينة'). استبدال text-left/ml-1 بـ text-start/ms-1. إضافة مدخلات نموذج مخفية لكل قيمة مختارة كي يقوم نموذج /influencers الأب بتسلسلها فعلياً، أو الدفع إلى router.push('/influencers?platform=…') عند التغيير. جعل اللوحة متجاوبة: w-[calc(100vw-2rem)] sm:w-64 مثبّتة start-0.</div>
+          <div class="why">إخفاق حرج في التوطين + الاتجاه من اليمين لليسار + الحالة: أزرار التصفية لا تفعل شيئاً حالياً (يُرسَل `q` فقط)، وهي بالإنجليزية فقط، وتفيض على الجوال/RTL. هذا هو المكوّن الأكثر استخداماً في الصفحة الرئيسية + المؤثرين.</div>
+
+          <div class="status-tag">تم الشحن</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF02</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/messages/messages-ui.tsx</div>
+          <div class="desc">استبدال grid-cols-12 بـ grid-cols-1 md:grid-cols-12؛ إضافة مبدّل للجوال يعرض قائمة المحادثات أو لوحة الدردشة مع زر رجوع. تبديل rounded-br-md/bl-md بـ rounded-ee-md/es-md المنطقية كي تشير أطراف الفقاعات في RTL بالاتجاه الصحيح.</div>
+          <div class="why">على الجوال يضغط التقسيم القسري 4/8 الدردشة إلى نحو 240px (غير قابل للاستخدام). إخفاق تجاوبي حرج على سطح الاتصال الأساسي.</div>
+
+
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF03</div>
+        <div class="body">
+          <div class="where">apps/admin/src/components/shell.tsx</div>
+          <div class="desc">تغليف الشريط الجانبي في `hidden md:flex`؛ إضافة زر هامبرغر + درج Sheet للجوال. إزالة `overflow-hidden` من الحاوية الجذرية كي تتمكّن النوافذ المنبثقة/التلميحات من الخروج. إضافة aria-label إلى &lt;aside> و&lt;nav> الداخلي. قراءة رابط فتح المتجر من process.env.NEXT_PUBLIC_WEB_URL (الرجوع إلى localhost فقط عندما يكون غير معرَّف). استبدال أيقونات الرموز اليونيكودية بـ SVG (aria-hidden) وقلب الاتجاهية منها عبر CSS.</div>
+          <div class="why">لوحة الإدارة غير قابلة للاستخدام على الجوال (الشريط الجانبي بعرض 256px يستهلك كامل العرض). رابط الإنتاج مثبّت على collabstr-web.localhost — معطّل في الإنتاج.</div>
+
+          <div class="status-tag">تم الشحن</div>
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF04</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/orders/page.tsx</div>
+          <div class="desc">تغليف &lt;table> في &lt;div className='overflow-x-auto'> مع min-w-[760px]. تمرير تعدادات حالة أزرار التصفية عبر مساعد statusLabel(s, locale) الجديد من i18n.ts. إضافة role='group' مع aria-label و aria-current='page' على الزر النشط. تغليف شريحة #id في &lt;bdi>؛ تغليف كل استدعاء fmtMoney في &lt;bdi> كي لا يعاد ترتيب المبلغ + الرسوم في RTL.</div>
+          <div class="why">فيض تجاوبي حرج + توطين حرج: يرى مستخدمو العربية تعدادات الحالة بالإنجليزية (pending_payment, awaiting_creator) في كل شاشات الطلبات، ويتعطّل تخطيط الجدول تحت نحو 1024px.</div>
+
+          <div class="status-tag">تم الشحن</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF05</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/campaigns/page.tsx + apps/admin/src/app/creators/page.tsx + apps/admin/src/app/disputes/page.tsx + apps/admin/src/app/payouts/page.tsx + apps/admin/src/app/audit/page.tsx + apps/admin/src/app/users/page.tsx + apps/admin/src/app/brands/page.tsx + apps/admin/src/app/page.tsx</div>
+          <div class="desc">إضافة مكوّن غلاف مشترك واحد &lt;ResponsiveTable> (overflow-x-auto + min-w + أنماط مرمّزة) واستبدال كل &lt;table> خام في لوحة الإدارة. استبدال جميع الأسهم الحرفية `Brand → Creator` بمساعد &lt;DirArrow /> يُقلَب بحسب اللغة.</div>
+          <div class="why">كل جدول في لوحة الإدارة يتعطّل على اللوحي/الجوال. خمسة استنتاجات منفصلة مدمجة في إصلاح مشترك واحد.</div>
+
+
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF06</div>
+        <div class="body">
+          <div class="where">apps/admin/src/lib/format.ts</div>
+          <div class="desc">استبدال LOCALE='en-SA' المثبّت بمساعد getLocale() يقرأ الكوكيز على الخادم و useLocale() في العميل. تقبل fmtMoney/fmtDate/fmtAgo جميعها اللغة. تنفيذ سلاسل fmtAgo العربية (الآن / قبل ٥د) عبر Intl.RelativeTimeFormat.</div>
+          <div class="why">كل سلسلة عملة/تاريخ/وقت نسبي في لوحة الإدارة بالإنجليزية بغض النظر عن لغة المستخدم — ما يقوّض طبقة ثنائية اللغة بأكملها.</div>
+
+          <div class="status-tag">تم الشحن</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF07</div>
+        <div class="body">
+          <div class="where">apps/api/prisma/schema.prisma + apps/api/src/payments/ (وحدة جديدة)</div>
+          <div class="desc">إضافة نماذج PaymentIntent و EscrowHold و LedgerEntry و Payout و PayoutAccount. ربط /orders/:id/pay بمحوّل مزوّد خدمة دفع مرخَّص من ساما (HyperPay/Moyasar/Tap) مع webhook وجدول IdempotencyKey. تنفيذ قيود دفتر أستاذ مزدوج القيد لـ charge→escrow→release→payout. تخزين المبالغ كأعداد صحيحة بالهللات مع currency='SAR'.</div>
+          <div class="why">اليوم /orders/:id/pay مجرّد بديل صوري؛ لا تدفّق مالي حقيقي؛ لا دفتر ضمان؛ لا مدفوعات. لا يمكن إطلاق سوق دون هذا.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF08</div>
+        <div class="body">
+          <div class="where">apps/api/src/auth/ (verify-email + password-reset + 2fa)</div>
+          <div class="desc">إضافة نموذجَي EmailVerificationToken و PasswordResetToken + نقاط النهاية (POST /auth/verify-email/request و /verify-email/confirm و /password/forgot و /password/reset). إضافة وحدة TOTP للمصادقة الثنائية (speakeasy) مع رموز احتياطية. حجب /orders/:id/pay وتسجيل المدفوعات خلف verifiedAt و(للمدفوعات) mfaEnabled.</div>
+          <div class="why">عمود emailVerifiedAt موجود لكن لا شيء يملؤه؛ يمكن للمستخدمين غير المؤكَّدين إجراء المعاملات؛ لا نقطة نهاية لإعادة تعيين كلمة المرور مطلقاً؛ يتطلب امتثال المدفوعات في السعودية المصادقة الثنائية قبل تحريك الأموال.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF09</div>
+        <div class="body">
+          <div class="where">apps/api/prisma/schema.prisma + apps/api/src/kyc/ (جديد) + apps/api/src/tax/ (جديد)</div>
+          <div class="desc">إضافة KycCase (provider, status, documents[], expiry, nationalId, iqama, wathqRef) و TaxProfile (vatNumber, zatcaRef, isVatRegistered, withholdingRate). حجب المدفوعات حتى kycStatus=approved. للمبدعين غير المقيمين، تطبيق ضريبة استقطاع 5% على المدفوعات؛ وللعلامات/المبدعين المقيمين فوق 375 ألف ريال سعودي، إظهار مبدّل تحصيل ضريبة القيمة المضافة.</div>
+          <div class="why">إلزامي لامتثال مكافحة غسل الأموال + ZATCA + ضريبة استقطاع غير المقيمين في السعودية. بدون هذا، لا يمكن أن تتدفّق المدفوعات قانونياً.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF10</div>
+        <div class="body">
+          <div class="where">apps/api/src/invoices/ + محوّل ZATCA المرحلة الثانية</div>
+          <div class="desc">إضافة نموذج Invoice + توليد فواتير إلكترونية بصيغة XML متوافقة مع ZATCA (ثنائية اللغة EN/AR، رمز QR، سجل تجاري للمورّد، ترقيم تسلسلي، توقيع تشفيري) عند كل تحرير طلب. استخدام Fatoora SDK من ZATCA (مثل zatca-sdk-php أو بناء محوّل TS). المقاصّة الفورية عبر ZATCA API.</div>
+          <div class="why">الفوترة الإلكترونية للمرحلة الثانية من ZATCA إلزامية للكيانات السعودية المسجّلة في ضريبة القيمة المضافة (انضمام الموجة 24 بحلول 30 يونيو 2026). تصل غرامات عدم الامتثال إلى 50 ألف ريال سعودي عن كل مخالفة.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF11</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/[username]/page.tsx</div>
+          <div class="desc">ربط زر المشاركة (navigator.share مع بديل النسخ للحافظة). تحويل نموذج الحفظ إلى مكوّن عميل يُرسل POST إلى ${NEXT_PUBLIC_API_URL}/api/v1/creators/${id}/save مع بيانات الاعتماد. استبدال ring-white بـ ring-bg. تبديل ml-auto→ms-auto و text-right→text-end. إضافة شريط CTA سفلي لاصق للجوال مع السعر + الإضافة إلى السلة. توطين toLocaleDateString للمراجعات. إصلاح النص البديل لمعرض الأعمال. عرض الطرف المقابل `href:'#'` كـ &lt;span> بدلاً من &lt;Link>.</div>
+          <div class="why">الصفحة العامة الأكثر زيارة (ملف المبدع) بها 6 استنتاجات منفصلة: زر مشاركة معطّل، حفظ معطّل، RTL مكسور، وضع داكن قبيح، لا CTA للجوال، توطين مكسور.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF12</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/creator-dashboard/packages/page.tsx</div>
+          <div class="desc">تحويل نماذج الحذف والإنشاء من إرسال نماذج أصلية إلى `/api/packages/*` (التي ترجع 404) إلى مكوّن عميل يجلب ${NEXT_PUBLIC_API_URL}/api/v1/me/packages مع بيانات الاعتماد و router.refresh() عند النجاح.</div>
+          <div class="why">يفشل كلا النموذجين بصمت (404) — لا يستطيع المبدعون إنشاء الباقات أو حذفها. ميزة أساسية معطّلة.</div>
+
+
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF13</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/globals.css + apps/admin/src/app/globals.css</div>
+          <div class="desc">إزالة تجاوزات `.text-xs { font-size: 0.9rem }` / `.text-[10px|11px|9px]` !important. إزالة `html { font-size: 19px }`. إدخال أداة `.badge` (أو توسيع رمز سمة Tailwind `--text-xs`) للأماكن التي تحتاج فعلاً إلى حد أدنى أكبر للحجم. إعادة تدقيق مواضع استدعاء text-xs بعد التراجع.</div>
+          <div class="why">تكسر التجاوزات العامة بصمت كل مقاسات Tailwind في كلا التطبيقين، ما يسبّب تسميات مفرطة الحجم في الأزرار/الجداول الضيّقة وتضخّم مقياس التخطيط بنحو 19%.</div>
+
+          <div class="status-tag">تم الشحن</div>
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">CF14</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/header.tsx + apps/admin/src/components/shell.tsx</div>
+          <div class="desc">إضافة قائمة هامبرغر للجوال (Sheet/Drawer) مع روابط تنقّل كاملة. حالياً `hidden md:flex` بلا بديل — لا يرى مستخدمو الجوال أي تنقّل إطلاقاً.</div>
+          <div class="why">تجاوب حرج: التنقّل الأساسي بأكمله غير مرئي على الهواتف. هذا معيق للإطلاق لأي سوق يكون مشتروه محمولين أولاً (السعودية نحو 85% جوال).</div>
+
+          <div class="status-tag">تم الشحن</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF15</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/user-menu.tsx</div>
+          <div class="desc">استبدال `absolute right-0` بـ `end-0`. إضافة aria-haspopup='menu' و aria-expanded={open} و role='menu' / role='menuitem'. إضافة معالج keydown للإغلاق بـ Esc ومستمع النقر خارج القائمة. إضافة متغيّرات داكنة لتسجيل الخروج (text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20).</div>
+          <div class="why">تقفز القائمة المنسدلة خارج الشاشة في RTL؛ غير قابلة للوصول بلوحة المفاتيح؛ معطّلة في الوضع الداكن.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF16</div>
+        <div class="body">
+          <div class="where">apps/api/src/auth/auth.service.ts + apps/api/src/common/guards/throttler.guard.ts (جديد)</div>
+          <div class="desc">تعيين رمز التحديث عبر كوكي httpOnly Secure SameSite=Lax (لا في جسم JSON). إضافة تحديد معدّل عام عبر @nestjs/throttler (login: 5/min، signup: 3/min، contact: 5/hour). إضافة بوابة hCaptcha/Turnstile على signup/login/contact. إضافة رمز CSRF مزدوج الإرسال للمسارات المغيّرة للحالة. تخزين userAgent/ip/lastUsedAt/deviceLabel على RefreshToken؛ وكشف GET /auth/sessions و DELETE /auth/sessions/:id.</div>
+          <div class="why">مكشوف اليوم لحشو بيانات الاعتماد؛ الرموز في جسم JSON قابلة للسرقة عبر XSS؛ لا واجهة لإبطال الجلسات لكل جهاز.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">CF17</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/pricing/page.tsx</div>
+          <div class="desc">تحويل tier.price من سلسلة مُوطَّنة في القاموس إلى قيم عددية + لاحقة الفترة. العرض عبر fmtMoney(tier.price, { locale: moneyLocale }) كي يرى مستخدمو العربية ر.س / الأرقام العربية باتساق ويبقى رمز SAR على اليسار وفق قواعد ساما.</div>
+          <div class="why">تتجاوز صفحة الأسعار حالياً المنسّق — يرى أي مستخدم عربي حرفيات إنجليزية/دولارية خام من القاموس.</div>
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--pages)"></span> صفحات جديدة <span class="badge" style="background:var(--surface); color:var(--muted);">13 إجمالاً</span></h2>
+    <p class="sub">ينطبق على مستودعي Nakhla والكويت معاً ما لم يكن مسار الملف خاصاً بمنتج بعينه.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">NP01</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/(legal)/regulations/mawthooq/page.tsx</div>
+          <div class="desc">مركز امتثال موثوق يشرح تصريح الهيئة العامة لتنظيم الإعلام، والرسوم (15,000 ريال سعودي / 3 سنوات)، والمتطلبات، ونموذج 'قدّم تصريحك' للمبدعين.</div>
+
+          <div class="why">الأقسام: ما هو موثوق · من يحتاجه · كيفية التقديم · الرسوم + الصلاحية · رفع رقم التصريح + انتهاء الصلاحية · الأسئلة الشائعة</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP02</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/(legal)/zatca/page.tsx</div>
+          <div class="desc">أسئلة شائعة عن الفوترة الإلكترونية للمرحلة الثانية من ZATCA + مطالبة تسجيل ضريبة القيمة المضافة للعلامات/المبدعين فوق حد 375 ألف ريال سعودي.</div>
+
+          <div class="why">الأقسام: ضريبة القيمة المضافة في السعودية · متى يلزم التسجيل · ما نصدره تلقائياً من فواتير · تنزيل الفواتير السابقة · شرح رمز QR الخاص بـ ZATCA</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP03</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/checkout/success/page.tsx + apps/web/src/app/checkout/cancel/page.tsx</div>
+          <div class="desc">روابط عودة مزوّد الخدمة لتدفّق إعادة توجيه 3DS الخاص بـ HyperPay/Tap/Moyasar مع ملخّص الطلب، وفاتورة ضريبة القيمة المضافة القابلة للتنزيل، والخطوات التالية إلى /orders/[id].</div>
+
+          <div class="why">الأقسام: التأكيد · ملخّص الطلب · تنزيل الفاتورة (PDF + XML) · ماذا يحدث بعد ذلك · التواصل مع الدعم</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP04</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/creator-dashboard/payouts/page.tsx</div>
+          <div class="desc">تسجيل مدفوعات المبدع (اعرف عميلك + بنك/STC Pay/IBAN + نموذج ضريبي) وسجلّ المدفوعات.</div>
+
+          <div class="why">الأقسام: حالة اعرف عميلك · إضافة طريقة دفع (IBAN/STC Pay/PayPal) · الملف الضريبي (ضريبة القيمة المضافة، الاستقطاع) · الرصيد المتاح · سجلّ المدفوعات · الجدولة (تلقائي/يدوي)</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP05</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/dashboard/billing/page.tsx</div>
+          <div class="desc">مركز فوترة للعلامة مع طرق دفع محفوظة (Mada/Apple Pay/Tabby/Tamara)، وملف ضريبة القيمة المضافة، وفواتير ZATCA قابلة للتنزيل.</div>
+
+          <div class="why">الأقسام: طرق الدفع · ملف ضريبة القيمة المضافة (السجل التجاري + رقم الضريبة) · الفواتير (ZATCA XML + PDF) · الإنفاق الشهري · محفظة إعادة الشحن التلقائي</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP06</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/influencers/[city]/page.tsx (برمجي) + apps/web/src/app/influencers/[platform]/page.tsx</div>
+          <div class="desc">تحسين محركات بحث برمجي لـ /influencers/riyadh و /jeddah و /khobar و /dammam و /makkah و /madinah و /alkhobar + /instagram و /tiktok و /snapchat و /youtube — يطابق استراتيجية صفحات الهبوط بحسب الموقع/المنصة لدى Collabstr بصيغة ثنائية اللغة EN/AR.</div>
+
+          <div class="why">الأقسام: بطل الصفحة (المدينة + المنصة) · أفضل 12 مبدعاً · متوسط الأسعار بحسب الفئة · فئات محلية · دراسات حالة محلية · دعوة لاتخاذ إجراء</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP07</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/auth/verify-email/page.tsx + apps/web/src/app/auth/reset-password/page.tsx</div>
+          <div class="desc">تدفّقا تأكيد التحقق من البريد الإلكتروني + طلب/تأكيد إعادة تعيين كلمة المرور المرتبطان بخلفية CF08.</div>
+
+          <div class="why">الأقسام: تأكيد الرمز · إعادة إرسال الرابط · نموذج كلمة مرور جديدة · حالة النجاح</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP08</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/auth/2fa/page.tsx</div>
+          <div class="desc">إعداد المصادقة الثنائية (رمز TOTP QR + رموز احتياطية) — مطلوب قبل تفعيل المدفوعات.</div>
+
+          <div class="why">الأقسام: مسح رمز QR بتطبيق المصادقة · إدخال رمز من 6 أرقام · رموز احتياطية (تنزيل) · تعطيل المصادقة الثنائية</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP09</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/disputes/[id]/page.tsx</div>
+          <div class="desc">مساحة عمل لحل النزاعات مع ملفات الأدلة، ومؤقّت اتفاقية مستوى الخدمة، وإجراءات استرداد/تحرير/تقسيم، وملاحظات المحكِّم.</div>
+
+          <div class="why">الأقسام: الأطراف + المبالغ · الأدلة (من الجانبين) · العد التنازلي لاتفاقية مستوى الخدمة · القرار (استرداد/تحرير/تقسيم) · الملاحظات · سجلّ التدقيق</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP10</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/finance/ledger/page.tsx + apps/admin/src/app/finance/reconciliation/page.tsx</div>
+          <div class="desc">عمليات مالية: عرض دفتر الأستاذ (مزدوج القيد)، ومطابقة مزوّد الخدمة (تسويات HyperPay/Tap مقابل دفتر الأستاذ الداخلي)، وتقرير ضريبة القيمة المضافة الشهري، وتقرير الاستقطاع.</div>
+
+          <div class="why">الأقسام: تسوية اليوم · حجوزات الضمان المفتوحة · ضريبة القيمة المضافة المُحصَّلة (15%) · توريد الاستقطاع · التصدير إلى ZATCA</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP11</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/compliance/mawthooq/page.tsx</div>
+          <div class="desc">قائمة انتظار الامتثال تعرض المبدعين بحسب حالة التصريح (نشط / منتهٍ / مفقود)، وإعادة التحقق الجماعي، وحجب التعاقد عند انتهاء الصلاحية.</div>
+
+          <div class="why">الأقسام: تصاريح نشطة · تنتهي خلال 30 يوماً · مفقود/منتهٍ (محجوب) · مراجعة رفع التصريح · سجلّ التدقيق</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP12</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/inbox/offers/page.tsx (نموذج Offer داخل المحادثة)</div>
+          <div class="desc">بطاقات عروض مخصّصة داخل الرسائل المباشرة (نمط Collabstr/Aspire) تتحوّل إلى طلبات بنقرة واحدة.</div>
+
+          <div class="why">الأقسام: بطاقات العروض في المحادثة · قبول ← الدفع · عرض مضاد · رفض + السبب</div>
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">NP13</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/about/trust-safety/page.tsx</div>
+          <div class="desc">مركز الثقة والأمان: شرح الضمان (مزوّد خدمة دفع مرخَّص من ساما)، اعرف عميلك، عملية النزاع، سياسة الاسترداد، الإشراف على المحتوى، تدفّقات الإبلاغ — مطلوب لثقة العلامات في السعودية.</div>
+
+          <div class="why">الأقسام: ضمان الحجز · مبدعون موثّقون · حل النزاعات · الإبلاغ + الإشراف · سياسة الاسترداد</div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--comp)"></span> مكوّنات ناقصة <span class="badge" style="background:var(--surface); color:var(--muted);">13 إجمالاً</span></h2>
+    <p class="sub">ينطبق على مستودعي Nakhla والكويت معاً ما لم يكن مسار الملف خاصاً بمنتج بعينه.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">MC01</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/sar-amount.tsx + apps/admin/src/components/sar-amount.tsx</div>
+          <div class="desc">مُصيّر مبالغ SAR معزول ثنائي الاتجاه باستخدام &lt;bdi>، والرمز الجديد U+20C1 مع خط saudi-riyal-font احتياطياً، و Intl.NumberFormat('ar-SA'|'en-SA', { currency: 'SAR' }). استخدامه في كل مكان بدلاً من تداخل سلاسل fmtMoney.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC02</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/dir-arrow.tsx + apps/admin/src/components/dir-arrow.tsx</div>
+          <div class="desc">أيقونة سهم واعية باللغة (→ في LTR، ← في RTL) كـ SVG قابل للقلب؛ يستبدل كل حرفية → / ↗ / ↩ / ⟿ / ↳ مثبّتة في كلا التطبيقين.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">MC03</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/mobile-nav.tsx + apps/admin/src/components/mobile-nav.tsx</div>
+          <div class="desc">هامبرغر للجوال + درج Sheet مع تنقّل كامل، ومبدّل لغة، وقائمة مستخدم — يعالج ثغرات الجوال في كل من header.tsx وغلاف لوحة الإدارة.</div>
+
+
+          <div class="status-tag">تم الشحن</div>
+        </div>
+      </div>
+      <div class="item shipped">
+        <div class="id">MC04</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/responsive-table.tsx + apps/admin/src/components/responsive-table.tsx</div>
+          <div class="desc">غلاف مشترك: overflow-x-auto + min-w-* + صفوف مرمّزة للوضع الداكن + رأس لاصق على القوائم الطويلة. يستبدل 8 جداول &lt;table> خام منفصلة في لوحة الإدارة.</div>
+
+
+          <div class="status-tag">تم الشحن</div>
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC05</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/status-pill.tsx</div>
+          <div class="desc">زرّ حالة مُترجَم ومرمّز للسمة يأخذ (status, locale) ويعيد تسمية مُوطَّنة + خلفية واعية بالوضع الداكن. يزيل كل موضع استدعاء `o.status.replace(/_/g,' ')` خام.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC06</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/mobile-sticky-cta.tsx</div>
+          <div class="desc">شريط CTA سفلي مثبّت للجوال (السعر + الإجراء الأساسي) يُستخدم في ملف المبدع، وتفاصيل الباقة، وتفاصيل الحملة. lg:hidden.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC07</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/live-region.tsx + apps/admin/src/components/live-region.tsx</div>
+          <div class="desc">مُعلِن aria-live='polite' / 'assertive' لتبديل اللغة، وأخطاء النماذج، ونجاح الحفظ — يستبدل alert() الأصلي في إجراءات لوحة الإدارة ورسائل الخطأ الصامتة داخل &lt;p>.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC08</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/toast.tsx</div>
+          <div class="desc">نظام إشعارات/توست يستبدل alert() في orders/[id]/actions و users/row-actions و broadcast/form وأزرار الحفظ/المشاركة المعطّلة.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC09</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/payment-method-badge.tsx</div>
+          <div class="desc">يعرض شعارات Mada/Apple Pay/STC Pay/Tabby/Tamara/Visa بأحجام صحيحة ونص بديل متاح — مطلوب عبر الدفع، والفوترة، وملف العلامة.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC10</div>
+        <div class="body">
+          <div class="where">apps/web/src/lib/format.ts (إعادة كتابة)</div>
+          <div class="desc">دالة fmtMoney/fmtDate/fmtAgo واحدة تقبل اللغة + العملة؛ تستخدم Intl مع عزل ثنائي الاتجاه؛ تعرض U+20C1 مع خط ويب احتياطي؛ تحترم قاعدة الرمز على اليسار في السعودية.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC11</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/seasonal-banner.tsx</div>
+          <div class="desc">لافتة تقويم ثقافي (رمضان، اليوم الوطني السعودي 23 سبتمبر، يوم التأسيس 22 فبراير، العيد) تُفعَّل تلقائياً وتُنسّق بطل الصفحة الرئيسية.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC12</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/offer-card.tsx</div>
+          <div class="desc">بطاقة عرض مخصّص داخل المحادثة (السعر + المخرجات + الموعد النهائي + قبول/رفض). مطلوبة لـ NP12 وهي ثغرة تكافؤ ميزات مع Collabstr/Aspire.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">MC13</div>
+        <div class="body">
+          <div class="where">apps/api/src/common/idempotency.middleware.ts + apps/api/src/payments/webhook.controller.ts</div>
+          <div class="desc">وسيط Idempotency-Key مدعوم بجدول IdempotencyKey؛ التحقق من توقيع webhook وإزالة التكرار لـ HyperPay/Tap/Moyasar.</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--schema)"></span> إضافات مخطط البيانات <span class="badge" style="background:var(--surface); color:var(--muted);">12 إجمالاً</span></h2>
+    <p class="sub">ينطبق على مستودعي Nakhla والكويت معاً ما لم يكن مسار الملف خاصاً بمنتج بعينه.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">SA01</div>
+        <div class="body">
+          <div class="where">PaymentIntent</div>
+          <div class="desc">الحقول: id, orderId, provider(hyperpay|tap|moyasar|stripe), providerRef, amount(Int halalas), currency, status(requires_action|processing|succeeded|failed|refunded), method(mada|apple_pay|visa|stc_pay|tabby|tamara), threeDsRef, createdAt</div>
+          <div class="why">اليوم /orders/:id/pay مجرّد بديل صوري. مطلوب لتتبّع عملية شحن حقيقية مقابل مزوّد خدمة دفع مرخَّص من ساما.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA02</div>
+        <div class="body">
+          <div class="where">EscrowHold + LedgerEntry</div>
+          <div class="desc">الحقول: EscrowHold: id, orderId, amount, status(held|released|refunded|split)، LedgerEntry: id, accountType(escrow|platform_revenue|creator_payable|psp_fee|vat|wht), debit, credit, currency, refType, refId, createdAt</div>
+          <div class="why">دفتر أستاذ مزدوج القيد مطلوب للمطابقة، وتقرير ضريبة القيمة المضافة، وتقرير الاستقطاع، وحساب المدفوعات.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA03</div>
+        <div class="body">
+          <div class="where">PayoutAccount + Payout</div>
+          <div class="desc">الحقول: PayoutAccount: id, userId, type(iban|stc_pay|paypal|wise), holderName, iban/accountRef, country, currency, verifiedAt، Payout: id, userId, accountId, amount, currency, status(pending|sent|paid|failed), providerRef, createdAt</div>
+          <div class="why">يجب أن يتمكّن المبدعون من سحب الأموال المحجوزة. صفحة /admin/payouts موجودة لكن بلا نموذج أساسي.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA04</div>
+        <div class="body">
+          <div class="where">KycCase</div>
+          <div class="desc">الحقول: id, userId(unique), provider, status(pending|approved|rejected|expired), nationalIdOrIqama, documents(Json), wathqRef, expiresAt, rejectionReason</div>
+          <div class="why">فحص إلزامي لمكافحة غسل الأموال في السعودية قبل المدفوعات/المعاملات.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA05</div>
+        <div class="body">
+          <div class="where">TaxProfile + Invoice</div>
+          <div class="desc">الحقول: TaxProfile: id, userId(unique), country, vatNumber, crNumber, isVatRegistered, withholdingRate, taxFormType(w9|w8ben|none)، Invoice: id, orderId, sellerUserId, buyerUserId, totalAmount, vatAmount, whtAmount, currency, zatcaXml, zatcaQrPng, status(draft|cleared|cancelled), sequentialNo</div>
+          <div class="why">الفوترة الإلكترونية للمرحلة الثانية من ZATCA + ضريبة استقطاع غير المقيمين، كلاهما مطلوب قانوناً في السعودية.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA06</div>
+        <div class="body">
+          <div class="where">Dispute</div>
+          <div class="desc">الحقول: id, orderId(unique), openedById, reason, evidence(Json[]), status(open|in_review|resolved_refund|resolved_release|resolved_split|cancelled), arbitratorId, arbitratorNotes, resolution(Json), slaDueAt</div>
+          <div class="why">لدى OrderStatus حالة 'disputed' لكن لا كيان يقود سير عمل النزاع.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA07</div>
+        <div class="body">
+          <div class="where">SocialAccount + ProfileVerification</div>
+          <div class="desc">الحقول: SocialAccount: id, userId, platform, handle, externalId, accessToken(encrypted), refreshToken(encrypted), followers, engagement, lastSyncedAt، ProfileVerification: id, userId, type(social|mawthooq|email|phone), status, evidence, verifiedAt, expiresAt, permitNumber</div>
+          <div class="why">followersIg/Tt/Yt أعداد صحيحة يدوية اليوم؛ شارات التوثيق سلاسل حرة. نحتاج حسابات مرتبطة عبر OAuth + تخزين تصريح موثوق مع انتهاء صلاحية لفرض امتثال CF11.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA08</div>
+        <div class="body">
+          <div class="where">Offer + MessageAttachment</div>
+          <div class="desc">الحقول: Offer: id, threadId, fromUserId, price, currency, deliverables(Json), deadline, status(pending|accepted|declined|expired|countered), orderId?، MessageAttachment: id, messageId, fileAssetId, kind(image|video|file|voice|offer)</div>
+          <div class="why">تحويل العرض إلى طلب داخل المحادثة ميزة أساسية لدى المنافسين (Collabstr، Aspire). المحادثات اليوم نصية فقط.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA09</div>
+        <div class="body">
+          <div class="where">FileAsset</div>
+          <div class="desc">الحقول: id, ownerId, bucket, key, mimeType, sizeBytes, scanStatus(pending|clean|infected), signedUrlExpiresAt, createdAt</div>
+          <div class="why">روابط الصورة الرمزية، والغلاف، ومعرض الأعمال، والتسليم سلاسل مجرّدة بلا تجريد تخزين أو فحص أو ملكية.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA10</div>
+        <div class="body">
+          <div class="where">AuditLog</div>
+          <div class="desc">الحقول: id, actorId, actorRole, action, targetType, targetId, diff(Json), ip, userAgent, createdAt</div>
+          <div class="why">صفحة /admin/audit موجودة بلا نموذج أساسي. مطلوبة لأثر بأسلوب SOC2 + مساءلة المشرفين.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA11</div>
+        <div class="body">
+          <div class="where">IdempotencyKey + Webhook + WebhookDelivery</div>
+          <div class="desc">الحقول: IdempotencyKey: key(PK), endpoint, userId, requestHash, responseJson, expiresAt، Webhook: id, brandId, url, secret, events[]، WebhookDelivery: id, webhookId, eventType, payload, status, attempts, nextRetryAt</div>
+          <div class="why">POST /orders و /pay و /release غير مقاومة للتكرار ← خطر الشحن المزدوج. لا سجلّ لـ webhooks الواردة من مزوّد الخدمة ← لا حماية من إعادة الإرسال.</div>
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">SA12</div>
+        <div class="body">
+          <div class="where">Report + Block + NotificationPreference + PushSubscription</div>
+          <div class="desc">الحقول: Report: id, reporterId, targetType, targetId, reason, status، Block: id, blockerId, blockedId, @@unique، NotificationPreference: id, userId, channel(email|push|sms|in_app), kind, enabled، PushSubscription: id, userId, endpoint, keysP256dh, keysAuth, userAgent</div>
+          <div class="why">أساسيات الثقة والأمان + تفضيلات الإشعارات لكل قناة + Web Push مفقودة.</div>
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--integ)"></span> تكاملات <span class="badge" style="background:var(--surface); color:var(--muted);">14 إجمالاً</span></h2>
+    <p class="sub">ينطبق على مستودعي Nakhla والكويت معاً ما لم يكن مسار الملف خاصاً بمنتج بعينه.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">IN01</div>
+        <div class="body">
+          <div class="where">HyperPay (مزوّد خدمة دفع مرخَّص من ساما)</div>
+          <div class="desc">HyperPay (مزوّد خدمة دفع مرخَّص من ساما)</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN02</div>
+        <div class="body">
+          <div class="where">Tap Payments</div>
+          <div class="desc">Tap Payments</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN03</div>
+        <div class="body">
+          <div class="where">Moyasar</div>
+          <div class="desc">Moyasar</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN04</div>
+        <div class="body">
+          <div class="where">Tabby + Tamara (الشراء الآن والدفع لاحقاً)</div>
+          <div class="desc">Tabby + Tamara (الشراء الآن والدفع لاحقاً)</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN05</div>
+        <div class="body">
+          <div class="where">ZATCA Fatoora المرحلة الثانية</div>
+          <div class="desc">ZATCA Fatoora المرحلة الثانية</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN06</div>
+        <div class="body">
+          <div class="where">Unifonic / Taqnyat رسائل OTP النصية</div>
+          <div class="desc">Unifonic / Taqnyat رسائل OTP النصية</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN07</div>
+        <div class="body">
+          <div class="where">امتثال SDAIA PDPL</div>
+          <div class="desc">امتثال SDAIA PDPL</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN08</div>
+        <div class="body">
+          <div class="where">Instagram + TikTok + YouTube + Snapchat OAuth</div>
+          <div class="desc">Instagram + TikTok + YouTube + Snapchat OAuth</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN09</div>
+        <div class="body">
+          <div class="where">Meilisearch (بحث نصي كامل بالعربية + الإنجليزية)</div>
+          <div class="desc">Meilisearch (بحث نصي كامل بالعربية + الإنجليزية)</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN10</div>
+        <div class="body">
+          <div class="where">تخزين متوافق مع S3 (Cloudflare R2 أو AWS S3 منطقة الرياض)</div>
+          <div class="desc">تخزين متوافق مع S3 (Cloudflare R2 أو AWS S3 منطقة الرياض)</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN11</div>
+        <div class="body">
+          <div class="where">Sentry + PostHog</div>
+          <div class="desc">Sentry + PostHog</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN12</div>
+        <div class="body">
+          <div class="where">WhatsApp Business Cloud API</div>
+          <div class="desc">WhatsApp Business Cloud API</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN13</div>
+        <div class="body">
+          <div class="where">التقويم الهجري (أم القرى)</div>
+          <div class="desc">التقويم الهجري (أم القرى)</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">IN14</div>
+        <div class="body">
+          <div class="where">hCaptcha / Cloudflare Turnstile</div>
+          <div class="desc">hCaptcha / Cloudflare Turnstile</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="bucket">
+    <h2><span class="dot" style="background:var(--polish)"></span> تحسينات <span class="badge" style="background:var(--surface); color:var(--muted);">16 إجمالاً</span></h2>
+    <p class="sub">ينطبق على مستودعي Nakhla والكويت معاً ما لم يكن مسار الملف خاصاً بمنتج بعينه.</p>
+    <div class="items">
+      <div class="item">
+        <div class="id">PL01</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/footer.tsx</div>
+          <div class="desc">توطين تسمية 'Help' المثبّتة وأزرار KSA/SAR عبر i.footer.* (المنطقة + العملة).</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL02</div>
+        <div class="body">
+          <div class="where">apps/web/src/components/dashboard-brand-bar.tsx</div>
+          <div class="desc">أخذ سلسلة consoleLabel واحدة من t()؛ إسقاط نمط دمج EN+AR؛ توطين زرّ KSA/SAR.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL03</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/dashboard/page.tsx + creator-dashboard/page.tsx + creator-dashboard/orders/page.tsx</div>
+          <div class="desc">تغيير شبكة مؤشرات الأداء sm:grid-cols-4 ← grid-cols-2 lg:grid-cols-4. تغليف صفوف الطلبات الأخيرة بـ flex-col sm:flex-row + min-w-0 truncate كي لا تفيض حالات العربية + مبالغ SAR.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL04</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/orders/[id]/page.tsx</div>
+          <div class="desc">استخدام fmtDate() الواعي باللغة عند كل استدعاء toLocale* مع النطاق الزمني Asia/Riyadh. إضافة rel='noopener noreferrer' + sr-only 'يفتح في تبويب جديد' لرابط التسليم &lt;a>.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL05</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/campaigns/new/page.tsx</div>
+          <div class="desc">نقل جميع نصوص الإدخال النائبة إلى i.campaigns.new.placeholders.*؛ إضافة تحقّق من جانب العميل لكل خطوة؛ إضافة aria-current='step' على الخطوة النشطة و role='progressbar' على الحاوية.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL06</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/campaigns/[id]/apply (ملف جديد)</div>
+          <div class="desc">استبدال إرسال النموذج الأصلي POST إلى /campaigns/{id}/apply غير الموجود بمكوّن عميل يُرسل POST إلى ${NEXT_PUBLIC_API_URL}/api/v1/campaigns/${id}/applications مع بيانات الاعتماد.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL07</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/forgot-password/page.tsx + apps/web/src/app/contact/page.tsx + apps/web/src/app/settings/notifications/page.tsx + apps/web/src/app/settings/billing/page.tsx</div>
+          <div class="desc">ربط جميع النماذج/الأزرار المعطّلة بنقاط نهاية خلفية حقيقية أو تعطيلها + إظهار شارة 'قريباً' — لا مزيد من عناصر تحكّم معطّلة تبدو فعّالة.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL08</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/page.tsx</div>
+          <div class="desc">استبدال mr-1.5 بـ me-1.5 على أزرار الفئات؛ استبدال → المثبّتة بـ &lt;DirArrow /> في صفوف 'عرض الكل'.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL09</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/notifications/page.tsx</div>
+          <div class="desc">منسّق تاريخ واعٍ باللغة؛ تحويل 'وضع علامة مقروء على الكل' إلى مكوّن عميل مع بيانات الاعتماد + router.refresh()؛ إضافة نقطة 'جديد' + sr-only 'غير مقروء' إلى تمييز غير المقروء.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL10</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/checkout/checkout-form.tsx</div>
+          <div class="desc">فرض dir='ltr' على مدخلات رقم البطاقة / تاريخ الانتهاء. تغيير شبكة lg:grid-cols-5 ← md:grid-cols-5 كي يجلس الملخّص جنباً إلى جنب على الأجهزة اللوحية. إضافة أزرار دفع Mada / Apple Pay / Tabby / Tamara عبر MC09.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL11</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/messages/messages-ui.tsx</div>
+          <div class="desc">استخدام rounded-ee-md / rounded-es-md بدلاً من rounded-br-md/bl-md كي تنقلب أطراف الفقاعات بشكل صحيح في RTL.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL12</div>
+        <div class="body">
+          <div class="where">apps/web/src/app/influencers/page.tsx</div>
+          <div class="desc">استخدام data.total.toLocaleString(locale === 'ar' ? 'ar-SA' : 'en-SA')؛ إضافة ترقيم صفحات السابق/التالي عندما تكون data.total > data.pageSize.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL13</div>
+        <div class="body">
+          <div class="where">apps/admin/src/components/locale-switcher.tsx + apps/admin/src/app/login/login-form.tsx</div>
+          <div class="desc">استخراج مساعد setLocaleCookie() مشترك بسمات SameSite=Lax + Secure (الإنتاج). استخدام التسميات المُترجَمة labels.signingIn بدلاً من '…'. إضافة role='alert' على خطأ تسجيل الدخول.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL14</div>
+        <div class="body">
+          <div class="where">apps/admin/src/components/ui.tsx</div>
+          <div class="desc">إضافة flex-wrap + gap-y-3 إلى PageHeader؛ تغليف الإجراء في shrink-0. ترجمة عناصر Pill الأبناء عبر statusLabel(status, locale) في كل موضع استدعاء.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL15</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/flow-map/*.tsx</div>
+          <div class="desc">إما توطين role-flows.tsx + order-state-machine.tsx + coverage-matrix.tsx + roadmap.tsx + architecture.tsx عبر i.flowMap.* أو تعليم كل قسم برأس واضح 'مرجع (بالإنجليزية فقط)'. استبدال أسماء مضيف localhost بـ NEXT_PUBLIC_WEB_URL/NEXT_PUBLIC_ADMIN_URL/NEXT_PUBLIC_API_URL.</div>
+
+
+
+        </div>
+      </div>
+      <div class="item">
+        <div class="id">PL16</div>
+        <div class="body">
+          <div class="where">apps/admin/src/app/orders/[id]/actions.tsx + users/row-actions.tsx + broadcast/form.tsx</div>
+          <div class="desc">استبدال alert() بـ MC07 LiveRegion / MC08 Toast؛ إضافة role='alert' على خطأ &lt;p> المضمّن؛ إضافة تسمية Link (اختياري) ثنائية اللغة + نص مساعد في نموذج البث.</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    مُولَّد من <code>docs/production-roadmap.json</code> · 85 بنداً إجمالاً · 8 تم شحنها هذه الجلسة
+    <br>مُركَّب بواسطة سير عمل متعدد الوكلاء wf_37b748d5-729 (2026-06-29)
+  </div>
+  </div>
 </div>
+<script>
+function setLang(l){var en=document.getElementById('en'),ar=document.getElementById('ar'),be=document.getElementById('btn-en'),ba=document.getElementById('btn-ar');if(l==='ar'){en.hidden=true;ar.hidden=false;document.documentElement.lang='ar';document.documentElement.dir='rtl';ba.classList.add('active');be.classList.remove('active');}else{ar.hidden=true;en.hidden=false;document.documentElement.lang='en';document.documentElement.dir='ltr';be.classList.add('active');ba.classList.remove('active');}try{localStorage.setItem('nakhla_lang',l);}catch(e){}}
+try{var s=localStorage.getItem('nakhla_lang');if(s)setLang(s);}catch(e){}
+</script>
 </body>
 </html>

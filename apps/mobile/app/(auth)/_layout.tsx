@@ -7,7 +7,7 @@ export default function AuthLayout() {
   return (
     <Stack
       screenOptions={{
-        header: (props) => <AppHeader title={typeof props.options.title === "string" ? props.options.title : ""} />,
+        header: (props) => <AppHeader stackHeader title={typeof props.options.title === "string" ? props.options.title : ""} />,
         contentStyle: { backgroundColor: palette.bg },
       }}
     />

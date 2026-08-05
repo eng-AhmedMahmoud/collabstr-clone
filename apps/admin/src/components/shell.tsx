@@ -17,6 +17,7 @@ export async function Shell({ me, children }: { me: Me; children: React.ReactNod
         { href: "/orders", label: i.nav.orders, icon: "◷" },
         { href: "/disputes", label: i.nav.disputes, icon: "▲" },
         { href: "/payouts", label: i.nav.payouts, icon: "↗" },
+        { href: "/finance", label: i.nav.finance, icon: "¤" },
         { href: "/audit", label: i.nav.audit, icon: "≡" },
       ],
     },

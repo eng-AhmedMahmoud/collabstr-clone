@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nakhla — Service Cost Analysis</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:960px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  h1{font-size:26px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:10px;border-top:1px solid var(--line)}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--blue)}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+  a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  .info{background:rgba(76,159,254,.15);color:var(--blue)}
+  ul{margin:10px 0;padding-left:20px} li{margin:6px 0}
+  ol{margin:10px 0;padding-left:22px} ol li{margin:7px 0}
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+  .stat{flex:1;min-width:150px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .stat b{display:block;font-size:18px} .stat span{color:var(--muted);font-size:12px}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .flag{border-left:3px solid var(--amber);padding:8px 14px;background:rgba(240,169,43,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .win{border-left:3px solid var(--green);padding:8px 14px;background:rgba(46,194,107,.06);border-radius:0 8px 8px 0;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Nakhla — Service Cost Analysis</h1>
+  <div class="sub">Prices verified 2026-07-06/07 · USD primary; SAR at pegged 3.75 · all prices fetched live from official pages unless flagged</div>
+</header>
+
+<h2>1 · One-time / annual fixed costs</h2>
+<table>
+  <tr><th>Item</th><th>Cost</th><th>Notes</th></tr>
+  <tr><td>Google Play Console</td><td><b>$25 one-time</b></td><td>Org account needs D-U-N-S; personal account needs 12 testers × 14 days closed testing before production. Realistic time-to-live 2–4 weeks.</td></tr>
+  <tr><td>Apple Developer Program</td><td><b>$99/yr</b></td><td>Organization enrollment = legal entity + D-U-N-S (needs CR). Individual enrollment works with just ID but app publishes under personal name.</td></tr>
+  <tr><td>Commercial Registration (CR, LLC)</td><td><b>~SAR 1,775 first year (~$473)</b>, then SAR 200–400/yr registry</td><td>Needed for: Apple org account, payment gateway onboarding, .sa domain, SMS sender ID. Saudi Business Center bundle (CR + AoA + Chamber).</td></tr>
+  <tr><td>Freelance licence (alternative)</td><td><b>SAR 0–1,156/yr</b></td><td>Accepted by Moyasar for gateway onboarding. NOT sufficient for Apple org account (no D-U-N-S). Fee changed under 2026 regs — verify on freelance.sa.</td></tr>
+  <tr><td>Domain <code>.sa</code>/<code>.com.sa</code></td><td><b>from ~SAR 200/yr (~$53)</b></td><td>Requires Saudi presence (CR / Saudi national / KSA trademark). Via SaudiNIC-accredited registrar. <code>.com</code> alternative: $10–20/yr.</td></tr>
+  <tr><td>SMS Sender ID registration (CST)</td><td><b>~SAR 299/yr (~$80)</b> via Unifonic</td><td>Mandatory pre-registration; 10–20 business days; transactional ID ≤11 chars. Start this early.</td></tr>
+</table>
+<div class="stat-row">
+  <div class="stat"><b>≈ $730–780</b><span>First-year fixed total, CR path (≈ SAR 2,700–2,900)</span></div>
+  <div class="stat"><b>≈ $180–490</b><span>Cheapest path: freelance licence + individual Apple</span></div>
+</div>
+
+<h2>2 · Monthly infrastructure — Launch phase (≈0–5k MAU)</h2>
+<table>
+  <tr><th>Service</th><th>Plan</th><th>$/mo</th><th>Notes</th></tr>
+  <tr><td>Vercel</td><td>Pro, 1 seat — required</td><td><b>$20</b></td><td>Hobby is explicitly non-commercial; Nakhla is commercial. Includes $20/mo usage credit — covers Blob + Fluid Compute at launch traffic.</td></tr>
+  <tr><td>Neon Postgres</td><td>Launch (usage-based, $0 base)</td><td><b>~$5–15</b></td><td>Pricing model changed: no more $19/$69 tiers. Compute $0.106/CU-hr, storage $0.35/GB-mo, scale-to-zero when idle. Current seed DB fits Free tier (0.5 GB, 100 CU-hrs) but Launch removes suspend risk. Vercel Marketplace version = same prices, billed on Vercel invoice.</td></tr>
+  <tr><td>Realtime (socket.io)</td><td>Hostinger KVM 2 VPS (recommended)</td><td><b>$8.99 promo → $14.99 renewal</b></td><td>See §4 — Pusher/Ably don't speak socket.io protocol; VPS runs the existing NestJS gateway unchanged. 2 vCPU / 8 GB RAM / 100 GB NVMe.</td></tr>
+  <tr><td>Email (Resend)</td><td>Free</td><td>$0</td><td>3,000/mo, 100/day. Pro $20/mo (50k) when outgrown.</td></tr>
+  <tr><td>SMS OTP (Unifonic)</td><td>Pay-per-SMS</td><td><b>~$15 @ 1k OTP/mo</b></td><td>SAR 0.055/SMS. Twilio is $0.0872/SMS to KSA — 6× more; skip.</td></tr>
+  <tr><td>Push (FCM + APNs + Expo push)</td><td>—</td><td>$0</td><td>All free.</td></tr>
+  <tr><td>EAS builds</td><td>Free</td><td>$0</td><td>15 Android + 15 iOS cloud builds/mo; local builds (current /apk workflow) unlimited/free.</td></tr>
+  <tr><td>Sentry</td><td>Developer (free)</td><td>$0</td><td>5k errors/mo, 1 user. Team $26/mo later.</td></tr>
+  <tr><td>PostHog</td><td>Free</td><td>$0</td><td>1M events + 5k recordings/mo free forever.</td></tr>
+</table>
+<div class="card"><b>Launch total: ~$50–70/mo</b> <span class="muted">(~SAR 190–260)</span></div>
+
+<h2>3 · Monthly — Growth phase (≈50k MAU)</h2>
+<table>
+  <tr><th>Service</th><th>$/mo</th><th>Driver</th></tr>
+  <tr><td>Vercel Pro + usage</td><td>50–120</td><td>Fluid Compute: Active CPU $0.128/hr + $0.60/M invocations; Blob storage $0.023/GB-mo.</td></tr>
+  <tr><td>Neon</td><td>30–80</td><td>~10 GB storage ($3.50) + compute hours dominate.</td></tr>
+  <tr><td>Realtime</td><td>15–100</td><td>VPS KVM 4 ($12.99→$28.99) — or Ably Standard $29+usage / Pusher Pro $99 (2k conns) if moving to managed.</td></tr>
+  <tr><td>Resend Pro</td><td>20</td><td>50k emails/mo, $0.90/1k over.</td></tr>
+  <tr><td>SMS (Unifonic)</td><td>50–150</td><td>Scales with signups/logins: 10k OTP ≈ SAR 550 ≈ $147.</td></tr>
+  <tr><td>Sentry Team</td><td>26</td><td>50k errors/mo.</td></tr>
+  <tr><td>PostHog</td><td>0–50</td><td>Free tier survives ~1M events; usage-based after.</td></tr>
+  <tr><td>EAS Starter (optional)</td><td>19</td><td>Only if cloud builds/OTA updates >1k MAU needed.</td></tr>
+</table>
+<div class="card"><b>Growth total: ~$210–560/mo</b> <span class="muted">(~SAR 790–2,100)</span></div>
+
+<h2>4 · Realtime provider decision (socket.io)</h2>
+<p>Key fact: <b>Pusher and Ably are NOT socket.io-compatible</b> — adopting either means replacing the NestJS <code>MessagesGateway</code> + web/mobile clients with their SDKs.</p>
+<table>
+  <tr><th>Option</th><th>Cost</th><th>Code change</th></tr>
+  <tr><td><b>Self-host on Hostinger KVM 2</b> (matches infra convention: Nakhla gets own KVM2)</td><td>$8.99→$14.99/mo</td><td><b>None</b> — deploy existing gateway as-is. Also gives a box for future cron/workers.</td></tr>
+  <tr><td>Ably</td><td>Free (200 conns, 6M msgs/mo) → Standard $29+usage (10k conns)</td><td>Full refactor to Ably SDK</td></tr>
+  <tr><td>Pusher Channels</td><td>Free (100 conns, 200k msgs/day) → Startup $49 (500 conns) → Pro $99 (2k conns)</td><td>Full refactor to Pusher SDK</td></tr>
+</table>
+<div class="win">Recommendation: VPS now (zero refactor, cheapest); revisit Ably if ops burden bites.</div>
+
+<h2>5 · Payments — % of GMV, not fixed (all quotes need direct confirmation)</h2>
+<p>mada scheme fee baseline: 1% capped SAR 200/txn. 15% VAT applies on gateway fees. Stripe does <b>not</b> operate domestically in KSA (verified 2026-07-06).</p>
+<table>
+  <tr><th>Gateway</th><th>Setup</th><th>Monthly</th><th>mada</th><th>Visa/MC</th><th>Marketplace splits</th></tr>
+  <tr><td><b>Tap Payments</b></td><td>0</td><td>0</td><td>custom (~2.75% cited)</td><td>2.75% (3.25% intl)</td><td><span class="pill ok">YES</span> native marketplace product (splits, commissions, payouts)</td></tr>
+  <tr><td><b>PayTabs</b></td><td>0</td><td>$49 (micro plan) or 0</td><td>~2.85–3.5% custom</td><td>same</td><td><span class="pill ok">YES</span> strongest split/escrow tooling reported</td></tr>
+  <tr><td>Moyasar</td><td>0</td><td>0</td><td>conflicting data: 1.5%+SAR 1 vs 2.5% — official pricing page 404, get quote</td><td>~2.5–2.9%</td><td>Payout product, no published split pricing</td></tr>
+  <tr><td>HyperPay</td><td>~SAR 1,500</td><td>~SAR 250</td><td>1.5%+SAR 1</td><td>2.75%+SAR 1</td><td>Enterprise/custom</td></tr>
+</table>
+<p>Worked example: SAR 100k GMV/mo, blended ~2.5% → <b>~SAR 2,500/mo (~$667) + VAT on fees</b>.</p>
+<p>Creator payouts (SAR IBAN): all quote-based — Tap marketplace payouts, Moyasar payouts, Lean Technologies (SAMA-licensed payouts API). Raw SARIE bank bulk transfer via corporate bank = cheapest (single-digit SAR per transfer).</p>
+<div class="win">Shortlist: <b>Tap or PayTabs</b> (both do marketplace splits natively — matches order/escrow model).</div>
+
+<h2>6 · Watch-outs</h2>
+<ul>
+  <li><b>Data flags</b>: Moyasar rates unverifiable (pricing page dead, third-party source self-contradicts). HyperPay/PayTabs rates custom-negotiated. GulfSaasReview numbers indicative only. Get direct quotes.</li>
+  <li><b>Neon Launchpad DB still unclaimed</b> — claim or migrate before budgeting Neon (see live-deployments memory).</li>
+  <li><b>PDPL</b>: Neon DB currently us-east-2. No KSA region on Neon; pick nearest allowed region deliberately when re-provisioning; KSA cross-border rules apply to personal data.</li>
+  <li><b>Expo EAS Production now $199/mo</b> (was $99) — avoid; free tier + local builds suffice.</li>
+  <li><b>Sender ID lead time</b> (10–20 business days) and <b>Google 12-tester rule</b> (personal accounts) are the two longest poles — start both before app store submission.</li>
+</ul>
+
+<h2>7 · Bottom line</h2>
+<table>
+  <tr><th>Phase</th><th>Fixed (yearly)</th><th>Infra (monthly)</th><th>Payments</th></tr>
+  <tr><td>Launch year</td><td>~$730 (CR path) / ~$180–490 (freelance path)</td><td>~$50–70</td><td>~2.5–2.9% of GMV + VAT</td></tr>
+  <tr><td>Growth (50k MAU)</td><td>~$205/yr (Apple + CR renewals + domain + sender ID)</td><td>~$210–560</td><td>negotiate interchange++ at volume</td></tr>
+</table>
+
+<div class="foot">Converted from <code>docs/md/cost-analysis.md</code>.</div>
+</div>
+</body>
+</html>

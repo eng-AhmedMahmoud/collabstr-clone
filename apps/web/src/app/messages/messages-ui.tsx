@@ -30,6 +30,12 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
   const [error, setError] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [live, setLive] = useState(false);
+  const [search, setSearch] = useState("");
+
+  const counterpartName = (th: Thread) => (me.role === "brand" ? th.creator : th.brand).name;
+  const visibleThreads = search.trim()
+    ? threads.filter((th) => counterpartName(th).toLowerCase().includes(search.trim().toLowerCase()))
+    : threads;
 
   const socketRef = useRef<Socket | null>(null);
   const activeIdRef = useRef<string | null>(active?.id ?? null);
@@ -170,11 +176,19 @@ export function MessagesUI({ me, threads }: { me: { id: string; role: "brand" | 
       <div className="grid grid-cols-12 gap-4 h-[75vh] rounded-2xl border border-border bg-elevated overflow-hidden">
         <aside className="col-span-4 border-r border-border flex flex-col">
           <div className="p-4 border-b border-border">
-            <input placeholder={i.messages.searchPh} className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={i.messages.searchPh}
+              className="w-full px-3.5 py-2.5 rounded-lg border border-border bg-surface"
+            />
           </div>
           <ul className="flex-1 overflow-y-auto">
             {threads.length === 0 && <li className="p-8 text-center text-sm text-muted">{i.messages.none}</li>}
-            {threads.map((t) => {
+            {threads.length > 0 && visibleThreads.length === 0 && (
+              <li className="p-8 text-center text-sm text-muted">{i.messages.none}</li>
+            )}
+            {visibleThreads.map((t) => {
               const counter = me.role === "brand" ? t.creator : t.brand;
               const last = t.messages[0];
               return (

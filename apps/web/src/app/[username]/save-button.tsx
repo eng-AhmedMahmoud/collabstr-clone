@@ -9,14 +9,17 @@ export function SaveButton({
   creatorId,
   username,
   loggedIn,
+  saved: initialSaved = false,
 }: {
   creatorId: string;
   username: string;
   loggedIn: boolean;
+  /** Whether the logged-in viewer has already saved this creator (server-resolved). */
+  saved?: boolean;
 }) {
   const router = useRouter();
   const i = useT();
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(initialSaved);
   const [pending, setPending] = useState(false);
 
   if (!loggedIn) {
@@ -58,6 +61,43 @@ export function SaveButton({
       }`}
     >
       {saved ? i.common.saved : i.profile.saveLabel}
+    </button>
+  );
+}
+
+export function ShareButton({ username, name }: { username: string; name: string }) {
+  const i = useT();
+  const [copied, setCopied] = useState(false);
+
+  async function share() {
+    const url =
+      typeof window !== "undefined" ? `${window.location.origin}/${username}` : `/${username}`;
+    // Prefer the native share sheet (mobile); if it's unavailable or the user
+    // cancels, fall back to copying the link to the clipboard.
+    if (typeof navigator !== "undefined" && navigator.share) {
+      try {
+        await navigator.share({ title: name, url });
+        return;
+      } catch {
+        // Cancelled or unsupported — fall through to the clipboard copy.
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // Clipboard blocked — nothing more we can do silently.
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={share}
+      className="px-3 py-2 rounded-lg border border-border text-sm font-medium hover:bg-surface"
+    >
+      {copied ? i.profile.shareCopied : i.profile.shareLabel}
     </button>
   );
 }

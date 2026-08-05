@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HypeAuditor — API Reply & Brief</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:960px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:26px}
+  h1{font-size:25px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:18px;margin:34px 0 12px;padding-top:10px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:18px 0 8px;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+  a{color:var(--accent);text-decoration:none} a:hover{text-decoration:underline}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  ul{margin:10px 0;padding-left:20px} li{margin:7px 0}
+  textarea{width:100%;height:720px;background:#0b0d11;color:#dfe3ea;border:1px solid var(--line);
+    border-radius:10px;padding:16px;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;resize:vertical}
+  .btn{display:inline-block;background:var(--accent);color:#fff;border:none;border-radius:8px;
+    padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;margin:8px 8px 0 0}
+  .btn.sec{background:var(--card2);color:var(--ink);border:1px solid var(--line)}
+  .hl{background:rgba(240,169,43,.18);color:#f6c66a;padding:1px 4px;border-radius:4px}
+  .links a{display:block;padding:7px 0;border-bottom:1px solid var(--line)}
+  .links .d{color:var(--muted);font-size:12.5px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:680px){.grid{grid-template-columns:1fr}}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+.langbar{display:flex;justify-content:flex-end;gap:6px;margin-bottom:14px}
+.langbtn{background:#1e222b;color:#a3a9b5;border:1px solid #2a2f3a;border-radius:8px;padding:6px 14px;font:600 13px/1 inherit;cursor:pointer}
+.langbtn.active{background:#7c5cff;color:#fff;border-color:#7c5cff}
+.lang[hidden]{display:none}
+#ar{direction:rtl}
+#ar ul{padding-left:0;padding-right:20px}
+#ar th,#ar td{text-align:right}
+#ar .links a{border-bottom-color:#2a2f3a}
+#ar .langbar{justify-content:flex-start}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="langbar"><button class="langbtn active" id="btn-en" onclick="setLang('en')">English</button><button class="langbtn" id="btn-ar" onclick="setLang('ar')">العربية</button></div>
+<div class="lang" id="en">
+
+<header class="top">
+  <h1>HypeAuditor — API Reply &amp; Brief</h1>
+  <div class="sub">Reply to Victoria Bakker (Partnership Manager EMEA) · Nakhla / Devya · rev. 2026-07-25 (docs-verified)</div>
+</header>
+
+<div class="card">
+  <b>Status:</b> Draft ready — <b>not sent</b>. Intro context removed (post-meeting). Questions are now grounded in the actual API docs. Fill the <span class="hl">5 highlighted spots</span>, then send from <code>contact@devya.dev</code>.
+</div>
+
+<h2>1 · The reply (editable)</h2>
+<p class="muted">Every technical question below was checked against <code>hypeauditor.readme.io</code> — see the brief (§3) for the facts each one rests on.</p>
+<textarea id="mail" spellcheck="false">Subject: Re: HypeAuditor API — answers, test approval & technical scoping questions
+
+Hi Victoria,
+
+Thanks again for the call — really useful. Answers to your questions first, then
+a few technical ones from the API docs so we can scope the integration cleanly.
+
+Your cost-estimation questions:
+
+1. Accounts validated per year: ~[1,000–3,000] unique creators/year to start. We
+   understand a report is cached for 12 months, so our pre-payout re-checks within
+   the year shouldn't add credits — we'd budget on unique creators, scaling with
+   the marketplace.
+2. Discovery usage: ~[300–800] searches/month, to source and vet creators in
+   specific KSA niches (mainly Instagram and TikTok, since Discovery doesn't cover
+   Snapchat — more on that below).
+3. Other features of interest: Campaign Reporting (post-campaign analysis), the
+   Audience Quality Score filter in Discovery, and Report Connections (cross-network
+   account linking).
+
+API test:
+- Please go ahead with the official approval — we'd like the 7-day live test.
+- Test email: contact@devya.dev
+- We'll use the free `nasa` Snapchat report to sanity-check Snapchat coverage
+  during the trial.
+- Preferred start: week of [4 Aug], or your earliest slot once approval clears.
+
+History tracking (your open item): we'd like to start accruing history for a
+shortlist of test accounts — I'll send the usernames separately. If calling
+Metrics History per account is the right trigger to both start history and unlock
+the report, we'll do that; please confirm the start date you need from us.
+
+Technical questions from the docs:
+
+1. AQS via API: the docs note the API returns `audience_type` (real / influencers /
+   mass-followers / suspicious) but not Quality Audience or Authentic Engagement
+   directly. Does the API expose the composite AQS (1–100) as a field, or should we
+   reconstruct our own authenticity score from audience_type, the growth charts,
+   and comment metrics?
+
+2. Report type + freshness: for authenticity validation (audience_type,
+   demographics, comment authenticity) we assume the advanced report (1 credit)
+   rather than the mini — can you confirm? And since a report is cached 12 months,
+   if we want a fresh re-check before payout, does that require a new credit or is
+   there a refresh path?
+
+3. Arabic / Saudi audience: does the report break audience down by country and
+   language, so we can confirm a creator's audience is genuinely Saudi and
+   Arabic-speaking? And how do Comments Authenticity and the comment-sentiment
+   model perform on Arabic / Saudi-dialect comments — any MENA-specific tuning?
+
+4. Snapchat (our top channel): (a) does the Snapchat report carry the same
+   audience-quality and demographics depth as Instagram, or is it lighter?
+   (b) Discovery covers Instagram/TikTok/YouTube/Twitch/X but not Snapchat — is
+   Snapchat discovery on the roadmap, or should we source Snapchat creators
+   ourselves and use the API only for their reports?
+
+5. Micro-creators: the API returns error 31 ("not enough followers") below 1,000,
+   plus errors for private/hidden accounts. A meaningful share of our KSA creators
+   are micro (under 1K) — is there any way to vet them, or should we treat 1,000
+   followers as a hard onboarding floor?
+
+6. Readiness & history: the report endpoint queues generation and returns
+   report_state (READY vs READY_LOW_CONFIDENCE). Is there a webhook/callback when it
+   flips to READY, or do we poll? Is READY_LOW_CONFIDENCE the state we'll see for the
+   new/young accounts you mentioned until ~1 month of data accrues? And for creators
+   already in your database, how far back does history typically reach?
+
+Happy to loop in your technical team on any of these, or jump on a follow-up call.
+Looking forward to the pricing structure once we lock the volumes above.
+
+Thanks, and have a great weekend!
+
+Best,
+Ahmed Mahmoud
+Founder, Nakhla (Devya Solutions)
+contact@devya.dev</textarea>
+<div>
+  <button class="btn" onclick="copyMail()">Copy email</button>
+  <button class="btn sec" onclick="mailtoOpen()">Open in mail client</button>
+  <span id="copied" class="muted" style="margin-left:8px"></span>
+</div>
+
+<h2>2 · Before you send — confirm these 5</h2>
+<table>
+  <tr><th>#</th><th>Field</th><th>Default in draft</th><th>Note</th></tr>
+  <tr><td>1</td><td>Validation volume / year</td><td>1,000–3,000 <b>unique</b> creators</td><td>Reports cache 12 mo → count unique creators, not re-checks</td></tr>
+  <tr><td>2</td><td>Discovery volume / month</td><td>300–800 searches</td><td>IG/TikTok only (no Snapchat in Discovery)</td></tr>
+  <tr><td>3</td><td>Test start</td><td>week of 4 Aug</td><td>7-day live window</td></tr>
+  <tr><td>4</td><td>History-tracking date + username shortlist</td><td>—</td><td>She's waiting (ETA Mon 27 Jul); trigger = Metrics History per account</td></tr>
+  <tr><td>5</td><td>Test email</td><td>contact@devya.dev</td><td>Which mailbox gets API test access</td></tr>
+</table>
+
+<h2>3 · API brief (docs-verified)</h2>
+<div class="grid">
+  <div class="card">
+    <h3>Shape &amp; limits</h3>
+    <ul>
+      <li><code>GET/POST hypeauditor.com/api/method/&lt;method&gt;</code>, JSON</li>
+      <li>Auth headers: <code>x-auth-id</code> + <code>x-auth-token</code></li>
+      <li>Use <b>v=2</b> (v=1 deprecated Aug 2024)</li>
+      <li>Rate limit: <b>100 requests/min</b> (error 6 = too many)</li>
+      <li>Reports <b>async</b>: same endpoint returns the report if ready, else queues it — <b>poll</b> (no webhook documented)</li>
+      <li><code>report_state</code>: <code>READY</code> vs <code>READY_LOW_CONFIDENCE</code> (low audience activity)</li>
+      <li><code>highDemand:true</code> = HA overloaded, slower generation</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>Endpoints</h3>
+    <ul>
+      <li><b>Report</b> per channel — IG, TikTok, YouTube, Twitch, X, <b>Snapchat</b> (<code>auditor.snapchat?channel=</code>)</li>
+      <li><b>Discovery</b> (<code>auditor.search</code>) — IG/TikTok/YouTube/Twitch/X <span class="bad">· not Snapchat</span></li>
+      <li><b>Metrics History</b> (<code>auditor.instagramHistory</code>) — <b>unlocks the report</b>; history only from DB-add date</li>
+      <li><b>Report Connections</b> (<code>auditor.reportConnections</code>) — links accounts across networks (incl. Snapchat=7)</li>
+      <li>Suggester · Lists · Campaign Management</li>
+    </ul>
+  </div>
+</div>
+<div class="card">
+  <h3>What the report returns (and doesn't)</h3>
+  <ul>
+    <li><span class="pill ok">returns</span> <code>audience_type</code> = real / influencers (infs) / mass-followers / suspicious → the fake-follower breakdown.</li>
+    <li><span class="pill ok">returns</span> demography (age/gender), location, blogger_rankings (country), follower/following growth charts, comment <b>sentiment</b> (pos/neu/neg), likes-spread, likes-comments ratio, ER benchmarks. Audience demographics &amp; authenticity = <b>advanced report</b> only.</li>
+    <li><span class="pill warn">derive</span> <b>Quality Audience &amp; Authentic Engagement are NOT returned</b> — compute: <code>Quality Audience = followers × (audience_type.real + audience_type.infs)</code>.</li>
+    <li><span class="pill warn">confirm</span> Whether the <b>composite AQS (1–100)</b> is a field, or must be reconstructed — asked (Q1).</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>Credits &amp; caching (cost model)</h3>
+  <ul>
+    <li>Advanced report = <b>1 report credit</b>; mini report = <b>1 mini credit</b>. Failed generation refunds the credit (check <code>restTokens</code>).</li>
+    <li>Report <b>cached 12 months</b>; a re-check <b>after 365 days = 1 credit</b> (so in-year re-checks don't add cost — budget on unique creators/year).</li>
+    <li>Snapchat: <code>nasa</code> report is <b>free</b> (use it to test). Report cached 1 year, same as IG.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>Hard limits / error codes</h3>
+  <p><b>Rejected outright</b> (returns error, no analysis): <code>31</code> &lt;1,000 followers · <code>30</code> private · <code>33</code> hidden · <code>34</code> suspended · <code>37</code> restricted · &lt;1 post. Snapchat: rejected if channel not found / no videos / no views. Also: <code>26</code> not enough credits, <code>27</code> no API access, <code>25</code> service unavailable, <code>16</code> not found.</p>
+</div>
+
+<h2>4 · Arabic / KSA compatibility</h2>
+<ul>
+  <li><span class="pill ok">yes</span> Creator country (blogger_rankings, location) + audience demographics are in the advanced report → Saudi targeting is filterable/reportable. Audience <b>language</b> breakdown = confirming in email (Q3).</li>
+  <li><span class="pill ok">yes</span> <b>Snapchat report</b> exists (critical — ~90% of Saudi 13–34s) and has a free <code>nasa</code> test.</li>
+  <li><span class="pill bad">gap</span> <b>Discovery does not cover Snapchat</b> — you'd source Snapchat creators yourself, API only for their reports (Q4).</li>
+  <li><span class="pill warn">confirm</span> Arabic / Saudi-dialect handling of <b>Comments Authenticity</b> + <b>comment sentiment</b> is undocumented (Q3).</li>
+</ul>
+
+<h2>5 · Pricing</h2>
+<div class="card">
+  <p><b>API is credit-based &amp; quote-only.</b> Documented unit: 1 report = 1 credit (advanced) / 1 mini credit (mini); the per-credit <b>price</b> is negotiated (Victoria confirmed API pricing differs from Browser packages). Public <b>Browser</b> tiers (not the API): ~$299/mo Basic, ~$499/mo Pro, Enterprise quote.</p>
+  <p><span class="pill warn">anchor</span> <b>Benchmark:</b> Modash's comparable Discovery API ≈ <b>$0.45 per audience report</b>, ~<b>$16,200/yr</b> floor. Use it to sanity-check HypeAuditor's per-credit quote.</p>
+</div>
+
+<h2>6 · Helpful links</h2>
+<div class="grid">
+  <div class="card links">
+    <h3>HypeAuditor API docs</h3>
+    <a href="https://hypeauditor.readme.io/llms.txt">API index (all endpoints, Markdown)</a>
+    <a href="https://hypeauditor.readme.io/reference/basic">Basic — auth, limits, versioning</a>
+    <a href="https://hypeauditor.readme.io/reference/report_instagram">Instagram Report — full field schema</a>
+    <a href="https://hypeauditor.readme.io/reference/report_snapchat">Snapchat Report</a>
+    <a href="https://hypeauditor.readme.io/reference/general_discovery">Discovery API</a>
+    <a href="https://hypeauditor.readme.io/reference/metrics_history_instagram">Metrics History (unlocks report)</a>
+    <a href="https://hypeauditor.readme.io/reference/connections">Report Connections</a>
+    <a href="https://hypeauditor.readme.io/reference/errors">Error codes</a>
+  </div>
+  <div class="card links">
+    <h3>Pricing, scoring &amp; benchmark</h3>
+    <a href="https://hypeauditor.com/api-integration/">API product overview</a>
+    <a href="https://hypeauditor.com/pricing/">HypeAuditor pricing (Browser tiers)</a>
+    <a href="https://help.hypeauditor.com/en/articles/2221731">What is AQS &amp; how it's calculated</a>
+    <a href="https://blog.hypeauditor.com/what-is-audience-quality-score-on-hypeauditor/">AQS deep-dive (fake-follower signals)</a>
+    <a href="https://www.modash.io/influencer-marketing-api/pricing">Modash API pricing — negotiation anchor</a>
+  </div>
+  <div class="card links">
+    <h3>KSA market context</h3>
+    <a href="https://www.arabnews.com/node/1411536/media">Snapchat dominance in Saudi Arabia</a>
+    <a href="https://influencermarketinghub.com/influencer-marketing-in-saudi-arabia-guide/">Influencer marketing in KSA (guide)</a>
+  </div>
+  <div class="card links">
+    <h3>Contact — Victoria Bakker</h3>
+    <a href="mailto:bakker@hypeauditor.com">bakker@hypeauditor.com</a>
+    <a href="tel:+46851971382">+46 851 971 382</a>
+    <a href="https://t.me/Torry_Bakker_signed">Telegram @Torry_Bakker_signed</a>
+    <span class="d">Partnership Manager EMEA · ETA Mon 27 Jul on history tracking</span>
+  </div>
+</div>
+<div class="card">
+  <h3>Related internal docs</h3>
+  <p class="muted"><code>docs/influencer-verification-plan.md</code> · <code>docs/influencer-verification-session-report.html</code> · <code>docs/freelance-platform-teardown.md</code></p>
+</div>
+
+<div class="foot">
+  Draft only — nothing sent. All API facts verified against hypeauditor.readme.io (fetched 2026-07-25). The three <span class="hl">confirm</span> items (AQS-via-API, audience-language breakdown, Arabic tuning) are genuinely undocumented — hence asked, not assumed.
+</div>
+
+</div>
+
+<div class="lang" id="ar" dir="rtl" hidden>
+
+<header class="top">
+  <h1>HypeAuditor — الردّ والموجز الخاص بالـ API</h1>
+  <div class="sub">ردّ إلى Victoria Bakker (مديرة الشراكات لمنطقة EMEA) · نخلة / Devya · مراجعة 2026-07-25 (مُوثَّقة وفق الوثائق)</div>
+</header>
+
+<div class="card">
+  <b>الحالة:</b> المسودّة جاهزة — <b>لم تُرسَل بعد</b>. حُذف سياق التعريف (بعد الاجتماع). الأسئلة الآن مبنية على وثائق الـ API الفعلية. املأ <span class="hl">المواضع الخمسة المميَّزة</span>، ثم أرسِل من <code>contact@devya.dev</code>.
+</div>
+
+<h2>1 · الرسالة (نص الرسالة بالإنجليزية)</h2>
+<p class="muted">نص الرسالة بالإنجليزية (تُرسَل إلى HypeAuditor). للاطّلاع والنسخ، بدّل إلى English.</p>
+<div><button class="btn" onclick="setLang('en')">عرض الرسالة بالإنجليزية</button></div>
+<p class="muted">جرى التحقّق من كل سؤال تقني أدناه مقابل <code>hypeauditor.readme.io</code> — راجع الموجز (القسم 3) للحقائق التي يستند إليها كل سؤال.</p>
+
+<h2>2 · قبل الإرسال — أكِّد هذه الخمسة</h2>
+<table>
+  <tr><th>#</th><th>الحقل</th><th>القيمة الافتراضية في المسودّة</th><th>ملاحظة</th></tr>
+  <tr><td>1</td><td>حجم التحقّق / سنويًا</td><td>1,000–3,000 صانع محتوى <b>فريد</b></td><td>التقارير مُخزَّنة مؤقتًا 12 شهرًا ← احسب صنّاع المحتوى الفريدين، لا عمليات إعادة الفحص</td></tr>
+  <tr><td>2</td><td>حجم الاكتشاف (Discovery) / شهريًا</td><td>300–800 عملية بحث</td><td>Instagram/TikTok فقط (لا يشمل Snapchat في Discovery)</td></tr>
+  <tr><td>3</td><td>بدء الاختبار</td><td>أسبوع 4 Aug</td><td>نافذة اختبار حيّ مدّتها 7 أيام</td></tr>
+  <tr><td>4</td><td>تاريخ بدء تتبّع السجلّ + قائمة أسماء المستخدمين</td><td>—</td><td>هي بانتظاره (الموعد المتوقّع الاثنين 27 Jul)؛ المُشغِّل = Metrics History لكل حساب</td></tr>
+  <tr><td>5</td><td>البريد الإلكتروني للاختبار</td><td>contact@devya.dev</td><td>أيّ صندوق بريد يحصل على وصول اختبار الـ API</td></tr>
+</table>
+
+<h2>3 · موجز الـ API (مُوثَّق وفق الوثائق)</h2>
+<div class="grid">
+  <div class="card">
+    <h3>البنية والحدود</h3>
+    <ul>
+      <li><code>GET/POST hypeauditor.com/api/method/&lt;method&gt;</code>، بصيغة JSON</li>
+      <li>ترويسات المصادقة: <code>x-auth-id</code> + <code>x-auth-token</code></li>
+      <li>استخدم <b>v=2</b> (النسخة v=1 أُوقفت في Aug 2024)</li>
+      <li>حدّ المعدّل: <b>100 طلب/دقيقة</b> (خطأ 6 = عدد الطلبات كبير جدًا)</li>
+      <li>التقارير <b>غير متزامنة (async)</b>: يعيد نفس الـ endpoint التقرير إن كان جاهزًا، وإلا يضعه في قائمة الانتظار — <b>استعلِم دوريًا (poll)</b> (لا يوجد webhook موثّق)</li>
+      <li><code>report_state</code>: <code>READY</code> مقابل <code>READY_LOW_CONFIDENCE</code> (نشاط جمهور منخفض)</li>
+      <li><code>highDemand:true</code> = HA محمّلة بأقصى طاقتها، توليد أبطأ</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>نقاط النهاية (Endpoints)</h3>
+    <ul>
+      <li><b>Report</b> لكل قناة — IG، TikTok، YouTube، Twitch، X، <b>Snapchat</b> (<code>auditor.snapchat?channel=</code>)</li>
+      <li><b>Discovery</b> (<code>auditor.search</code>) — IG/TikTok/YouTube/Twitch/X <span class="bad">· لا يشمل Snapchat</span></li>
+      <li><b>Metrics History</b> (<code>auditor.instagramHistory</code>) — <b>يفتح التقرير</b>؛ السجلّ يبدأ فقط من تاريخ الإضافة إلى قاعدة البيانات</li>
+      <li><b>Report Connections</b> (<code>auditor.reportConnections</code>) — يربط الحسابات عبر الشبكات (بما فيها Snapchat=7)</li>
+      <li>Suggester · Lists · Campaign Management</li>
+    </ul>
+  </div>
+</div>
+<div class="card">
+  <h3>ما الذي يعيده التقرير (وما لا يعيده)</h3>
+  <ul>
+    <li><span class="pill ok">يُعيد</span> <code>audience_type</code> = real / influencers (infs) / mass-followers / suspicious ← تفصيل المتابعين المزيّفين.</li>
+    <li><span class="pill ok">يُعيد</span> الديموغرافيا (العمر/الجنس)، الموقع، blogger_rankings (الدولة)، مخطّطات نمو المتابعين/المتابَعين، <b>مشاعر</b> التعليقات (إيجابي/محايد/سلبي)، توزيع الإعجابات، نسبة الإعجابات إلى التعليقات، معايير معدّل التفاعل. ديموغرافيا الجمهور وأصالته = في <b>التقرير المتقدّم (advanced)</b> فقط.</li>
+    <li><span class="pill warn">يُشتقّ</span> <b>Quality Audience وAuthentic Engagement لا يُعادان</b> — احسب: <code>Quality Audience = followers × (audience_type.real + audience_type.infs)</code>.</li>
+    <li><span class="pill warn">تأكيد</span> هل درجة <b>AQS المركّبة (1–100)</b> حقلٌ مُعاد، أم يجب إعادة بنائها — مطروح (السؤال 1).</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>الأرصدة والتخزين المؤقّت (نموذج التكلفة)</h3>
+  <ul>
+    <li>التقرير المتقدّم = <b>رصيد تقرير واحد</b>؛ التقرير المصغّر (mini) = <b>رصيد mini واحد</b>. التوليد الفاشل يُعيد الرصيد (تحقّق من <code>restTokens</code>).</li>
+    <li>التقرير <b>مُخزَّن مؤقتًا 12 شهرًا</b>؛ إعادة الفحص <b>بعد 365 يومًا = رصيد واحد</b> (لذا عمليات إعادة الفحص خلال السنة لا تضيف تكلفة — احسب على أساس صنّاع المحتوى الفريدين/سنويًا).</li>
+    <li>Snapchat: تقرير <code>nasa</code> <b>مجّاني</b> (استخدمه للاختبار). التقرير مُخزَّن مؤقتًا سنة واحدة، مثل IG.</li>
+  </ul>
+</div>
+<div class="card">
+  <h3>الحدود الصارمة / رموز الأخطاء</h3>
+  <p><b>مرفوض تمامًا</b> (يُعيد خطأً، دون تحليل): <code>31</code> أقل من 1,000 متابع · <code>30</code> خاص · <code>33</code> مخفي · <code>34</code> موقوف · <code>37</code> مقيّد · أقل من منشور واحد. Snapchat: مرفوض إذا لم تُوجد القناة / لا توجد مقاطع فيديو / لا توجد مشاهدات. أيضًا: <code>26</code> أرصدة غير كافية، <code>27</code> لا يوجد وصول إلى الـ API، <code>25</code> الخدمة غير متاحة، <code>16</code> غير موجود.</p>
+</div>
+
+<h2>4 · التوافق مع العربية / السوق السعودي</h2>
+<ul>
+  <li><span class="pill ok">نعم</span> دولة صانع المحتوى (blogger_rankings، location) + ديموغرافيا الجمهور متوفّرة في التقرير المتقدّم ← الاستهداف السعودي قابل للتصفية والتقرير. تفصيل <b>لغة</b> الجمهور = قيد التأكيد في الرسالة (السؤال 3).</li>
+  <li><span class="pill ok">نعم</span> <b>تقرير Snapchat</b> موجود (حاسم — نحو 90% من السعوديين بين 13–34 عامًا) ويتوفّر له اختبار <code>nasa</code> مجّاني.</li>
+  <li><span class="pill bad">فجوة</span> <b>Discovery لا يغطّي Snapchat</b> — ستوفّر صنّاع محتوى Snapchat بنفسك، ويُستخدم الـ API لتقاريرهم فقط (السؤال 4).</li>
+  <li><span class="pill warn">تأكيد</span> معالجة العربية / اللهجة السعودية في <b>Comments Authenticity</b> + <b>مشاعر التعليقات</b> غير مُوثّقة (السؤال 3).</li>
+</ul>
+
+<h2>5 · التسعير</h2>
+<div class="card">
+  <p><b>الـ API قائم على الأرصدة وبعرض سعر فقط.</b> الوحدة المُوثّقة: 1 تقرير = 1 رصيد (advanced) / 1 رصيد mini (mini)؛ <b>سعر</b> الرصيد الواحد يُتفاوَض عليه (أكّدت Victoria أنّ تسعير الـ API يختلف عن باقات Browser). أسعار <b>Browser</b> العامة (وليست الـ API): نحو 299$/شهر Basic، نحو 499$/شهر Pro، وEnterprise بعرض سعر.</p>
+  <p><span class="pill warn">مرجع</span> <b>معيار مقارنة:</b> واجهة Discovery API المماثلة من Modash ≈ <b>0.45$ لكل تقرير جمهور</b>، بحدّ أدنى نحو <b>16,200$/سنويًا</b>. استخدمه للتحقّق من معقولية عرض سعر HypeAuditor لكل رصيد.</p>
+</div>
+
+<h2>6 · روابط مفيدة</h2>
+<div class="grid">
+  <div class="card links">
+    <h3>وثائق HypeAuditor API</h3>
+    <a href="https://hypeauditor.readme.io/llms.txt">فهرس الـ API (جميع نقاط النهاية، Markdown)</a>
+    <a href="https://hypeauditor.readme.io/reference/basic">Basic — المصادقة والحدود والإصدارات</a>
+    <a href="https://hypeauditor.readme.io/reference/report_instagram">Instagram Report — مخطّط الحقول الكامل</a>
+    <a href="https://hypeauditor.readme.io/reference/report_snapchat">Snapchat Report</a>
+    <a href="https://hypeauditor.readme.io/reference/general_discovery">Discovery API</a>
+    <a href="https://hypeauditor.readme.io/reference/metrics_history_instagram">Metrics History (يفتح التقرير)</a>
+    <a href="https://hypeauditor.readme.io/reference/connections">Report Connections</a>
+    <a href="https://hypeauditor.readme.io/reference/errors">رموز الأخطاء</a>
+  </div>
+  <div class="card links">
+    <h3>التسعير والتقييم والمعيار</h3>
+    <a href="https://hypeauditor.com/api-integration/">نظرة عامة على منتج الـ API</a>
+    <a href="https://hypeauditor.com/pricing/">تسعير HypeAuditor (باقات Browser)</a>
+    <a href="https://help.hypeauditor.com/en/articles/2221731">ما هو AQS وكيف يُحتسَب</a>
+    <a href="https://blog.hypeauditor.com/what-is-audience-quality-score-on-hypeauditor/">تحليل معمّق لـ AQS (إشارات المتابعين المزيّفين)</a>
+    <a href="https://www.modash.io/influencer-marketing-api/pricing">تسعير Modash API — مرجع التفاوض</a>
+  </div>
+  <div class="card links">
+    <h3>سياق السوق السعودي</h3>
+    <a href="https://www.arabnews.com/node/1411536/media">هيمنة Snapchat في السعودية</a>
+    <a href="https://influencermarketinghub.com/influencer-marketing-in-saudi-arabia-guide/">التسويق عبر المؤثّرين في السعودية (دليل)</a>
+  </div>
+  <div class="card links">
+    <h3>جهة الاتصال — Victoria Bakker</h3>
+    <a href="mailto:bakker@hypeauditor.com">bakker@hypeauditor.com</a>
+    <a href="tel:+46851971382">+46 851 971 382</a>
+    <a href="https://t.me/Torry_Bakker_signed">Telegram @Torry_Bakker_signed</a>
+    <span class="d">مديرة الشراكات لمنطقة EMEA · الموعد المتوقّع الاثنين 27 Jul بشأن تتبّع السجلّ</span>
+  </div>
+</div>
+<div class="card">
+  <h3>وثائق داخلية ذات صلة</h3>
+  <p class="muted"><code>docs/influencer-verification-plan.md</code> · <code>docs/influencer-verification-session-report.html</code> · <code>docs/freelance-platform-teardown.md</code></p>
+</div>
+
+<div class="foot">
+  مسودّة فقط — لم يُرسَل شيء. جرى التحقّق من جميع حقائق الـ API مقابل hypeauditor.readme.io (جُلبت في 2026-07-25). بنود <span class="hl">التأكيد</span> الثلاثة (AQS عبر الـ API، تفصيل لغة الجمهور، ضبط العربية) غير مُوثّقة فعلًا — لذا طُرحت ولم تُفترَض.
+</div>
+
+</div>
+<script>
+function copyMail(){
+  var t=document.getElementById('mail'); t.select(); t.setSelectionRange(0,999999);
+  navigator.clipboard.writeText(t.value).then(function(){
+    document.getElementById('copied').textContent='Copied ✓';
+    setTimeout(function(){document.getElementById('copied').textContent='';},2000);
+  }).catch(function(){ document.execCommand('copy');
+    document.getElementById('copied').textContent='Copied ✓'; });
+}
+function mailtoOpen(){
+  var body=encodeURIComponent(document.getElementById('mail').value.replace(/^Subject:.*\n\n/,''));
+  window.location.href='mailto:bakker@hypeauditor.com?subject='+
+    encodeURIComponent('Re: HypeAuditor API — answers, test approval & technical scoping questions')+
+    '&body='+body;
+}
+</script>
+<script>
+function setLang(l){var en=document.getElementById('en'),ar=document.getElementById('ar'),be=document.getElementById('btn-en'),ba=document.getElementById('btn-ar');if(l==='ar'){en.hidden=true;ar.hidden=false;document.documentElement.lang='ar';document.documentElement.dir='rtl';ba.classList.add('active');be.classList.remove('active');}else{ar.hidden=true;en.hidden=false;document.documentElement.lang='en';document.documentElement.dir='ltr';be.classList.add('active');ba.classList.remove('active');}try{localStorage.setItem('nakhla_lang',l);}catch(e){}}
+try{var s=localStorage.getItem('nakhla_lang');if(s)setLang(s);}catch(e){}
+</script>
+</body>
+</html>

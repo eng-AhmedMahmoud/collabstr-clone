@@ -1,6 +1,7 @@
-import { Pressable, StyleSheet, Text, View, I18nManager } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/theme/context";
+import { useI18n } from "@/i18n/context";
 import { radius, spacing } from "@/theme";
 import type { ReactNode } from "react";
 
@@ -15,7 +16,11 @@ type Props = {
 
 export function ListItem({ label, value, icon, onPress, right, danger }: Props) {
   const { palette } = useTheme();
-  const chevron = I18nManager.isRTL ? "chevron-back" : "chevron-forward";
+  const { isRTL } = useI18n();
+  const align = isRTL ? "right" : "left";
+  // The row itself is mirrored by the root `direction` wrapper; the trailing
+  // chevron just needs the glyph that points "forward" for the active script.
+  const chevron = isRTL ? "chevron-back" : "chevron-forward";
   return (
     <Pressable
       onPress={onPress}
@@ -28,8 +33,8 @@ export function ListItem({ label, value, icon, onPress, right, danger }: Props) 
         <Ionicons name={icon} size={20} color={danger ? palette.danger : palette.brand} />
       ) : null}
       <View style={{ flex: 1 }}>
-        <Text style={[styles.label, { color: danger ? palette.danger : palette.fg }]}>{label}</Text>
-        {value ? <Text style={[styles.value, { color: palette.fgMuted }]}>{value}</Text> : null}
+        <Text style={[styles.label, { color: danger ? palette.danger : palette.fg, textAlign: align }]}>{label}</Text>
+        {value ? <Text style={[styles.value, { color: palette.fgMuted, textAlign: align }]}>{value}</Text> : null}
       </View>
       {right ?? (onPress ? <Ionicons name={chevron} size={18} color={palette.fgMuted} /> : null)}
     </Pressable>

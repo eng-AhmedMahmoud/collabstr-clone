@@ -1,5 +1,4 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { I18nManager } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import * as Localization from "expo-localization";
 import { dict, type Dict, type Locale } from "./dict";
@@ -15,13 +14,13 @@ export function getCurrentLocale(): Locale {
 
 type Ctx = {
   locale: Locale;
+  // Layout direction derived purely from the active locale. Consumers apply
+  // this in JS (root `direction` style + textAlign) so switching language flips
+  // the UI live, with no native reload — I18nManager.forceRTL is never called.
   dir: "ltr" | "rtl";
+  isRTL: boolean;
   t: Dict;
   setLocale: (l: Locale) => Promise<void>;
-  // True whenever the native layout direction doesn't match the active
-  // locale — including first launch on an Arabic device, where JS runs in
-  // Arabic but the app still renders LTR until a restart.
-  needsRestart: boolean;
 };
 
 const I18nCtx = createContext<Ctx | null>(null);
@@ -47,32 +46,22 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  useEffect(() => {
-    const shouldRTL = locale === "ar";
-    if (I18nManager.isRTL !== shouldRTL) {
-      I18nManager.allowRTL(shouldRTL);
-      I18nManager.forceRTL(shouldRTL);
-    }
-  }, [locale]);
-
-  // I18nManager.isRTL is fixed for the lifetime of the native session, so
-  // this stays true until the app is actually restarted.
-  const needsRestart = I18nManager.isRTL !== (locale === "ar");
-
-  const value = useMemo<Ctx>(
-    () => ({
+  const value = useMemo<Ctx>(() => {
+    const isRTL = locale === "ar";
+    return {
       locale,
-      dir: locale === "ar" ? "rtl" : "ltr",
+      dir: isRTL ? "rtl" : "ltr",
+      isRTL,
       t: dict[locale],
-      needsRestart,
       setLocale: async (l) => {
+        // Persist so the choice survives a real relaunch, then update state —
+        // the new `dir`/`isRTL` re-render the tree and flip layout immediately.
         await SecureStore.setItemAsync(KEY, l);
         currentLocale = l;
         setLocaleState(l);
       },
-    }),
-    [locale, needsRestart],
-  );
+    };
+  }, [locale]);
 
   return <I18nCtx.Provider value={value}>{children}</I18nCtx.Provider>;
 }

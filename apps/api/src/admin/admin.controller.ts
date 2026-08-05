@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Query, UseGuards } from "@nestjs/common";
 import { AdminService } from "./admin.service";
+import { ReconciliationService } from "../reconciliation/reconciliation.service";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 import { RolesGuard } from "../common/roles.guard";
 import { Roles } from "../common/roles.decorator";
@@ -12,7 +13,10 @@ import type { OrderStatus, Role } from "@prisma/client";
 @Roles("admin")
 @Controller("admin")
 export class AdminController {
-  constructor(private admin: AdminService) {}
+  constructor(
+    private admin: AdminService,
+    private recon: ReconciliationService,
+  ) {}
 
   @Get("overview")
   overview() {
@@ -85,18 +89,38 @@ export class AdminController {
   }
 
   @Post("orders/:id/force-release")
-  forceRelease(@Param("id") id: string, @Body("note") note?: string) {
-    return this.admin.forceRelease(id, note ?? "");
+  forceRelease(@CurrentUser() me: AuthUser, @Param("id") id: string, @Body("note") note?: string) {
+    return this.admin.forceRelease(me, id, note ?? "");
   }
 
   @Post("orders/:id/force-cancel")
-  forceCancel(@Param("id") id: string, @Body("reason") reason: string) {
-    return this.admin.forceCancel(id, reason);
+  forceCancel(@CurrentUser() me: AuthUser, @Param("id") id: string, @Body("reason") reason: string) {
+    return this.admin.forceCancel(me, id, reason);
   }
 
   @Post("orders/:id/force-dispute")
-  forceDispute(@Param("id") id: string, @Body("reason") reason: string) {
-    return this.admin.forceDispute(id, reason);
+  forceDispute(@CurrentUser() me: AuthUser, @Param("id") id: string, @Body("reason") reason: string) {
+    return this.admin.forceDispute(me, id, reason);
+  }
+
+  @Get("metrics")
+  metrics() {
+    return this.admin.metrics();
+  }
+
+  @Get("reconciliation")
+  reconciliation(@Query("take") take?: string) {
+    return this.recon.list(take ? Number(take) : undefined);
+  }
+
+  @Post("reconciliation/run")
+  runReconciliation() {
+    return this.recon.run();
+  }
+
+  @Get("webhooks")
+  webhooks(@Query("take") take?: string) {
+    return this.admin.webhookEvents(take ? Number(take) : undefined);
   }
 
   @Get("reviews")

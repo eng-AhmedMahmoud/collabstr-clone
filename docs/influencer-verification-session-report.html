@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Influencer Verification — Session Report</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:920px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  h1{font-size:26px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:8px;border-top:1px solid var(--line)}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--blue)}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:13px}
+  a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  ul{margin:10px 0;padding-left:20px} li{margin:6px 0}
+  pre{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:16px;
+    overflow:auto;font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace;color:#dfe3ea;white-space:pre-wrap}
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+  .stat{flex:1;min-width:120px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .stat b{display:block;font-size:22px} .stat span{color:var(--muted);font-size:12px}
+  .kv{font-size:13px;color:var(--muted)}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .tag{font-size:11px;color:var(--muted)}
+  .langbar{display:flex;justify-content:flex-end;gap:6px;margin-bottom:14px}
+  .langbtn{background:#1e222b;color:#a3a9b5;border:1px solid #2a2f3a;border-radius:8px;padding:6px 14px;font:600 13px/1 inherit;cursor:pointer}
+  .langbtn.active{background:#7c5cff;color:#fff;border-color:#7c5cff}
+  .lang[hidden]{display:none}
+  #ar{direction:rtl}
+  #ar ul{padding-left:0;padding-right:20px}
+  #ar th,#ar td{text-align:right}
+  #ar .langbar{justify-content:flex-start}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="langbar"><button class="langbtn active" id="btn-en" onclick="setLang('en')">English</button><button class="langbtn" id="btn-ar" onclick="setLang('ar')">العربية</button></div>
+<div class="lang" id="en">
+
+<header class="top">
+  <h1>Influencer Verification — Session Report</h1>
+  <div class="sub">Nakhla (KSA/GCC marketplace) · 2026-07-23 · research → plan → vendor outreach</div>
+</header>
+
+<p><b>The ask:</b> research tools/techniques/business solutions for validating influencers' real followers,
+engagement and reach (Collabstr + SocialBlade style); turn it into a plan to enhance influencer review in the app;
+and set up meetings with vendors who can help, via Claude-in-Chrome.</p>
+
+<div class="card">
+  <b>Bottom line</b>
+  <ul>
+    <li><span class="pill ok">DONE</span> Deep research completed &amp; fact-checked.</li>
+    <li><span class="pill ok">DONE</span> Build plan written → <code>docs/influencer-verification-plan.md</code></li>
+    <li><span class="pill ok">BOOKED</span> HypeAuditor demo requested.</li>
+    <li><span class="pill warn">REDIRECTED</span> Modash auto-declined the demo (out-of-ICP) → email draft ready below.</li>
+    <li><span class="pill bad">MANUAL</span> Phyllo form couldn't be automated (embedded cross-origin form) → 3 steps below.</li>
+  </ul>
+</div>
+
+<h2>1 · Research</h2>
+<div class="stat-row">
+  <div class="stat"><b>112</b><span>research agents</span></div>
+  <div class="stat"><b>29</b><span>sources fetched</span></div>
+  <div class="stat"><b>134</b><span>claims extracted</span></div>
+  <div class="stat"><b>20</b><span>confirmed (3-0 votes)</span></div>
+  <div class="stat"><b>5</b><span>refuted &amp; dropped</span></div>
+</div>
+
+<h3>Verified findings that shape the product</h3>
+<ul>
+  <li><b>Verified metrics need OAuth, not scraping.</b> Real reach/impressions/engagement come only from a creator
+  connecting their own account — Instagram Graph/Insights, TikTok Business, YouTube Analytics. Can't be pulled from a public profile. → the lever to gate a "Verified" badge behind account connection.</li>
+  <li><b>Instagram Insights requires a professional account</b> (business/creator); the API returns nothing for personal accounts.</li>
+  <li><b>TikTok</b> <code>user.info.stats</code> gives follower/following/likes/video counts; <code>user.info.profile</code> gives <code>is_verified</code>. Needs app review; returns self-reported counts (tamper-proof source, <i>not</i> fraud-proof).</li>
+  <li><b>"Verified" ≠ fraud-free.</b> A verified follower <i>count</i> can still be inflated with bought followers, so a separate fake-follower check is required on top.</li>
+  <li><b>Detection technique (production):</b> network-graph analysis over billions of accounts + follower segmentation (fake / mass-follower / influencer / real) + reachability. Degrades below ~10K followers — relevant for KSA's micro-influencer base.</li>
+  <li><b>Adopt-ready thresholds:</b> badge-eligible under <b>25%</b> fake followers; block over <b>50%</b>. Engagement red flag under 0.5%.</li>
+</ul>
+
+<h3>Vendor economics (build-vs-buy)</h3>
+<table>
+  <tr><th>Vendor</th><th>Role</th><th>Pricing</th></tr>
+  <tr><td>Modash Discovery API</td><td>Fake-follower / audience-quality reports</td><td>from <b>$16,200/yr</b> · ~<b>$0.45</b> per audience report (~$0.90 full vet)</td></tr>
+  <tr><td>HypeAuditor</td><td>Audience Quality Score (1–100) + fraud reports</td><td>Sales-led / custom</td></tr>
+  <tr><td>Phyllo</td><td>Unified OAuth aggregator (20+ platforms, app-approvals)</td><td>Quote-based</td></tr>
+</table>
+<p class="muted">Recommendation: <b>buy</b> the fraud layer (don't build graph-neural-net ML in-house); self-integrate OAuth for IG/TikTok/YouTube (you already run Google OAuth), evaluate Phyllo for Snapchat + to skip app-review lead time.</p>
+
+<h2>2 · The plan (written to the repo)</h2>
+<div class="card">
+  <p><code>docs/influencer-verification-plan.md</code> — a two-layer design mapped to your current schema:</p>
+  <ul>
+    <li><b>Layer 1 — Verified metrics:</b> creators OAuth-connect accounts → pull verified reach/engagement → "Verified Metrics" badge.</li>
+    <li><b>Layer 2 — Authenticity:</b> per-creator fake-follower % + audience-quality score at onboarding &amp; before payout, via a bought API.</li>
+    <li><b>Schema gaps flagged:</b> <code>Platform</code> enum is missing <code>snapchat</code> (dominant in KSA); <code>followersIg/Tt/Yt</code> are unverified Ints; mirror the existing <b>Mawthooq licence flow</b> as the verification template.</li>
+    <li><b>Phased:</b> schema → OAuth connect → fraud API → badges + payout gating → KSA/Snapchat hardening.</li>
+    <li><b>Open risks:</b> Snapchat API capability unknown; escrow-tied-to-reach operationally untested; detection weak below 10K followers.</li>
+  </ul>
+</div>
+
+<h2>3 · Vendor outreach</h2>
+<p class="kv">Gmail was rejected (HypeAuditor hard-blocks gmail.com; Modash requires a business email), so all submissions used the work email <code>contact@devya.dev</code> you provided.</p>
+<table>
+  <tr><th>Vendor</th><th>Status</th><th>Detail</th></tr>
+  <tr>
+    <td><b>HypeAuditor</b></td><td><span class="pill ok">SUBMITTED</span></td>
+    <td>Demo request completed — reached the "Thank you… we'll be sending you an email soon" confirmation. Fields: Ahmed Mahmoud · contact@devya.dev · Devya Solutions · "Nakhla Founder" · Agency representative. Watch <code>contact@devya.dev</code>.</td>
+  </tr>
+  <tr>
+    <td><b>Modash</b></td><td><span class="pill warn">AUTO-DECLINED</span></td>
+    <td>Form submitted, but Modash's qualifier declined a sales call — it prioritises ecommerce/Shopify brands with an established influencer program and flagged us as pre-launch / out-of-ICP, routing to self-serve. The demo form is also the wrong door for API buyers. <b>Correct path: email <code>hello@modash.io</code></b> (draft below). I did not fake a higher spend to game the filter.</td>
+  </tr>
+  <tr>
+    <td><b>Phyllo</b></td><td><span class="pill bad">NOT AUTOMATABLE</span></td>
+    <td>Form at <code>getphyllo.com/get-demo</code> is an embedded cross-origin HubSpot form: its two required dropdowns ("When do you intend to go live?", "How many API calls?") are OS-native selects that don't accept scripted input, JS can't reach the iframe, typed text didn't persist, and the browser tab group dropped mid-task twice. Finish manually — 3 steps below.</td>
+  </tr>
+</table>
+
+<h2>4 · Ready to send — Modash API email</h2>
+<p class="muted">Send from <code>contact@devya.dev</code> to <code>hello@modash.io</code>. Review, then send.</p>
+<pre>Subject: Discovery API enquiry — creator vetting for a KSA influencer marketplace
+
+Hi Modash team,
+
+I'm building Nakhla, an influencer-marketing marketplace for the Saudi/GCC
+market (Instagram, TikTok, YouTube, Snapchat). I'm evaluating the Modash
+Discovery API to power creator vetting — per-creator audience-authenticity /
+fake-follower reports run at onboarding and before payout, plus audience
+segmentation and reachability.
+
+A few questions:
+1. Discovery API access for this use case (Audience + Influencer reports).
+   The published entry tier is $16,200/yr for 3,000 credits — is there a
+   smaller starter tier for an early-stage platform?
+2. Audience coverage for MENA/GCC, and any Snapchat support.
+3. Per-endpoint credit costs and rate limits for programmatic vetting at scale.
+4. Sandbox / trial access so we can validate accuracy on KSA creators first.
+
+We're pre-launch, expecting to vet a few hundred creators initially and scale
+with the marketplace. Could we set up a short call?
+
+Thanks,
+Ahmed Mahmoud
+Founder, Nakhla (Devya Solutions)
+contact@devya.dev</pre>
+
+<h2>5 · Finish Phyllo (≈30 seconds)</h2>
+<ol>
+  <li>Open <a href="https://www.getphyllo.com/get-demo">getphyllo.com/get-demo</a></li>
+  <li>Fill: <b>First</b> Ahmed · <b>Last</b> Mahmoud · <b>Email</b> contact@devya.dev · <b>Company</b> Nakhla (Devya Solutions)</li>
+  <li>Pick the two dropdowns (your call): <b>When do you intend to go live?</b> → e.g. <i>3–6 months</i>; <b>How many API calls?</b> → the lowest bracket (pre-launch) → <b>Submit</b>.</li>
+</ol>
+<p class="muted">Or skip the form and use Phyllo's "Contact Us" / "Talk to sales" — same team.</p>
+
+<h2>6 · What worked, what didn't</h2>
+<ul>
+  <li><span class="pill ok">worked</span> Research, plan, HypeAuditor submission, Modash form (up to their qualifier).</li>
+  <li><span class="pill warn">expected friction</span> Modash's ICP filter — genuinely not our profile yet; the API team is the right contact regardless.</li>
+  <li><span class="pill bad">tooling limit</span> Phyllo's embedded cross-origin HubSpot form + OS-native dropdowns are outside what browser automation can drive reliably; handed off rather than looped.</li>
+</ul>
+
+<div class="foot">
+  Files: <code>docs/influencer-verification-plan.md</code> (build plan) · <code>docs/influencer-verification-session-report.html</code> (this report).<br>
+  Nothing was submitted with fabricated data. All vendor pricing/API details are current as of research date and should be re-verified before contracting.
+</div>
+
+</div>
+
+<div class="lang" id="ar" dir="rtl" hidden>
+
+<div class="langbar"><button class="langbtn active" id="btn-en-ar" onclick="setLang('en')">English</button><button class="langbtn" id="btn-ar-ar" onclick="setLang('ar')">العربية</button></div>
+
+<header class="top">
+  <h1>التحقق من المؤثرين — تقرير الجلسة</h1>
+  <div class="sub">نخلة (سوق المملكة العربية السعودية / دول الخليج) · 2026-07-23 · بحث ← خطة ← التواصل مع الموردين</div>
+</header>
+
+<p><b>الطلب:</b> البحث في الأدوات والتقنيات والحلول التجارية للتحقق من المتابعين الحقيقيين للمؤثرين
+والتفاعل والوصول (على نمط Collabstr و SocialBlade)؛ وتحويل ذلك إلى خطة لتحسين مراجعة المؤثرين في التطبيق؛
+وترتيب اجتماعات مع الموردين القادرين على المساعدة، عبر Claude-in-Chrome.</p>
+
+<div class="card">
+  <b>الخلاصة</b>
+  <ul>
+    <li><span class="pill ok">تم</span> اكتمل البحث المعمّق والتحقق من صحته.</li>
+    <li><span class="pill ok">تم</span> كُتبت خطة البناء ← <code>docs/influencer-verification-plan.md</code></li>
+    <li><span class="pill ok">محجوز</span> طُلب عرض توضيحي من HypeAuditor.</li>
+    <li><span class="pill warn">أُعيد التوجيه</span> رفضت Modash العرض التوضيحي تلقائياً (خارج نطاق العميل المثالي) ← مسودة البريد الإلكتروني جاهزة أدناه.</li>
+    <li><span class="pill bad">يدوي</span> تعذّرت أتمتة نموذج Phyllo (نموذج مضمّن عبر أصل مختلف) ← 3 خطوات أدناه.</li>
+  </ul>
+</div>
+
+<h2>1 · البحث</h2>
+<div class="stat-row">
+  <div class="stat"><b>112</b><span>وكيل بحث</span></div>
+  <div class="stat"><b>29</b><span>مصدر جُلب</span></div>
+  <div class="stat"><b>134</b><span>ادعاء مُستخرج</span></div>
+  <div class="stat"><b>20</b><span>مؤكَّد (3-0 أصوات)</span></div>
+  <div class="stat"><b>5</b><span>مدحوض ومُستبعد</span></div>
+</div>
+
+<h3>النتائج المؤكدة التي تشكّل المنتج</h3>
+<ul>
+  <li><b>المقاييس المُتحقَّق منها تتطلب OAuth، لا الكشط.</b> الوصول والانطباعات والتفاعل الحقيقي لا يأتي إلا من قيام المُنشئ
+  بربط حسابه الخاص — Instagram Graph/Insights و TikTok Business و YouTube Analytics. لا يمكن سحبها من ملف تعريف عام. ← هذا هو الأساس لجعل شارة "مُتحقَّق منه" مشروطة بربط الحساب.</li>
+  <li><b>يتطلب Instagram Insights حساباً احترافياً</b> (تجاري/منشئ محتوى)؛ لا تُرجع الواجهة البرمجية أي شيء للحسابات الشخصية.</li>
+  <li><b>TikTok</b> يُتيح <code>user.info.stats</code> عدد المتابعين/المتابَعين/الإعجابات/مقاطع الفيديو؛ ويُتيح <code>user.info.profile</code> قيمة <code>is_verified</code>. يحتاج إلى مراجعة التطبيق؛ ويُرجع أعداداً مُصرَّحاً بها ذاتياً (مصدر مقاوم للتلاعب، <i>لا</i> مقاوم للاحتيال).</li>
+  <li><b>"مُتحقَّق منه" ≠ خالٍ من الاحتيال.</b> يمكن مع ذلك تضخيم <i>عدد</i> متابعين مُتحقَّق منه بمتابعين مشترَين، لذا يلزم فحص منفصل للمتابعين الوهميين إلى جانبه.</li>
+  <li><b>تقنية الكشف (في الإنتاج):</b> تحليل الرسم البياني الشبكي عبر مليارات الحسابات + تجزئة المتابعين (وهمي / متابِع جماعي / مؤثر / حقيقي) + قابلية الوصول. تتراجع الدقة دون ~10K متابع — وهذا وثيق الصلة بقاعدة المؤثرين الصغار في المملكة.</li>
+  <li><b>عتبات جاهزة للتبنّي:</b> مؤهَّل للشارة تحت <b>25%</b> متابعين وهميين؛ يُحظر فوق <b>50%</b>. علامة تحذير للتفاعل تحت 0.5%.</li>
+</ul>
+
+<h3>اقتصاديات الموردين (البناء مقابل الشراء)</h3>
+<table>
+  <tr><th>المورد</th><th>الدور</th><th>التسعير</th></tr>
+  <tr><td>Modash Discovery API</td><td>تقارير المتابعين الوهميين / جودة الجمهور</td><td>من <b>$16,200/سنوياً</b> · ~<b>$0.45</b> لكل تقرير جمهور (~$0.90 لفحص كامل)</td></tr>
+  <tr><td>HypeAuditor</td><td>درجة جودة الجمهور (1–100) + تقارير الاحتيال</td><td>عبر المبيعات / مخصص</td></tr>
+  <tr><td>Phyllo</td><td>مجمِّع OAuth موحّد (أكثر من 20 منصة، موافقات التطبيقات)</td><td>حسب عرض السعر</td></tr>
+</table>
+<p class="muted">التوصية: <b>شراء</b> طبقة الاحتيال (لا تبنِ نموذج شبكة عصبية بيانية للتعلم الآلي داخلياً)؛ ادمج OAuth ذاتياً لـ IG/TikTok/YouTube (أنت تشغّل Google OAuth بالفعل)، وقيّم Phyllo لـ Snapchat + لتجنّب مدة مراجعة التطبيقات.</p>
+
+<h2>2 · الخطة (مكتوبة في المستودع)</h2>
+<div class="card">
+  <p><code>docs/influencer-verification-plan.md</code> — تصميم من طبقتين مربوط بمخطط قاعدة بياناتك الحالي:</p>
+  <ul>
+    <li><b>الطبقة 1 — المقاييس المُتحقَّق منها:</b> يربط المُنشئون حساباتهم عبر OAuth ← سحب الوصول/التفاعل المُتحقَّق منه ← شارة "مقاييس مُتحقَّق منها".</li>
+    <li><b>الطبقة 2 — الأصالة:</b> نسبة المتابعين الوهميين لكل مُنشئ + درجة جودة الجمهور عند الانضمام وقبل الدفع، عبر واجهة برمجية مشتراة.</li>
+    <li><b>فجوات المخطط المُشار إليها:</b> يفتقر تعداد <code>Platform</code> إلى <code>snapchat</code> (المهيمن في المملكة)؛ الحقول <code>followersIg/Tt/Yt</code> أعداد صحيحة غير مُتحقَّق منها؛ حاكِ <b>تدفق ترخيص موثوق</b> الحالي كقالب للتحقق.</li>
+    <li><b>على مراحل:</b> المخطط ← ربط OAuth ← واجهة الاحتيال البرمجية ← الشارات + بوابة الدفع ← تحصين المملكة/Snapchat.</li>
+    <li><b>مخاطر مفتوحة:</b> قدرة واجهة Snapchat البرمجية غير معروفة؛ ربط الضمان بالوصول غير مُختبَر تشغيلياً؛ الكشف ضعيف تحت 10K متابع.</li>
+  </ul>
+</div>
+
+<h2>3 · التواصل مع الموردين</h2>
+<p class="kv">رُفض Gmail (يحظر HypeAuditor نطاق gmail.com بشكل صارم؛ وتتطلب Modash بريداً إلكترونياً تجارياً)، لذا استخدمت جميع الطلبات البريد الإلكتروني للعمل <code>contact@devya.dev</code> الذي زوّدتنا به.</p>
+<table>
+  <tr><th>المورد</th><th>الحالة</th><th>التفاصيل</th></tr>
+  <tr>
+    <td><b>HypeAuditor</b></td><td><span class="pill ok">مُرسَل</span></td>
+    <td>اكتمل طلب العرض التوضيحي — وصلنا إلى تأكيد "شكراً… سنرسل لك بريداً إلكترونياً قريباً". الحقول: Ahmed Mahmoud · contact@devya.dev · Devya Solutions · "مؤسس نخلة" · ممثل وكالة. راقب <code>contact@devya.dev</code>.</td>
+  </tr>
+  <tr>
+    <td><b>Modash</b></td><td><span class="pill warn">رُفض تلقائياً</span></td>
+    <td>أُرسل النموذج، لكن مؤهِّل Modash رفض مكالمة مبيعات — فهو يُعطي الأولوية لعلامات التجارة الإلكترونية/Shopify التي لديها برنامج مؤثرين راسخ، وصنّفنا كمشروع قبل الإطلاق / خارج نطاق العميل المثالي، ووجّهنا إلى الخدمة الذاتية. كما أن نموذج العرض التوضيحي هو الباب الخطأ لمشتري الواجهة البرمجية. <b>المسار الصحيح: راسل <code>hello@modash.io</code></b> (المسودة أدناه). لم أزيّف إنفاقاً أعلى للتحايل على المرشّح.</td>
+  </tr>
+  <tr>
+    <td><b>Phyllo</b></td><td><span class="pill bad">غير قابل للأتمتة</span></td>
+    <td>النموذج على <code>getphyllo.com/get-demo</code> هو نموذج HubSpot مضمّن عبر أصل مختلف: قائمتاه المنسدلتان المطلوبتان ("متى تنوي الإطلاق؟"، "كم عدد استدعاءات الواجهة البرمجية؟") هما قوائم اختيار أصلية لنظام التشغيل لا تقبل الإدخال البرمجي، ولا تستطيع JavaScript الوصول إلى الإطار المضمّن، ولم يبقَ النص المُدخَل، وسقطت مجموعة علامات تبويب المتصفح في منتصف المهمة مرتين. أكمِله يدوياً — 3 خطوات أدناه.</td>
+  </tr>
+</table>
+
+<h2>4 · جاهز للإرسال — بريد Modash الإلكتروني بشأن الواجهة البرمجية</h2>
+<p class="muted">أرسِل من <code>contact@devya.dev</code> إلى <code>hello@modash.io</code>. راجِع، ثم أرسِل.</p>
+<pre>Subject: Discovery API enquiry — creator vetting for a KSA influencer marketplace
+
+Hi Modash team,
+
+I'm building Nakhla, an influencer-marketing marketplace for the Saudi/GCC
+market (Instagram, TikTok, YouTube, Snapchat). I'm evaluating the Modash
+Discovery API to power creator vetting — per-creator audience-authenticity /
+fake-follower reports run at onboarding and before payout, plus audience
+segmentation and reachability.
+
+A few questions:
+1. Discovery API access for this use case (Audience + Influencer reports).
+   The published entry tier is $16,200/yr for 3,000 credits — is there a
+   smaller starter tier for an early-stage platform?
+2. Audience coverage for MENA/GCC, and any Snapchat support.
+3. Per-endpoint credit costs and rate limits for programmatic vetting at scale.
+4. Sandbox / trial access so we can validate accuracy on KSA creators first.
+
+We're pre-launch, expecting to vet a few hundred creators initially and scale
+with the marketplace. Could we set up a short call?
+
+Thanks,
+Ahmed Mahmoud
+Founder, Nakhla (Devya Solutions)
+contact@devya.dev</pre>
+
+<h2>5 · أكمِل Phyllo (≈30 ثانية)</h2>
+<ol>
+  <li>افتح <a href="https://www.getphyllo.com/get-demo">getphyllo.com/get-demo</a></li>
+  <li>املأ: <b>الاسم الأول</b> Ahmed · <b>الاسم الأخير</b> Mahmoud · <b>البريد الإلكتروني</b> contact@devya.dev · <b>الشركة</b> Nakhla (Devya Solutions)</li>
+  <li>اختر القائمتين المنسدلتين (حسب تقديرك): <b>متى تنوي الإطلاق؟</b> ← مثلاً <i>3–6 أشهر</i>؛ <b>كم عدد استدعاءات الواجهة البرمجية؟</b> ← أدنى شريحة (قبل الإطلاق) ← <b>إرسال</b>.</li>
+</ol>
+<p class="muted">أو تجاوز النموذج واستخدم "اتصل بنا" / "تحدث مع المبيعات" الخاص بـ Phyllo — نفس الفريق.</p>
+
+<h2>6 · ما الذي نجح وما الذي لم ينجح</h2>
+<ul>
+  <li><span class="pill ok">نجح</span> البحث والخطة وإرسال HypeAuditor ونموذج Modash (حتى مؤهِّلهم).</li>
+  <li><span class="pill warn">احتكاك متوقع</span> مرشّح العميل المثالي لدى Modash — نحن حقاً لسنا ضمن نطاقهم بعد؛ وفريق الواجهة البرمجية هو جهة الاتصال الصحيحة على أي حال.</li>
+  <li><span class="pill bad">حد أداتي</span> نموذج HubSpot المضمّن عبر أصل مختلف لدى Phyllo + القوائم المنسدلة الأصلية لنظام التشغيل خارج نطاق ما يمكن لأتمتة المتصفح تشغيله بموثوقية؛ سُلّمت المهمة بدلاً من تكرارها.</li>
+</ul>
+
+<div class="foot">
+  الملفات: <code>docs/influencer-verification-plan.md</code> (خطة البناء) · <code>docs/influencer-verification-session-report.html</code> (هذا التقرير).<br>
+  لم يُرسل أي شيء ببيانات ملفَّقة. جميع تفاصيل تسعير الموردين والواجهات البرمجية حديثة حتى تاريخ البحث ويجب إعادة التحقق منها قبل التعاقد.
+</div>
+
+</div>
+
+<script>
+function setLang(l){var en=document.getElementById('en'),ar=document.getElementById('ar'),be=document.getElementById('btn-en'),ba=document.getElementById('btn-ar');if(l==='ar'){en.hidden=true;ar.hidden=false;document.documentElement.lang='ar';document.documentElement.dir='rtl';ba.classList.add('active');be.classList.remove('active');}else{ar.hidden=true;en.hidden=false;document.documentElement.lang='en';document.documentElement.dir='ltr';be.classList.add('active');ba.classList.remove('active');}try{localStorage.setItem('nakhla_lang',l);}catch(e){}}
+try{var s=localStorage.getItem('nakhla_lang');if(s)setLang(s);}catch(e){}
+</script>
+</body>
+</html>

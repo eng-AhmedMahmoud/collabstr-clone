@@ -1,3 +1,8 @@
+// Import first so Sentry.init() (gated on EXPO_PUBLIC_SENTRY_DSN) runs
+// before the rest of the app modules are evaluated.
+import { sentryEnabled } from "@/monitoring";
+import * as Sentry from "@sentry/react-native";
+import { View } from "react-native";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -5,12 +10,24 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/auth/context";
 import { ThemeProvider } from "@/theme/context";
-import { I18nProvider } from "@/i18n/context";
+import { I18nProvider, useI18n } from "@/i18n/context";
 import { ToastProvider } from "@/components/Toast";
-import { RtlRestartBanner } from "@/components/RtlRestartBanner";
 import { queryClient } from "@/api/queryClient";
 
-export default function RootLayout() {
+// Consumes the i18n context so the whole tree re-lays-out when the locale
+// changes. Setting `direction` on this container makes Yoga mirror flex
+// start/end for the subtree — RTL applies live, no native reload needed.
+function DirectionRoot() {
+  const { dir } = useI18n();
+  return (
+    <View style={{ flex: 1, direction: dir }}>
+      <StatusBar style="auto" />
+      <Stack screenOptions={{ headerShown: false }} />
+    </View>
+  );
+}
+
+function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
@@ -19,9 +36,7 @@ export default function RootLayout() {
             <I18nProvider>
               <AuthProvider>
                 <ToastProvider>
-                  <StatusBar style="auto" />
-                  <Stack screenOptions={{ headerShown: false }} />
-                  <RtlRestartBanner />
+                  <DirectionRoot />
                 </ToastProvider>
               </AuthProvider>
             </I18nProvider>
@@ -31,3 +46,9 @@ export default function RootLayout() {
     </GestureHandlerRootView>
   );
 }
+
+// Sentry.wrap() is safe even without init() — ReactNativeProfiler bails out
+// when no client exists — but conditionally wrapping keeps the tree entirely
+// Sentry-free (no TouchEventBoundary/Profiler) when no DSN is configured,
+// e.g. day-to-day Expo Go dev.
+export default sentryEnabled ? Sentry.wrap(RootLayout) : RootLayout;

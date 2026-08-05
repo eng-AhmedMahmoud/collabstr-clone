@@ -38,7 +38,7 @@ export function UserRowActions({ user, viewerRole }: { user: User; viewerRole: s
       {user.bannedAt ? (
         <button disabled={busy} onClick={() => act("unban")} className="px-2.5 py-1 rounded-lg border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10">{i.users.unban}</button>
       ) : (
-        <button disabled={busy} onClick={() => act("ban")} className="px-2.5 py-1 rounded-lg border border-red-500/40 text-red-300 hover:bg-red-500/10">{i.users.ban}</button>
+        <button disabled={busy} onClick={() => { if (!confirm(i.users.banConfirm)) return; act("ban"); }} className="px-2.5 py-1 rounded-lg border border-red-500/40 text-red-300 hover:bg-red-500/10">{i.users.ban}</button>
       )}
       {isSuperadmin && user.role !== "admin" && user.role !== "superadmin" && (
         <button disabled={busy} onClick={() => { if (!confirm(i.users.makeAdminConfirm)) return; act("promote-admin"); }} className="px-2.5 py-1 rounded-lg border border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10">{i.users.makeAdmin}</button>

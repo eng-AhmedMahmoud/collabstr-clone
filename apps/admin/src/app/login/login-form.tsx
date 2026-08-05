@@ -25,7 +25,7 @@ export function LoginForm({ next, labels }: { next?: string; labels: Labels }) {
       });
       const me = await res.json().catch(() => null);
       if (!res.ok) throw new Error(me?.message ?? "Login failed");
-      if (me?.role !== "admin") {
+      if (me?.role !== "admin" && me?.role !== "superadmin") {
         await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/auth/logout`, {
           method: "POST",
           credentials: "include",

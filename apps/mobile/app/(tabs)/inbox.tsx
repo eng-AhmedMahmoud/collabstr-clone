@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { useRouter } from "expo-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Screen } from "@/components/Screen";
 import { Avatar } from "@/components/Avatar";
 import { EmptyState } from "@/components/EmptyState";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { Badge } from "@/components/Badge";
-import { useNotifications, useThreads, type NotificationItem, type Thread } from "@/api/queries";
+import { qk, useNotifications, useThreads, type NotificationItem, type Thread } from "@/api/queries";
 import { useMarkAllNotificationsRead } from "@/api/mutations";
+import { getSocket } from "@/api/socket";
 import { useAuth } from "@/auth/context";
 import { useTheme } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
@@ -20,7 +22,7 @@ type Tab = "messages" | "notifications";
 export default function Inbox() {
   const { me } = useAuth();
   const { palette } = useTheme();
-  const { t } = useI18n();
+  const { t, isRTL } = useI18n();
   const router = useRouter();
   const [tab, setTab] = useState<Tab>("messages");
 
@@ -42,7 +44,7 @@ export default function Inbox() {
   return (
     <Screen padded={false}>
       <View style={styles.headerBar}>
-        <Text style={[styles.title, { color: palette.fg }]}>{t.tabs.inbox}</Text>
+        <Text style={[styles.title, { color: palette.fg, textAlign: isRTL ? "right" : "left" }]}>{t.tabs.inbox}</Text>
       </View>
       <View style={{ paddingHorizontal: spacing.lg }}>
         <SegmentedControl
@@ -64,6 +66,18 @@ function MessagesList() {
   const { t } = useI18n();
   const router = useRouter();
   const q = useThreads();
+  const qc = useQueryClient();
+
+  // Realtime nudge: any message on any of my threads refreshes the list.
+  // The thread query has no poll of its own, so this is the live path.
+  useEffect(() => {
+    const socket = getSocket();
+    const onUpdated = () => qc.invalidateQueries({ queryKey: qk.threads() });
+    socket.on("thread:updated", onUpdated);
+    return () => {
+      socket.off("thread:updated", onUpdated);
+    };
+  }, [qc]);
 
   return (
     <FlatList
@@ -89,6 +103,11 @@ function MessagesList() {
 
 function ThreadRow({ item, onPress }: { item: Thread; onPress: () => void }) {
   const { palette } = useTheme();
+  const { isRTL } = useI18n();
+  const align = isRTL ? "right" : "left";
+  // Defensive: the mapping in useThreads always supplies a peer, but guard
+  // anyway so a malformed row can never crash the whole inbox list.
+  const peer = item.peer ?? { id: item.id, name: "", avatarUrl: null, username: null };
   return (
     <Pressable
       onPress={onPress}
@@ -97,14 +116,14 @@ function ThreadRow({ item, onPress }: { item: Thread; onPress: () => void }) {
         { backgroundColor: palette.card, borderColor: palette.border, opacity: pressed ? 0.9 : 1 },
       ]}
     >
-      <Avatar uri={item.peer.avatarUrl} seed={item.peer.username ?? item.peer.id} size={44} />
+      <Avatar uri={peer.avatarUrl} seed={peer.username ?? peer.id} size={44} />
       <View style={{ flex: 1 }}>
         <View style={styles.rowTop}>
-          <Text style={[styles.name, { color: palette.fg }]} numberOfLines={1}>{item.peer.name}</Text>
+          <Text style={[styles.name, { color: palette.fg, textAlign: align }]} numberOfLines={1}>{peer.name}</Text>
           {item.unread > 0 ? <Badge label={String(item.unread)} tone="brand" /> : null}
         </View>
         {item.lastMessage ? (
-          <Text style={[styles.preview, { color: palette.fgMuted }]} numberOfLines={1}>
+          <Text style={[styles.preview, { color: palette.fgMuted, textAlign: align }]} numberOfLines={1}>
             {item.lastMessage.body}
           </Text>
         ) : null}
@@ -155,6 +174,8 @@ function NotificationsList() {
 
 function NotifRow({ item }: { item: NotificationItem }) {
   const { palette } = useTheme();
+  const { isRTL } = useI18n();
+  const align = isRTL ? "right" : "left";
   const router = useRouter();
   const href = mapNotificationHref(item.href);
   return (
@@ -167,8 +188,8 @@ function NotifRow({ item }: { item: NotificationItem }) {
       ]}
     >
       <View style={{ flex: 1 }}>
-        <Text style={[styles.name, { color: palette.fg }]}>{item.title}</Text>
-        <Text style={[styles.preview, { color: palette.fgMuted }]}>{item.body}</Text>
+        <Text style={[styles.name, { color: palette.fg, textAlign: align }]}>{item.title}</Text>
+        <Text style={[styles.preview, { color: palette.fgMuted, textAlign: align }]}>{item.body}</Text>
       </View>
       {!item.read ? <View style={[styles.dot, { backgroundColor: palette.brand }]} /> : null}
     </Pressable>

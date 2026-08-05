@@ -1,0 +1,1470 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>نخلة — نموذج العمل والأرباح والتكاليف</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;700&family=Zain:wght@700;800;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #f5f0e5;
+    --card: #fffdf8;
+    --ink: #17251d;
+    --muted: #5d6b63;
+    --green: #0c6b44;
+    --green-deep: #0a3d29;
+    --green-soft: #e3f1e9;
+    --gold: #b98a2f;
+    --gold-bright: #d4a437;
+    --gold-soft: #f9f1de;
+    --red: #b3372f;
+    --red-soft: #fbecea;
+    --line: #e6dfd0;
+    --f-display: "Zain", "IBM Plex Sans Arabic", "Tajawal", sans-serif;
+    --f-body: "IBM Plex Sans Arabic", "Tajawal", "Segoe UI", Tahoma, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--f-body);
+    background:
+      radial-gradient(900px 400px at 85% -50px, rgba(185, 138, 47, .10), transparent 65%),
+      radial-gradient(700px 500px at 0% 20%, rgba(12, 107, 68, .06), transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    line-height: 1.9;
+    padding: 0 16px 64px;
+  }
+  body::before {
+    content: "";
+    position: fixed; inset: 0; z-index: 40; pointer-events: none; opacity: .05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  ::selection { background: var(--gold); color: #fff; }
+
+  /* شريط تقدم القراءة */
+  #progress {
+    position: fixed; top: 0; right: 0; left: 0; height: 4px; z-index: 60;
+    background: linear-gradient(270deg, var(--gold-bright), var(--gold), var(--green));
+    transform: scaleX(0); transform-origin: 100% 50%;
+  }
+
+  /* شريط الأقسام الثابت */
+  .toc {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; gap: 4px;
+    max-width: 960px; margin: 0 auto 20px;
+    padding: 10px 14px;
+    background: rgba(245, 240, 229, .82);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .toc::-webkit-scrollbar { display: none; }
+  .toc .brand {
+    font-family: var(--f-display); font-weight: 900; font-size: 17px;
+    color: var(--green-deep); margin-inline-end: 10px; white-space: nowrap;
+  }
+  .toc a {
+    position: relative; white-space: nowrap; font-size: 13.5px; font-weight: 500;
+    color: var(--muted); padding: 4px 10px; border-radius: 8px; border: none;
+    text-decoration: none; transition: color .25s ease, background .25s ease;
+  }
+  .toc a::after {
+    content: ""; position: absolute; bottom: 0; inset-inline: 10px; height: 2px;
+    background: var(--gold); border-radius: 2px;
+    transform: scaleX(0); transform-origin: 100% 50%; transition: transform .3s ease;
+  }
+  .toc a:hover { color: var(--green); background: var(--green-soft); }
+  .toc a.active { color: var(--green-deep); font-weight: 700; }
+  .toc a.active::after { transform: scaleX(1); }
+
+  .wrap { max-width: 960px; margin: 0 auto; }
+
+  /* ============ الترويسة ============ */
+  header {
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(600px 300px at 15% -60px, rgba(212, 164, 55, .28), transparent 60%),
+      linear-gradient(150deg, #0e5c3a, var(--green-deep) 70%);
+    color: #fff;
+    border-radius: 22px;
+    padding: 48px 40px 44px;
+    margin-bottom: 36px;
+    box-shadow: 0 24px 60px -28px rgba(10, 61, 41, .55);
+  }
+  header::before {
+    content: ""; position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.06) 45%, transparent 70%);
+  }
+  header::after {
+    content: "🌴"; position: absolute; font-size: 190px; line-height: 1;
+    inset-inline-start: -28px; bottom: -46px; opacity: .09;
+    transform: rotate(-12deg);
+    animation: sway 9s ease-in-out infinite;
+  }
+  @keyframes sway {
+    0%, 100% { transform: rotate(-12deg) translateY(0); }
+    50% { transform: rotate(-7deg) translateY(-10px); }
+  }
+  header h1 {
+    font-family: var(--f-display); font-weight: 900;
+    font-size: clamp(26px, 4.4vw, 40px); line-height: 1.4;
+    margin-bottom: 10px; letter-spacing: -.5px;
+    opacity: 0; animation: rise .7s cubic-bezier(.2, .7, .3, 1) .05s forwards;
+  }
+  header p {
+    opacity: 0; font-size: 17px; max-width: 660px; color: rgba(255,255,255,.9);
+    animation: rise .7s cubic-bezier(.2, .7, .3, 1) .18s forwards;
+  }
+  .hero-stats {
+    display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px;
+    opacity: 0; animation: rise .7s cubic-bezier(.2, .7, .3, 1) .32s forwards;
+  }
+  .chip {
+    flex: 1 1 170px; border: 1px solid rgba(255,255,255,.18); border-radius: 14px;
+    padding: 12px 16px; background: rgba(255,255,255,.07);
+    backdrop-filter: blur(4px);
+    transition: transform .3s ease, background .3s ease;
+  }
+  .chip:hover { transform: translateY(-3px); background: rgba(255,255,255,.12); }
+  .chip b {
+    display: block; font-family: var(--f-display); font-weight: 800;
+    font-size: 21px; color: var(--gold-bright); white-space: nowrap;
+  }
+  .chip span { font-size: 13px; color: rgba(255,255,255,.78); }
+  @keyframes rise { to { opacity: 1; transform: none; } from { opacity: 0; transform: translateY(16px); } }
+
+  /* ============ العناوين ============ */
+  section { scroll-margin-top: 76px; }
+  h2 {
+    position: relative; z-index: 0;
+    font-family: var(--f-display); font-weight: 900;
+    font-size: clamp(22px, 3vw, 27px);
+    margin: 52px 0 16px; padding-top: 14px;
+    color: var(--green-deep);
+  }
+  h2::before {
+    content: attr(data-num); position: absolute; z-index: -1;
+    top: -30px; inset-inline-start: -6px;
+    font-size: 88px; font-weight: 900; line-height: 1;
+    color: var(--gold); opacity: .12; letter-spacing: -2px;
+  }
+  h2::after {
+    content: ""; display: block; width: 64px; height: 4px; margin-top: 6px;
+    border-radius: 4px;
+    background: linear-gradient(270deg, var(--gold-bright), var(--gold));
+  }
+  h3 {
+    font-family: var(--f-display); font-weight: 800;
+    font-size: 18.5px; margin: 20px 0 8px; color: var(--ink);
+  }
+  p, li { font-size: 16px; color: var(--ink); }
+  .muted { color: var(--muted); font-size: 14.5px; }
+
+  /* ============ البطاقات ============ */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 26px 28px;
+    margin-bottom: 18px;
+    box-shadow: 0 1px 2px rgba(23, 37, 29, .04);
+    transition: transform .35s cubic-bezier(.2, .7, .3, 1), box-shadow .35s ease, border-color .35s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    border-color: #d9cfb8;
+    box-shadow: 0 18px 40px -22px rgba(23, 37, 29, .22);
+  }
+
+  /* ظهور عند التمرير */
+  .rv { opacity: 0; transform: translateY(22px); transition: opacity .65s ease, transform .65s cubic-bezier(.2, .7, .3, 1); }
+  .rv.on { opacity: 1; transform: none; }
+
+  /* ============ دورة العمل ============ */
+  .cycle { display: flex; flex-wrap: wrap; gap: 10px; align-items: stretch; margin: 16px 0; }
+  .step {
+    flex: 1 1 132px;
+    background: var(--green-soft);
+    border: 1px solid #cde7da;
+    border-radius: 14px;
+    padding: 14px;
+    text-align: center;
+    transition: transform .3s cubic-bezier(.2, .7, .3, 1), box-shadow .3s ease, border-color .3s ease;
+    opacity: 0; transform: translateY(14px) scale(.97);
+  }
+  .rv.on .step { opacity: 1; transform: none; }
+  .rv.on .step:nth-child(1) { transition: all .5s cubic-bezier(.2,.7,.3,1) .05s; }
+  .rv.on .step:nth-child(3) { transition: all .5s cubic-bezier(.2,.7,.3,1) .15s; }
+  .rv.on .step:nth-child(5) { transition: all .5s cubic-bezier(.2,.7,.3,1) .25s; }
+  .rv.on .step:nth-child(7) { transition: all .5s cubic-bezier(.2,.7,.3,1) .35s; }
+  .step:hover {
+    transform: translateY(-4px);
+    border-color: var(--green);
+    box-shadow: 0 12px 24px -14px rgba(12, 107, 68, .4);
+  }
+  .step b { display: block; font-family: var(--f-display); font-weight: 800; font-size: 15.5px; color: var(--green); }
+  .step span { font-size: 13px; color: var(--muted); }
+  .arrow {
+    align-self: center; color: var(--gold); font-size: 20px; font-weight: bold;
+    animation: nudge 2.2s ease-in-out infinite;
+  }
+  @keyframes nudge { 0%, 100% { transform: translateX(0); } 50% { transform: translateX(-5px); } }
+  .branch { background: var(--red-soft); border-color: #f0cfcc; }
+  .branch:hover { border-color: var(--red); box-shadow: 0 12px 24px -14px rgba(179, 55, 47, .35); }
+  .branch b { color: var(--red); }
+
+  /* ============ المصطلحات ============ */
+  dl.terms dt {
+    font-family: var(--f-display); font-weight: 800;
+    font-size: 17.5px; color: var(--gold); margin-top: 18px;
+  }
+  dl.terms dd {
+    margin-right: 0; color: var(--ink);
+    padding-inline-start: 14px; border-inline-start: 2px solid var(--gold-soft);
+    transition: border-color .3s ease;
+  }
+  dl.terms dd:hover { border-inline-start-color: var(--gold); }
+
+  /* ============ الجداول ============ */
+  .tbl {
+    border-radius: 14px; overflow: hidden; overflow-x: auto;
+    margin: 14px 0; border: 1px solid var(--line);
+    -webkit-overflow-scrolling: touch;
+  }
+  table { width: 100%; border-collapse: collapse; background: #fff; min-width: 560px; }
+  th, td { border: 1px solid var(--line); padding: 11px 13px; font-size: 15px; text-align: right; }
+  tr:first-child th, tr:first-child td { border-top: none; }
+  tr:last-child th, tr:last-child td { border-bottom: none; }
+  th:first-child, td:first-child { border-right: none; }
+  th:last-child, td:last-child { border-left: none; }
+  th {
+    background: var(--green-deep); color: #f3ead6;
+    font-family: var(--f-display); font-weight: 800; font-size: 15.5px;
+  }
+  tr:nth-child(even) td { background: #fbf8f1; }
+  tr:hover td { background: var(--gold-soft); transition: background .2s ease; }
+  .num { font-variant-numeric: tabular-nums; }
+  .total-row td {
+    background: var(--green-soft) !important; font-weight: bold;
+    border-top: 2px solid var(--green) !important;
+  }
+
+  /* ============ مثال الأرباح ============ */
+  .calc {
+    background: var(--gold-soft); border: 1px solid #ecd9ac; border-radius: 14px;
+    padding: 14px 18px; margin: 14px 0 4px;
+  }
+  .calc label { font-size: 15px; font-weight: 500; color: var(--ink); display: block; margin-bottom: 6px; }
+  .calc label b { color: var(--green-deep); font-variant-numeric: tabular-nums; }
+  .calc .hint { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+  input[type="range"] {
+    width: 100%; height: 6px; appearance: none; -webkit-appearance: none;
+    background: linear-gradient(270deg, var(--green), var(--gold));
+    border-radius: 6px; outline: none; cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    appearance: none; -webkit-appearance: none;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #fff; border: 4px solid var(--green);
+    box-shadow: 0 2px 8px rgba(10, 61, 41, .35);
+    transition: transform .2s ease;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+  input[type="range"]::-moz-range-thumb {
+    width: 15px; height: 15px; border-radius: 50%;
+    background: #fff; border: 4px solid var(--green);
+    box-shadow: 0 2px 8px rgba(10, 61, 41, .35);
+  }
+  .money-flow { display: flex; flex-wrap: wrap; gap: 12px; margin: 16px 0; }
+  .money-box {
+    flex: 1 1 185px;
+    border-radius: 14px;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid var(--line);
+    font-size: 14.5px;
+    transition: transform .3s cubic-bezier(.2, .7, .3, 1), box-shadow .3s ease;
+    opacity: 0; transform: translateY(14px);
+  }
+  .rv.on .money-box { opacity: 1; transform: none; }
+  .rv.on .money-box:nth-child(1) { transition: all .5s cubic-bezier(.2,.7,.3,1) .05s; }
+  .rv.on .money-box:nth-child(2) { transition: all .5s cubic-bezier(.2,.7,.3,1) .15s; }
+  .rv.on .money-box:nth-child(3) { transition: all .5s cubic-bezier(.2,.7,.3,1) .25s; }
+  .rv.on .money-box:nth-child(4) { transition: all .5s cubic-bezier(.2,.7,.3,1) .35s; }
+  .money-box:hover { transform: translateY(-4px); box-shadow: 0 14px 28px -16px rgba(23, 37, 29, .25); }
+  .money-box .amount {
+    font-family: var(--f-display); font-size: 23px; font-weight: 800;
+    display: block; font-variant-numeric: tabular-nums; white-space: nowrap;
+  }
+  .in { background: var(--green-soft); }
+  .in .amount { color: var(--green); }
+  .out { background: var(--gold-soft); }
+  .out .amount { color: var(--gold); }
+  .net {
+    background: linear-gradient(150deg, #0e5c3a, var(--green-deep));
+    border-color: var(--green-deep); color: #f0ede4;
+  }
+  .net .amount { color: var(--gold-bright); }
+  .net .muted { color: rgba(255,255,255,.65); }
+
+  .badge {
+    display: inline-block;
+    background: linear-gradient(150deg, var(--gold-soft), #f2e3bd);
+    color: var(--gold);
+    border: 1px solid #ecd9ac;
+    border-radius: 20px; padding: 2px 12px; font-size: 13px; font-weight: bold;
+    margin-inline-start: 6px; vertical-align: middle;
+  }
+  .alert {
+    background: var(--red-soft);
+    border: 1px solid #f0cfcc;
+    border-inline-start: 4px solid var(--red);
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin: 16px 0 4px;
+  }
+  .alert b { color: var(--red); }
+  code {
+    background: var(--green-soft); color: var(--green-deep);
+    border-radius: 5px; padding: 1px 6px; font-size: 13.5px;
+    direction: ltr; display: inline-block;
+  }
+  ul { padding-inline-start: 22px; }
+  li::marker { color: var(--gold); }
+  a { color: var(--green); text-decoration: none; border-bottom: 1px dashed var(--green); transition: color .2s ease, border-color .2s ease; }
+  a:hover { border-bottom-style: solid; color: var(--gold); border-color: var(--gold); }
+
+  footer {
+    margin-top: 56px; text-align: center; color: var(--muted); font-size: 13px;
+  }
+  footer::before {
+    content: "✦ ✦ ✦"; display: block; color: var(--gold);
+    letter-spacing: 14px; margin-bottom: 14px; font-size: 11px;
+  }
+
+  /* زر العودة للأعلى */
+  #toTop {
+    position: fixed; bottom: 22px; inset-inline-end: 22px; z-index: 55;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--green-deep); color: var(--gold-bright);
+    border: 1px solid rgba(212, 164, 55, .4);
+    font-size: 19px; cursor: pointer;
+    box-shadow: 0 10px 26px -10px rgba(10, 61, 41, .5);
+    opacity: 0; transform: translateY(14px); pointer-events: none;
+    transition: opacity .35s ease, transform .35s ease, background .25s ease;
+  }
+  #toTop.show { opacity: 1; transform: none; pointer-events: auto; }
+  #toTop:hover { background: var(--green); }
+
+  @media (max-width: 620px) {
+    header { padding: 34px 24px; }
+    .arrow { display: none; }
+    .step { flex-basis: 100%; }
+    h2::before { font-size: 64px; top: -20px; }
+    .card { padding: 20px 18px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .rv, .step, .money-box, header h1, header p, .hero-stats { opacity: 1 !important; transform: none !important; }
+  }
+
+  /* ============ مبدّل اللغة ============ */
+  .langbar{
+    position:fixed; top:52px; inset-inline-end:16px; z-index:65;
+    display:flex; gap:6px; padding:5px; border-radius:12px;
+    background:rgba(245,240,229,.9); border:1px solid var(--line);
+    backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+    box-shadow:0 10px 24px -14px rgba(23,37,29,.35);
+  }
+  .langbtn{border-radius:8px;padding:6px 14px;font:600 13px/1 inherit;cursor:pointer;border:1px solid var(--line);background:var(--card);color:var(--muted)}
+  .langbtn.active{background:var(--green);color:#fff;border-color:var(--green)}
+  .lang[hidden]{display:none}
+  #en{direction:ltr;text-align:left}
+  #en ul{padding-right:0;padding-left:20px}
+  #en th,#en td{text-align:left}
+  details.tapdrop{border:1px solid var(--line);border-radius:14px;background:var(--card);margin:16px 0;overflow:hidden}
+  details.tapdrop>summary{cursor:pointer;list-style:none;padding:14px 18px;font-weight:700;color:var(--green-deep);background:var(--gold-soft);display:flex;align-items:center;gap:10px}
+  details.tapdrop>summary::-webkit-details-marker{display:none}
+  details.tapdrop>summary::before{content:"+";color:var(--gold);font-weight:800;font-size:16px;line-height:1}
+  details.tapdrop[open]>summary::before{content:"–"}
+  details.tapdrop .tapbody{padding:6px 18px 16px}
+  details.tapdrop h4{color:var(--green);margin:14px 0 6px;font-size:15px}
+  details.tapdrop table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13.5px}
+  details.tapdrop td{border-bottom:1px solid var(--line);padding:7px 10px;text-align:start;vertical-align:top}
+  details.tapdrop .conf{color:var(--green);font-weight:800}
+  details.tapdrop .chk{color:var(--gold);font-weight:800}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<nav class="toc" id="toc">
+  <span class="brand">🌴 نخلة</span>
+  <a href="#cycle">دورة العمل</a>
+  <a href="#terms">المصطلحات</a>
+  <a href="#revenue">نموذج الربح</a>
+  <a href="#costs">التكاليف</a>
+  <a href="#breakeven">نقطة التعادل</a>
+  <a href="#growth">خطة النمو</a>
+  <a href="#compliance">الامتثال التنظيمي</a>
+  <a href="#monitoring">المراقبة والتشغيل</a>
+  <a href="#missing">الميزات الناقصة</a>
+</nav>
+
+<div class="wrap">
+
+  <div class="langbar"><button class="langbtn" id="btn-en" onclick="setLang('en')">English</button><button class="langbtn active" id="btn-ar" onclick="setLang('ar')">العربية</button></div>
+
+  <div class="lang" id="en" dir="ltr" hidden>
+
+  <header>
+    <h1>🌴 Nakhla — How the business works and how it earns</h1>
+    <p>Nakhla is a Saudi platform connecting brands with content creators: the brand requests content, the creator delivers it, and the platform safeguards both parties' rights and takes its commission. This document explains the order lifecycle, the terminology, the revenue model, and the costs — in plain business language.</p>
+    <div class="hero-stats">
+      <div class="chip"><b>6%</b><span>Platform commission on every deal</span></div>
+      <div class="chip"><b>≈ 13 orders/month</b><span>Break-even point</span></div>
+      <div class="chip"><b>≈ $32–47/month</b><span>Infrastructure at launch</span></div>
+    </div>
+  </header>
+
+  <!-- ============ Order lifecycle ============ -->
+  <section>
+  <h2 data-num="01" class="rv">1. The order lifecycle (an order's journey from start to finish)</h2>
+  <div class="card rv">
+    <p>Every deal on Nakhla follows a clear, protected path. Think of it like a "small contract" in which the platform is the guaranteeing intermediary:</p>
+    <div class="cycle rv">
+      <div class="step"><b>1. Create the order</b><span>The brand chooses the creator's package and writes the details (the brief)</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>2. Payment into escrow</b><span>The amount is paid and held in a protected account at the licensed payment gateway — it does not reach the creator yet (see section 7)</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>3. Execution</b><span>The creator accepts the order and starts the work</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>4. Delivery</b><span>They submit the final work for review</span></div>
+    </div>
+    <div class="cycle rv">
+      <div class="step"><b>5. Review</b><span>The brand approves, or requests a revision</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>6. Approval</b><span>The work is officially accepted</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>7. Release of funds</b><span>The platform instructs the payment gateway to transfer the dues to the creator and deduct its commission</span></div>
+    </div>
+    <div class="cycle rv">
+      <div class="step branch"><b>Alternative path: dispute</b><span>If the two parties disagree, the order is frozen and platform management steps in: either release the funds to the creator or return them to the brand</span></div>
+      <div class="step branch"><b>Alternative path: cancellation</b><span>The order is cancelled before approval and the held amount is returned to the brand</span></div>
+    </div>
+    <p class="muted">Every step is recorded in the order log with its date and reason — full transparency should any dispute arise.</p>
+  </div>
+  </section>
+
+  <!-- ============ Key terms ============ -->
+  <section>
+  <h2 data-num="02" class="rv">2. Key terms (in plain language)</h2>
+  <div class="card rv">
+    <dl class="terms">
+      <dt>💰 Escrow</dt>
+      <dd>The amount the brand pays does not go directly to the creator; it is held in a protected account <b>at the payment provider licensed by SAMA</b> — not in a Nakhla account (this is a regulatory requirement, see section 7) — until the work is delivered and approved. This protects both sides: the brand is assured it will not pay for work that was not delivered, and the creator is assured the funds genuinely exist before starting.</dd>
+
+      <dt>⚖️ Dispute</dt>
+      <dd>If the brand rejects the work or a disagreement occurs, they open a "dispute." The order is frozen and the amount stays held, while Nakhla's management team reviews the case and rules: either release the funds to the creator (the work is sound) or return them to the brand (the work is not as agreed).</dd>
+
+      <dt>📤 Release</dt>
+      <dd>The moment the deal successfully ends: the platform releases the hold, the creator receives their dues, and the platform keeps its commission.</dd>
+
+      <dt>📊 Gross Merchandise Value (GMV)</dt>
+      <dd>The total value of all completed deals across the platform. This is not the platform's profit — the platform's profit is a small slice of it (the commission). But it is the most important indicator of the platform's growth and its negotiating power with payment providers.</dd>
+
+      <dt>🔁 Revision</dt>
+      <dd>The brand's right to request improvements to the delivered work before final approval — without opening a dispute.</dd>
+
+      <dt>🧾 Service Fee</dt>
+      <dd>A percentage the platform adds to the package price and the brand pays — currently <b>6%</b>. This is the platform's core revenue.</dd>
+    </dl>
+  </div>
+  </section>
+
+  <!-- ============ Revenue model ============ -->
+  <section>
+  <h2 data-num="03" class="rv">3. The revenue model — where does Nakhla earn?</h2>
+  <div class="card rv">
+    <h3>Primary income source: a 6% commission on every deal</h3>
+    <p>A worked example on an order of <b>SAR 1,000</b>:</p>
+    <div class="calc">
+      <label>Order value: <b>SAR 1,000</b></label>
+      <div class="hint">The interactive distribution slider is available in the Arabic view</div>
+    </div>
+    <div class="money-flow rv">
+      <div class="money-box in"><span class="amount">1,060 SAR</span>paid by the brand<br /><span class="muted">(package price + 6% commission)</span></div>
+      <div class="money-box out"><span class="amount">1,000 SAR</span>received by the creator</div>
+      <div class="money-box out"><span class="amount">≈ 29 SAR</span>payment gateway fees<br /><span class="muted">(≈ 2.75% of the transaction value)</span></div>
+      <div class="money-box net"><span class="amount">≈ 31 SAR</span>Nakhla's net profit before tax<br /><span class="muted">(≈ 3% of the deal value)</span></div>
+    </div>
+    <p class="muted">Tax note: the platform's commission is subject to 15% VAT (added on top of the commission and remitted to the Zakat, Tax and Customs Authority).</p>
+
+    <h3>Future income sources (revenue growth paths)</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>Source</th><th>The idea</th><th>Note</th></tr>
+      <tr><td><b>Raise the commission gradually</b></td><td>The global competitor (Collabstr) takes 15–20% from both sides — at 6%, Nakhla has a large margin to raise</td><td>The fastest profit lever with no development at all</td></tr>
+      <tr><td><b>Brand subscriptions</b></td><td>A monthly plan for companies: advanced search, multiple campaigns, an account manager</td><td>Steady recurring revenue (SaaS)</td></tr>
+      <tr><td><b>Creator promotion</b></td><td>Premium placement in search results and the home page for a fee</td><td>Like "sponsored placement" inside the platform</td></tr>
+      <tr><td><b>Commission on the creator</b></td><td>Deduct a small percentage from the creator's dues in addition to the brand's commission</td><td>The standard model globally (commission from both sides)</td></tr>
+      <tr><td><b>Campaign management services</b></td><td>Nakhla runs the entire campaign for large brands for a higher percentage</td><td>High profit margin, requires an operations team</td></tr>
+    </table>
+    </div>
+  </div>
+  </section>
+
+  <!-- ============ Costs ============ -->
+  <section>
+  <h2 data-num="04" class="rv">4. Cost analysis</h2>
+
+  <div class="card rv">
+    <h3>The bottom line first <span class="badge">Bottom line</span></h3>
+    <div class="tbl">
+    <table>
+      <tr><th>Stage</th><th>Fixed / annual costs</th><th>Monthly operations (infrastructure)</th><th>Payment fees</th></tr>
+      <tr>
+        <td><b>Launch</b></td>
+        <td class="num">≈ $260 first year (≈ SAR 965)<br /><span class="muted">+ $200 (≈ SAR 750) development tools and subscriptions for the first two months</span></td>
+        <td class="num">≈ $32–47/month (≈ SAR 120–175)</td>
+        <td class="num">≈ 2.5–2.9% of transaction value + 15% VAT on commissions</td>
+      </tr>
+      <tr>
+        <td><b>Growth (50k active users)</b></td>
+        <td class="num">≈ $205/year renewals (≈ SAR 770)</td>
+        <td class="num">≈ $210–560/month (≈ SAR 790–2,100)</td>
+        <td class="num">Negotiate special rates at scale</td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="card rv">
+    <h3>Final technical architecture at launch (the approved decision)</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>Component</th><th>Where it runs</th><th>Monthly cost</th></tr>
+      <tr><td>Website + admin panel + API</td><td><a href="https://vercel.com/pricing" target="_blank">Vercel Pro</a></td><td class="num">$20</td></tr>
+      <tr><td>Database (Postgres)</td><td><a href="https://neon.tech/pricing" target="_blank">Neon</a> — usage-based pricing only, no base fee</td><td class="num">≈ $5–15</td></tr>
+      <tr><td>Real-time chat server (socket.io)</td><td><a href="https://www.hostinger.com/vps-hosting" target="_blank">Hostinger KVM1</a> — 1 vCPU / 4GB RAM handles tens of thousands of concurrent connections, and the current system runs on it with no re-engineering</td><td class="num">$6.49 (renews at 11.99)</td></tr>
+      <tr><td>File and image storage</td><td><a href="https://vercel.com/docs/vercel-blob" target="_blank">Vercel Blob</a></td><td class="num">A few cents</td></tr>
+      <tr class="total-row"><td colspan="2">Total monthly at launch</td><td class="num">≈ $32–47 (≈ SAR 120–175)</td></tr>
+    </table>
+    </div>
+
+    <h3>Cost line-item details at launch</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>Item</th><th>Cost</th><th>Practical notes</th></tr>
+      <tr><td>Development tools and subscriptions (first two months)</td><td class="num">≈ $200 (≈ SAR 750) — one-time</td><td>The first two months from launch are an intensive technical phase: subscriptions to AI, development and testing tools — they end once the platform stabilizes</td></tr>
+      <tr><td>Apple Developer account (iOS)</td><td class="num">$99/year</td><td>The organization account requires a commercial registration and a D-U-N-S number — <a href="https://developer.apple.com/programs/" target="_blank">Apple Developer Program</a></td></tr>
+      <tr><td>Google Developer account (Android)</td><td class="num">$25 — one-time</td><td>The personal account requires a closed test: 12 testers for 14 days before publishing — <a href="https://play.google.com/console/about/" target="_blank">Google Play Console</a></td></tr>
+      <tr><td>Email verification (a free option approved for launch)</td><td class="num">SAR 0</td><td>The verification code is sent by email via <a href="https://resend.com/pricing" target="_blank">Resend</a> (3,000 messages/month free) — the same verification experience at no cost. We add SMS later as a trust feature ("phone-verified") for creators</td></tr>
+      <tr><td>SMS verification messages (later — Unifonic)</td><td class="num">SAR 0.055/message</td><td>Six times cheaper than Twilio inside Saudi Arabia. Registering a sender name with the Communications Authority ≈ SAR 299/year and takes 10–20 business days. <b>Authority rules:</b> operational messages (verification codes) are allowed around the clock, while marketing messages require a separate sender name (8 characters maximum) that must end with the suffix <code>-AD</code> and are prohibited from 9 PM to 8 AM — <a href="https://www.cst.gov.sa/en/regulations-and-licenses/regulations/Document-1560" target="_blank">Communications, Space and Technology Commission regulation</a></td></tr>
+      <tr><td>Payment gateway</td><td class="num">≈ 2.5–2.9% + a fixed fee</td><td>Stripe is not available locally — the approved candidate after documented research: <a href="https://www.tap.company" target="_blank">Tap Payments</a> (SAMA-licensed, its "Marketplace" product for splitting payments, covers Kuwait for expansion into the next GCC market) — details in section 7. mada cards ≈ 1% capped at SAR 200</td></tr>
+      <tr><td>Transferring dues to creators</td><td class="num">Per quotation</td><td>Cheapest channel: bulk "Sarie" transfers via the commercial bank account — a few riyals per transfer</td></tr>
+      <tr><td>Error monitoring, analytics, notifications</td><td class="num">SAR 0</td><td>The free tiers cover the entire launch phase (Sentry, PostHog, Apple and Google notifications, building the apps locally)</td></tr>
+    </table>
+    </div>
+
+    <div class="alert">
+      <b>⏰ The two longest lead-time items before launching the app — start them immediately:</b>
+      <ul>
+        <li>Google's requirement: 12 testers for 14 days before publishing to the store</li>
+        <li>Registering the SMS sender name with the Communications Authority (10–20 business days) — no longer blocks launch after adopting email verification, but start it early in preparation for the "phone-verified" feature</li>
+      </ul>
+    </div>
+  </div>
+  </section>
+
+  <!-- ============ Break-even ============ -->
+  <section>
+  <h2 data-num="05" class="rv">5. When does the platform cover its costs? (break-even)</h2>
+  <div class="card rv">
+    <p>An approximate calculation for the launch phase after adopting the final architecture:</p>
+    <ul>
+      <li>Monthly operations ≈ <b>$32–47</b> + annual costs spread over 12 months ≈ <b>$100/month total</b> ≈ <b>SAR 375/month</b></li>
+      <li>First two months only: add ≈ <b>$100/month</b> in development tools and subscriptions (an intensive technical phase that ends once the platform stabilizes)</li>
+      <li>The platform's net profit per deal ≈ <b>3%</b> of its value (6% commission minus payment fees)</li>
+      <li>So the break-even point ≈ <b>SAR 13,000 in transactions per month</b> — roughly <b>13 orders averaging SAR 1,000</b> per month</li>
+    </ul>
+    <p class="muted">Any growth above this figure turns into direct profit, and raising the commission from 6% toward the global rate (15–20%) lowers the break-even point to fewer than 5 orders per month.</p>
+  </div>
+  </section>
+
+  <!-- ============ Growth plan ============ -->
+  <section>
+  <h2 data-num="06" class="rv">6. The growth plan in the Saudi market</h2>
+  <div class="card rv">
+    <h3>Why is Saudi Arabia an ideal market for Nakhla?</h3>
+    <ul>
+      <li>Among the world's highest users of social media — Snapchat, TikTok and Instagram reach most of the population, and digital advertising spend grows annually</li>
+      <li>Vision 2030 pushes small and medium enterprises toward digital marketing, with government support for entrepreneurship (Monsha'at)</li>
+      <li>Global competitors (Collabstr and others) do not offer: local payment (mada), Saudi tax invoices, Arabic support, or local bank transfers to creators — this is our gap</li>
+    </ul>
+
+    <h3>Phase one (months 1–3): building the supply side — creators first</h3>
+    <ul>
+      <li>Recruiting <b>50–100 creators</b> manually in 3 focused verticals (fashion & beauty, restaurants & coffee, tech) — geographic focus: Riyadh and Jeddah</li>
+      <li>Early-join incentive: <b>0% commission for the first 3 months</b> + a "Founding Member" badge — zero cost and high loyalty</li>
+      <li>The creators themselves are the first marketing channel: each creator announces their Nakhla profile to their audience</li>
+    </ul>
+
+    <h3>Phase two (months 4–6): activating the demand side — the brands</h3>
+    <ul>
+      <li>Targeting restaurants, cafés and small e-commerce stores: their first campaign at a reduced commission + a documented case study</li>
+      <li>Partnerships with local marketing agencies: the agency manages its clients through Nakhla for a percentage</li>
+      <li>Registering with "Maroof" and displaying the commercial registration inside the platform — trust precedes the sale in the Saudi market</li>
+      <li>Focused paid ads on commercial search terms ("Saudi influencers," "influencer ads") — a small, high-intent budget</li>
+    </ul>
+
+    <h3>Phase three (months 6–12): expansion and profit maximization</h3>
+    <ul>
+      <li>Raising the commission gradually from 6% toward 10–15% after proving value — still cheaper than the global competitor</li>
+      <li>Launching brand subscriptions and paid promotion for creators (the income sources from section 3)</li>
+      <li>Activating the "phone-verified" feature via SMS as an additional trust layer</li>
+    </ul>
+
+    <h3>A winning card: the Saudi seasonal calendar</h3>
+    <p>Advertising spend in Saudi Arabia is highly seasonal — we build ready campaign packages two months before each season:</p>
+    <div class="tbl">
+    <table>
+      <tr><th>Season</th><th>The opportunity</th></tr>
+      <tr><td><b>Ramadan and Eid al-Fitr</b></td><td>The biggest advertising season of the year — peak influencer spend; prepare the packages two months ahead</td></tr>
+      <tr><td><b>National Day (September) and Founding Day (February)</b></td><td>National-identity campaigns for almost every brand</td></tr>
+      <tr><td><b>Riyadh Season and the entertainment seasons</b></td><td>Restaurants, events and entertainment — intense demand for local creators</td></tr>
+      <tr><td><b>Back-to-school and White Friday</b></td><td>E-commerce seasons — store offers through influencers</td></tr>
+    </table>
+    </div>
+
+    <p class="muted">The governing rule for growth: marketplaces succeed through focus — one city, few verticals, real deal liquidity — then expand. We do not spread the effort across all of Saudi Arabia from day one.</p>
+  </div>
+  </section>
+
+  <!-- ============ Regulatory compliance ============ -->
+  <section>
+  <h2 data-num="07" class="rv">7. Regulatory compliance — research findings documented against official sources</h2>
+
+  <div class="card rv">
+    <h3>The golden rule: Nakhla never holds escrow funds <span class="badge">Legally mandatory</span></h3>
+    <p>The Saudi Payments and Payment Services Law (Royal Decree M/26, Article 4) restricts receiving, holding and transferring funds to payment service providers licensed by <b>the Saudi Central Bank (SAMA)</b> — with fines reaching <b>SAR 25 million</b>. Therefore the "held" escrow amount in the order lifecycle (section 1) does not sit in a Nakhla account, but in a <b>dedicated, protected bank account at the licensed payment provider</b>, and it is the payment provider that carries out the splitting of amounts, the transfers, and the verification of recipients' identities. Nakhla runs the deal and the decision — not the money.</p>
+    <div class="tbl">
+    <table>
+      <tr><th>Decision</th><th>Summary</th><th>Reason</th></tr>
+      <tr><td><b>Candidate gateway: Tap Payments</b></td><td>The approved candidate after research — pending sandbox verification</td><td>SAMA-licensed since 2020, supports mada, Apple Pay and STC Pay, has a ready "Marketplace" product (splitting amounts, deducting the commission, managing transfers), and covers the entire Gulf including Kuwait — ready for future expansion into the next GCC market</td></tr>
+      <tr><td><b>Stripe permanently ruled out</b></td><td>Not available in Saudi Arabia or Kuwait</td><td>The UAE is the only Gulf country supported</td></tr>
+      <tr><td><b>Payment page: full redirect</b></td><td>A settled architectural decision</td><td>Keeps the card-security certification scope (PCI-DSS) at the lowest level (SAQ A) and avoids the new script-scanning requirements that version 4 imposes on embedded (iframe) pages</td></tr>
+    </table>
+    </div>
+    <p class="muted">Comparisons of Moyasar, HyperPay and PayTabs did not survive adversarial source verification — the Tap recommendation is built on its documented strengths and the exclusion of Stripe, and needs a review of the contract, fees, and escrow-hold window before final commitment.</p>
+
+    <details class="tapdrop">
+      <summary>Tap Payments details: contract, fees, and settlement / hold window (documented research — click to expand)</summary>
+      <div class="tapbody">
+        <p class="muted" style="margin:8px 0">Confirmed figures from Tap's official pages and Help Center (support.tap.company), 2026 research. <span class="conf">✓</span> = confirmed from Tap sources · <span class="chk">⟳</span> = settled in the contract with Tap.</p>
+
+        <h4>1) Settlement &amp; hold window (most important for cash flow)</h4>
+        <table>
+          <tr><td><span class="conf">✓</span> Mada settlement</td><td class="num">3 working days (T+3) · SAR 100 min</td></tr>
+          <tr><td><span class="conf">✓</span> Visa / Mastercard settlement</td><td class="num">5 working days (T+5) · SAR 100 min</td></tr>
+          <tr><td><span class="conf">✓</span> Payout to bank</td><td>Automatic &amp; free in Saudi Arabia</td></tr>
+          <tr><td><span class="conf">✓</span> Early payout / settlement under SAR 100</td><td class="num">SAR 5 fee on request</td></tr>
+          <tr><td><span class="conf">✓</span> Payout frequency</td><td>Adjustable (bi-weekly / monthly) by contacting Tap</td></tr>
+          <tr><td><span class="chk">⟳</span> Rolling reserve</td><td>Not part of the standard model — Tap settles on the T+3/T+5 window. A reserve (fixed % / period) may be applied to higher-risk or Marketplace accounts at Tap's discretion — confirm at contracting</td></tr>
+        </table>
+        <p class="muted" style="margin:8px 0"><b>Cash-flow impact:</b> plan for a 3–5 working-day gap between the customer's card charge and funds landing in the Nakhla account (then split to the creator via the Marketplace product). No long 30–180-day hold in the standard model — unlike some providers.</p>
+
+        <h4>2) Fees</h4>
+        <table>
+          <tr><td><span class="conf">✓</span> Standard cards</td><td class="num">2.75% per transaction</td></tr>
+          <tr><td><span class="conf">✓</span> International cards</td><td class="num">3.25% + FX</td></tr>
+          <tr><td><span class="chk">⟳</span> Mada cards</td><td>Lower than credit cards (exact rate to confirm — market norm ≈ 1% capped SAR 200)</td></tr>
+          <tr><td><span class="conf">✓</span> Monthly / setup fee</td><td>None (transparent, no subscription)</td></tr>
+          <tr><td><span class="chk">⟳</span> Refund fee</td><td>Not published — confirm in contract (whether the original transaction fee is returned)</td></tr>
+          <tr><td><span class="chk">⟳</span> Chargeback fee</td><td>Not published — confirm in contract</td></tr>
+        </table>
+
+        <h4>3) Contract</h4>
+        <ul>
+          <li><span class="conf">✓</span> Pay-as-you-go with no monthly fee — points to a low-commitment relationship without long lock-in.</li>
+          <li><span class="chk">⟳</span> Commitment term and cancellation-notice period are not published — review the Merchant Agreement and Terms &amp; Conditions on tap.company.</li>
+          <li><span class="chk">⟳</span> Legal responsibilities and risk allocation (especially the Marketplace flow and creator-KYC before paying out earnings) — defined in the Marketplace agreement.</li>
+        </ul>
+
+        <h4>Confirm with Tap before signing</h4>
+        <ul>
+          <li>Commitment term and cancellation-notice period.</li>
+          <li>Refund fee and chargeback fee.</li>
+          <li>Whether a rolling reserve applies to Marketplace accounts — its % and duration.</li>
+          <li>Marketplace-flow settlement timing (split + creator payout) and payout KYC requirements.</li>
+          <li>The exact Mada rate.</li>
+        </ul>
+        <p class="muted" style="margin:8px 0;font-size:12.5px">Sources: Tap Help Center (KSA settlement timing), Tap pricing page (2.75%/3.25%), Terms &amp; Conditions. <span class="chk">⟳</span> items depend on the contractual offer and vary by volume and risk profile.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card rv">
+    <h3>The obligations map — every regulator and what it requires of us</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>Authority / law</th><th>The practical obligation on Nakhla</th><th>Status</th></tr>
+      <tr><td><b>SAMA — the Payments Law</b></td><td>Every movement of funds through a licensed payment provider; Nakhla is limited to the role of technical intermediary and a mirror record of transactions</td><td>The platform's architecture is built on this basis ✅</td></tr>
+      <tr><td><b>ZATCA (Zakat, Tax and Customs Authority)</b></td><td>E-invoicing (Fatoora) for every commission, subscription and promotion fee + <b>electronic credit notes</b> linked to the original invoice upon refunds or commission adjustments in cancelled/disputed orders — internal entries alone are not enough</td><td>Required before commercial launch ⏳</td></tr>
+      <tr><td><b>Mawthooq (General Authority of Media Regulation — GAMR)</b></td><td>A mandatory Mawthooq license for every creator advertising commercially + their commitment to clearly disclosing that the content is advertising</td><td>Implemented in the platform: license verification at signup and an admin review gate ✅</td></tr>
+      <tr><td><b>SDAIA — Personal Data Protection Law (PDPL)</b></td><td>There is no approved-countries list — hosting data on US/European servers (Neon/Vercel) requires <b>contractual clauses in SDAIA's form (SCCs)</b> with each provider + a <b>written 6-element transfer risk assessment before operating on real data</b>; breach notification within 72 hours via a portal requiring a Saudi ID/residency — a Saudi-resident notification officer must be named in the contingency plan starting now</td><td>Before launch — with legal counsel ⏳</td></tr>
+      <tr><td><b>Ministry of Commerce — E-Commerce Law (M/126)</b></td><td>Always display prices inclusive of tax, disclose the store's identity and registration, register the online store, and the customer's right to withdraw within 7 days — which <b>lapses once the service has been used</b>; whether the "customized products" exception applies to content services needs a legal opinion (fines up to SAR 1 million)</td><td>The refund policy needs counsel's approval ⏳</td></tr>
+      <tr><td><b>Anti-Money Laundering (AML)</b></td><td>Nakhla is not an "obligated entity" as long as all funds move through the licensed payment provider — identity verification, suspicious-activity reporting and keeping records for 10 years are the payment provider's legal responsibility and cannot be transferred by contract; Nakhla mirrors the 10-year retention in its records and builds escalation channels</td><td>The immutable financial ledger is ready ✅</td></tr>
+    </table>
+    </div>
+    <div class="alert">
+      <b>⚖️ Items requiring a Saudi legal counsel before launch:</b>
+      <ul>
+        <li>Confirming that structuring the escrow at the payment provider keeps Nakhla entirely outside the scope of a SAMA license (if Nakhla were deemed a "participant in a payment service," all the exemption conclusions would flip)</li>
+        <li>Whether the withdrawal exception applies to customized content services (the law's text says "products")</li>
+        <li>The mechanism for signing SDAIA-form contractual clauses with US providers (Neon/Vercel) — most likely appended to the existing data-processing agreements</li>
+        <li>The official Arabic text of the advertising-content controls from the Media Regulation Authority (the file is geo-blocked — to be fetched from inside Saudi Arabia)</li>
+      </ul>
+    </div>
+    <p class="muted">The full details with primary sources and verbatim quotations: <code>docs/compliance-monitoring-blueprint.md</code> and <code>docs/compliance-gaps-addendum.md</code> — every finding above passed adversarial verification by three independent votes (3-0) or was explicitly flagged as unsettled.</p>
+  </div>
+
+  <div class="card rv">
+    <h3>In-platform advertising disclosure — the "paid promotion" rules</h3>
+    <p>The "creator promotion" income source (section 3) is subject to strict disclosure rules globally (the US Federal Trade Commission FTC, and the UK advertising bodies ASA/CMA) and locally (Mawthooq):</p>
+    <ul>
+      <li>Every paid card in search results or on the home page carries a clear <b>"Ad"</b> badge — not "Featured" or "Promoted" alone (the FTC considers these ambiguous terms)</li>
+      <li>The badge is decided by the server (the <code>isSponsored</code> field in the response) so no app can drop it, and it appears in the user's language (Arabic/English)</li>
+      <li>The creator confirms that the published content carries the disclosure ("Ad" / #ad at the start of the caption) before delivering the order — and management monitors, escalates and documents (documented programs mitigate liability in enforcement)</li>
+    </ul>
+  </div>
+  </section>
+
+  <!-- ============ Monitoring & operations ============ -->
+  <section>
+  <h2 data-num="08" class="rv">8. Financial and operational monitoring — what is actually built into the platform</h2>
+
+  <div class="card rv">
+    <h3>Design principle: every riyal has a trail, and every step has a record <span class="badge">Implemented ✅</span></h3>
+    <p>The following infrastructure is implemented in the code today and mirrors the "protected-account reconciliation" duty that SAMA imposes on payment providers — so we are audit-ready from day one:</p>
+    <div class="tbl">
+    <table>
+      <tr><th>Layer</th><th>What it does</th><th>Status</th></tr>
+      <tr><td><b>Financial ledger</b></td><td>An immutable entry for every movement: collection, refund, dues transfer, commission — with the payment provider's reference. The governing equation for every completed order: <code>collection − refund − dues − commission = 0</code></td><td>✅</td></tr>
+      <tr><td><b>Order event log</b></td><td>Every state transition is recorded with full structure: who the actor is and their role, from which state to which state, the reason — including admin and automated-system interventions</td><td>✅</td></tr>
+      <tr><td><b>Payment webhook capture</b></td><td>Every notification from the payment gateway is stored raw with its signature before processing, with automatic deduplication — no notification is lost and none is processed twice</td><td>✅</td></tr>
+      <tr><td><b>Daily reconciliation</b></td><td>An automated check every day at 3 AM (Riyadh time): inflow = dues + commission + amount held in escrow — any discrepancy surfaces immediately with a red flag in the admin panel</td><td>✅</td></tr>
+      <tr><td><b>Error monitoring (Sentry)</b></td><td>Crash tracking across the website, admin panel, API and mobile app — active the moment an activation key is added, with no footprint before that</td><td>✅</td></tr>
+      <tr><td><b>The admin "Finance" panel</b></td><td>A new page: daily reconciliation records with an instant-run button + a payment-notification log with error highlighting</td><td>✅</td></tr>
+      <tr><td><b>Operational metrics for admins</b></td><td>The order funnel across all its states, the dispute rate, dues-payout time (average + 90th percentile), and threshold-breach alerts: delivery pending over 72 hours or a dispute open over 7 days</td><td>✅</td></tr>
+    </table>
+    </div>
+    <p class="muted">Coming next after connecting the actual payment gateway: matching the internal ledger with the payment provider's statements, e-invoicing (ZATCA), and subscription and paid-promotion admin panels once those sources launch.</p>
+  </div>
+  </section>
+
+  <!-- ============ Missing features ============ -->
+  <section>
+  <h2 data-num="09" class="rv">9. Missing features — why, the requirements, and the time estimate</h2>
+
+  <div class="card rv">
+    <h3>What is required for commercial launch <span class="badge">Top priority</span></h3>
+    <div class="tbl">
+    <table>
+      <tr><th>Feature</th><th>Why it is not present now</th><th>Requirements</th><th>Time estimate</th></tr>
+      <tr>
+        <td><b>Actual payment gateway integration (Tap)</b></td>
+        <td>The decision was pending until the regulatory research was settled (section 7). The infrastructure is ready: a unified gateway interface + a sandbox provider working today — switching does not touch the rest of the code</td>
+        <td>Commercial registration ← opening a merchant account with Tap (contract + entity verification) ← sandbox keys ← building the Tap connector (collection, refund, notifications) + a full-redirect payment page</td>
+        <td class="num">External wait of 1–3 weeks (account approval) + 2–3 weeks of development — they overlap</td>
+      </tr>
+      <tr>
+        <td><b>Actual dues transfers</b></td>
+        <td>Depends entirely on the payment gateway and a commercial bank account — no point building it before them</td>
+        <td>A commercial bank account, collecting and verifying creators' IBANs, the Tap transfers product or bulk "Sarie" transfers, linking every transfer to the financial ledger</td>
+        <td class="num">+ one week on top of the gateway integration</td>
+      </tr>
+      <tr>
+        <td><b>Email account verification</b></td>
+        <td>Priority went to the escrow and compliance core; the free provider is approved (Resend) but not yet wired</td>
+        <td>Wiring Resend, temporary verification codes, Arabic/English message templates</td>
+        <td class="num">2–3 days</td>
+      </tr>
+      <tr>
+        <td><b>The data-protection package (PDPL)</b></td>
+        <td>The obligations became clear with the recent research — and they are documents and procedures more than code</td>
+        <td>SDAIA contractual clauses with Neon, Vercel and the hosting, the written transfer risk assessment (6 elements), a privacy policy, a data-subject requests path, a 72-hour breach plan with a Saudi-resident officer — with legal counsel</td>
+        <td class="num">1–2 weeks (in parallel, does not block development)</td>
+      </tr>
+      <tr>
+        <td><b>E-invoicing (ZATCA)</b></td>
+        <td>Requires a commercial registration and tax registration first; and the actual obligation begins once the revenue threshold is exceeded (SAR 375k)</td>
+        <td>VAT registration ← a compliant invoicing provider (faster than direct integration) ← invoices for every commission/subscription + credit notes linked to the original invoice for refunds</td>
+        <td class="num">1–2 weeks with a ready provider</td>
+      </tr>
+    </table>
+    </div>
+    <div class="alert">
+      <b>⏰ The critical path = the commercial registration:</b> it is the key that opens four doors at once — a Tap merchant account, tax registration, the commercial bank account, and the Apple organization account (which also requires a D-U-N-S number). Obtaining it first lets everything above run in parallel: <b>full commercial launch ≈ 6–8 calendar weeks from obtaining the registration</b>.
+    </div>
+  </div>
+
+  <div class="card rv">
+    <h3>Income sources not yet built (from section 3)</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>Feature</th><th>Why it is not present now</th><th>Requirements</th><th>Time estimate</th></tr>
+      <tr>
+        <td><b>Brand subscriptions</b></td>
+        <td>Planned as a second income source — building it before a payment gateway that supports recurring billing is pointless</td>
+        <td>Plan and subscription models in the database, recurring billing via Tap, feature gating (advanced search, multiple campaigns, account manager), a subscriptions admin panel, ZATCA invoices</td>
+        <td class="num">2–3 weeks (after the gateway integration)</td>
+      </tr>
+      <tr>
+        <td><b>Paid promotion for creators</b></td>
+        <td>The advertising-disclosure rules were unsettled — now settled by research (section 7): a mandatory "Ad" badge</td>
+        <td>A promotion-slots model with time periods, a server-side <code>isSponsored</code> field, an "Ad" badge on web and mobile, a slots-and-pricing admin panel, fee collection and invoicing</td>
+        <td class="num">1–2 weeks</td>
+      </tr>
+      <tr>
+        <td><b>Commission on the creator</b></td>
+        <td>A pricing decision, not a technical one — the financial ledger supports it from day one (a separate commission entry for each side)</td>
+        <td>A percentage decision + updating the price calculator, the display interfaces and the invoice templates</td>
+        <td class="num">A few days once the decision is made</td>
+      </tr>
+      <tr>
+        <td><b>Full campaign management services</b></td>
+        <td>Requires a human operations team (a campaign manager) — not a launch priority for a self-service platform</td>
+        <td>Hiring an operator, a "managed campaign" path in the platform, higher-percentage pricing, service contracts</td>
+        <td class="num">2–4 weeks of development + hiring — after attracting large brands</td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="card rv">
+    <h3>Deferred operational improvements</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>Feature</th><th>Why it is not present now</th><th>Requirements</th><th>Time estimate</th></tr>
+      <tr>
+        <td><b>Advertising-disclosure oversight tools</b></td>
+        <td>Their rules just emerged from the recent research (section 7)</td>
+        <td>A disclosure-confirmation step before delivering the order, an admin monitoring queue for delivered content, a public "report a hidden ad" button, documenting every action</td>
+        <td class="num">≈ one week</td>
+      </tr>
+      <tr>
+        <td><b>A formal disputes path</b></td>
+        <td>The dispute state exists technically and freezes the amount, but with no documented path: evidence, deadlines, appeal</td>
+        <td>Uploading attachments as evidence, announced deadlines for a ruling, a published arbitration policy for both parties, reasoned decision templates</td>
+        <td class="num">1–2 weeks</td>
+      </tr>
+      <tr>
+        <td><b>Publishing the mobile app to the stores</b></td>
+        <td>The app works fully in the development environment — publishing awaits the developer accounts and their time requirements</td>
+        <td>The Apple organization account (commercial registration + D-U-N-S), a Google account + a closed test of 12 testers for 14 days, store icons and screenshots, the production build</td>
+        <td class="num">3–4 calendar weeks (mostly waiting — runs in parallel)</td>
+      </tr>
+      <tr>
+        <td><b>Phone verification ("phone-verified") (SMS)</b></td>
+        <td>A previously approved decision: email is enough for launch (section 4) — SMS is a later trust layer</td>
+        <td>Registering the sender name with the Communications Authority (10–20 business days), wiring Unifonic</td>
+        <td class="num">2–3 days of development after registration</td>
+      </tr>
+      <tr>
+        <td><b>Matching the payment provider's statements</b></td>
+        <td>The daily internal reconciliation is built ✅ — matching it against Tap's statements needs the actual gateway first</td>
+        <td>Pulling Tap's statements automatically, comparing them with the internal ledger, and surfacing discrepancies in the "Finance" panel</td>
+        <td class="num">≈ one week (after the gateway integration)</td>
+      </tr>
+    </table>
+    </div>
+    <p class="muted">All the estimates above are actual development by one developer + AI tools, and do not include external wait periods except where stated. The suggested order: commercial registration immediately ← (Tap + ZATCA + PDPL + store accounts in parallel) ← the additional income sources after payments stabilize.</p>
+  </div>
+  </section>
+
+  <footer class="rv">Nakhla 🌴 — an internal document explaining the business model, costs and growth plan • Prices are estimates as of July 2026 • USD = SAR 3.75</footer>
+
+  </div>
+
+  <div class="lang" id="ar" dir="rtl">
+
+  <header>
+    <h1>🌴 نخلة — كيف يعمل المشروع وكيف يربح؟</h1>
+    <p>نخلة منصة سعودية تربط العلامات التجارية بصنّاع المحتوى: العلامة التجارية تطلب محتوى، صانع المحتوى ينفّذه، والمنصة تضمن حقوق الطرفين وتأخذ عمولتها. هذا الملف يشرح دورة العمل، المصطلحات، نموذج الربح، والتكاليف — بلغة عمل بسيطة.</p>
+    <div class="hero-stats">
+      <div class="chip"><b>٦٪</b><span>عمولة المنصة على كل صفقة</span></div>
+      <div class="chip"><b>≈ ١٣ طلبًا/شهر</b><span>نقطة التعادل</span></div>
+      <div class="chip"><b>≈ ٣٢–٤٧ دولار/شهر</b><span>تشغيل البنية التحتية عند الإطلاق</span></div>
+    </div>
+  </header>
+
+  <!-- ============ دورة العمل ============ -->
+  <section id="cycle">
+  <h2 data-num="٠١" class="rv">١. دورة العمل (رحلة الطلب من البداية للنهاية)</h2>
+  <div class="card rv">
+    <p>كل صفقة في نخلة تمر بمسار واضح ومحمي. فكّر فيها مثل «مقاولة صغيرة» المنصة فيها هي الوسيط الضامن:</p>
+    <div class="cycle rv">
+      <div class="step"><b>١. إنشاء الطلب</b><span>العلامة التجارية تختار باقة صانع المحتوى وتكتب التفاصيل (البريف)</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>٢. الدفع للضمان</b><span>المبلغ يُدفع ويُحجز في حساب محمي لدى بوابة الدفع المرخصة — لا يصل لصانع المحتوى بعد (انظر القسم ٧)</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>٣. التنفيذ</b><span>صانع المحتوى يقبل الطلب ويبدأ العمل</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>٤. التسليم</b><span>يرفع العمل النهائي للمراجعة</span></div>
+    </div>
+    <div class="cycle rv">
+      <div class="step"><b>٥. المراجعة</b><span>العلامة التجارية توافق، أو تطلب تعديلًا</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>٦. الموافقة</b><span>العمل مقبول رسميًا</span></div>
+      <div class="arrow">←</div>
+      <div class="step"><b>٧. تحرير المبلغ</b><span>المنصة تأمر بوابة الدفع بتحويل المستحقات لصانع المحتوى وخصم عمولتها</span></div>
+    </div>
+    <div class="cycle rv">
+      <div class="step branch"><b>مسار بديل: نزاع</b><span>لو اختلف الطرفان، الطلب يتجمّد وتتدخل إدارة المنصة: إما تحرير المبلغ لصانع المحتوى أو إرجاعه للعلامة التجارية</span></div>
+      <div class="step branch"><b>مسار بديل: إلغاء</b><span>الطلب يُلغى قبل الموافقة والمبلغ المحجوز يرجع للعلامة التجارية</span></div>
+    </div>
+    <p class="muted">كل خطوة تُسجَّل في سجل الطلب بتاريخها وسببها — شفافية كاملة لو حصل أي خلاف.</p>
+  </div>
+  </section>
+
+  <!-- ============ المصطلحات ============ -->
+  <section id="terms">
+  <h2 data-num="٠٢" class="rv">٢. المصطلحات الأساسية (بالبلدي)</h2>
+  <div class="card rv">
+    <dl class="terms">
+      <dt>💰 الضمان (Escrow)</dt>
+      <dd>المبلغ الذي تدفعه العلامة التجارية لا يذهب مباشرة لصانع المحتوى، بل يُحجز في حساب محمي <b>لدى بوابة الدفع المرخصة من ساما</b> — لا في حساب نخلة (هذا شرط نظامي، انظر القسم ٧) — حتى يُسلَّم العمل وتتم الموافقة عليه. هذا يحمي الطرفين: العلامة التجارية تضمن أنها لن تدفع مقابل عمل لم يُنجز، وصانع المحتوى يضمن أن المبلغ موجود فعلًا قبل أن يبدأ.</dd>
+
+      <dt>⚖️ النزاع (Dispute)</dt>
+      <dd>لو رفضت العلامة التجارية العمل أو حصل خلاف، تفتح «نزاعًا». الطلب يتجمّد والمبلغ يبقى محجوزًا، وفريق إدارة نخلة يراجع القضية ويحكم: إما تحرير المبلغ لصانع المحتوى (العمل سليم) أو إرجاعه للعلامة التجارية (العمل غير مطابق).</dd>
+
+      <dt>📤 تحرير المبلغ (Release)</dt>
+      <dd>لحظة نهاية الصفقة بنجاح: المنصة تفك الحجز، صانع المحتوى يستلم مستحقاته، والمنصة تحتفظ بعمولتها.</dd>
+
+      <dt>📊 إجمالي قيمة التعاملات (GMV)</dt>
+      <dd>مجموع قيمة كل الصفقات المكتملة عبر المنصة. هذا ليس ربح المنصة — ربح المنصة نسبة صغيرة منه (العمولة). لكنه المؤشر الأهم لنمو المنصة وقوتها التفاوضية مع مزودي الدفع.</dd>
+
+      <dt>🔁 طلب تعديل (Revision)</dt>
+      <dd>حق العلامة التجارية في طلب تحسينات على العمل المسلَّم قبل الموافقة النهائية — بدون فتح نزاع.</dd>
+
+      <dt>🧾 عمولة الخدمة (Service Fee)</dt>
+      <dd>نسبة تضيفها المنصة على سعر الباقة وتدفعها العلامة التجارية — حاليًا <b>٦٪</b>. هذه هي إيراد المنصة الأساسي.</dd>
+    </dl>
+  </div>
+  </section>
+
+  <!-- ============ نموذج الربح ============ -->
+  <section id="revenue">
+  <h2 data-num="٠٣" class="rv">٣. نموذج الربح — من أين تكسب نخلة؟</h2>
+  <div class="card rv" id="calcCard">
+    <h3>مصدر الدخل الأساسي: عمولة ٦٪ على كل صفقة</h3>
+    <p>مثال عملي على طلب بقيمة <b class="deal-v">١٬٠٠٠ ريال</b>:</p>
+    <div class="calc">
+      <label for="dealRange">قيمة الطلب: <b class="deal-v">١٬٠٠٠ ريال</b></label>
+      <input type="range" id="dealRange" min="250" max="20000" step="250" value="1000" aria-label="قيمة الطلب بالريال" />
+      <div class="hint">حرّك المؤشر لتشاهد توزيع المبالغ على أي قيمة طلب</div>
+    </div>
+    <div class="money-flow rv">
+      <div class="money-box in"><span class="amount"><span class="val" data-k="brand">١٬٠٦٠</span> ريال</span>تدفعها العلامة التجارية<br /><span class="muted">(سعر الباقة + عمولة ٦٪)</span></div>
+      <div class="money-box out"><span class="amount"><span class="val" data-k="creator">١٬٠٠٠</span> ريال</span>يستلمها صانع المحتوى</div>
+      <div class="money-box out"><span class="amount">≈ <span class="val" data-k="fee">٢٩</span> ريال</span>رسوم بوابة الدفع<br /><span class="muted">(≈ ٢٫٧٥٪ من قيمة العملية)</span></div>
+      <div class="money-box net"><span class="amount">≈ <span class="val" data-k="net">٣١</span> ريال</span>صافي ربح نخلة قبل الضريبة<br /><span class="muted">(≈ ٣٪ من قيمة الصفقة)</span></div>
+    </div>
+    <p class="muted">ملاحظة ضريبية: عمولة المنصة تخضع لضريبة القيمة المضافة ١٥٪ (تُضاف على العمولة وتورَّد للزكاة والضريبة والجمارك).</p>
+
+    <h3>مصادر دخل مستقبلية (مسارات نمو الإيراد)</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>المصدر</th><th>الفكرة</th><th>ملاحظة</th></tr>
+      <tr><td><b>رفع العمولة تدريجيًا</b></td><td>المنافس العالمي (Collabstr) يأخذ ١٥–٢٠٪ من الطرفين — نخلة عند ٦٪ لديها هامش رفع كبير</td><td>أسرع رافعة للربح بدون أي تطوير</td></tr>
+      <tr><td><b>اشتراكات العلامات التجارية</b></td><td>باقة شهرية للشركات: بحث متقدم، حملات متعددة، مدير حساب</td><td>دخل ثابت متكرر (SaaS)</td></tr>
+      <tr><td><b>إبراز صنّاع المحتوى</b></td><td>ظهور مميز في نتائج البحث والصفحة الرئيسية مقابل رسوم</td><td>مثل «الإعلان الممول» داخل المنصة</td></tr>
+      <tr><td><b>عمولة على صانع المحتوى</b></td><td>خصم نسبة صغيرة من مستحقات صانع المحتوى إضافة لعمولة العلامة التجارية</td><td>النموذج المعتاد عالميًا (عمولة من الطرفين)</td></tr>
+      <tr><td><b>خدمات إدارة الحملات</b></td><td>نخلة تدير الحملة كاملة للعلامات الكبيرة مقابل نسبة أعلى</td><td>هامش ربح مرتفع، يحتاج فريق تشغيل</td></tr>
+    </table>
+    </div>
+  </div>
+  </section>
+
+  <!-- ============ التكاليف ============ -->
+  <section id="costs">
+  <h2 data-num="٠٤" class="rv">٤. تحليل التكاليف</h2>
+
+  <div class="card rv">
+    <h3>الخلاصة أولًا <span class="badge">الخط السفلي</span></h3>
+    <div class="tbl">
+    <table>
+      <tr><th>المرحلة</th><th>تكاليف ثابتة / سنوية</th><th>تشغيل شهري (بنية تحتية)</th><th>رسوم المدفوعات</th></tr>
+      <tr>
+        <td><b>الإطلاق</b></td>
+        <td class="num">≈ ٢٦٠ دولار أول سنة (≈ ٩٦٥ ريال)<br /><span class="muted">+ ٢٠٠ دولار (≈ ٧٥٠ ريال) أدوات تطوير واشتراكات لأول شهرين</span></td>
+        <td class="num">≈ ٣٢–٤٧ دولار/شهر (≈ ١٢٠–١٧٥ ريال)</td>
+        <td class="num">≈ ٢٫٥–٢٫٩٪ من قيمة التعاملات + ضريبة ١٥٪ على العمولات</td>
+      </tr>
+      <tr>
+        <td><b>النمو (٥٠ ألف مستخدم نشط)</b></td>
+        <td class="num">≈ ٢٠٥ دولار/سنة تجديدات (≈ ٧٧٠ ريال)</td>
+        <td class="num">≈ ٢١٠–٥٦٠ دولار/شهر (≈ ٧٩٠–٢٬١٠٠ ريال)</td>
+        <td class="num">تفاوض على أسعار خاصة عند الحجم</td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="card rv">
+    <h3>البنية التقنية النهائية عند الإطلاق (القرار المعتمد)</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>المكوّن</th><th>أين يعمل</th><th>التكلفة الشهرية</th></tr>
+      <tr><td>الموقع + لوحة الإدارة + الواجهة البرمجية (API)</td><td><a href="https://vercel.com/pricing" target="_blank">Vercel Pro</a></td><td class="num">٢٠ دولار</td></tr>
+      <tr><td>قاعدة البيانات (Postgres)</td><td><a href="https://neon.tech/pricing" target="_blank">Neon</a> — تسعير حسب الاستخدام فقط، بدون رسوم أساسية</td><td class="num">≈ ٥–١٥ دولار</td></tr>
+      <tr><td>خادم المحادثات الفورية (socket.io)</td><td><a href="https://www.hostinger.com/vps-hosting" target="_blank">Hostinger KVM1</a> — 1 vCPU / 4GB RAM تكفي لعشرات آلاف الاتصالات المتزامنة، والنظام الحالي يعمل عليه بدون أي إعادة برمجة</td><td class="num">٦٫٤٩ دولار (يتجدد ١١٫٩٩)</td></tr>
+      <tr><td>تخزين الملفات والصور</td><td><a href="https://vercel.com/docs/vercel-blob" target="_blank">Vercel Blob</a></td><td class="num">قروش معدودة</td></tr>
+      <tr class="total-row"><td colspan="2">الإجمالي الشهري عند الإطلاق</td><td class="num">≈ ٣٢–٤٧ دولار (≈ ١٢٠–١٧٥ ريال)</td></tr>
+    </table>
+    </div>
+
+    <h3>تفاصيل بنود التكلفة عند الإطلاق</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>البند</th><th>التكلفة</th><th>ملاحظات عملية</th></tr>
+      <tr><td>أدوات التطوير والاشتراكات (أول شهرين)</td><td class="num">≈ ٢٠٠ دولار (≈ ٧٥٠ ريال) — مرة واحدة</td><td>أول شهرين من الإطلاق مرحلة تقنية مكثفة: اشتراكات أدوات الذكاء الاصطناعي والتطوير والاختبار — تنتهي بعد استقرار المنصة</td></tr>
+      <tr><td>حساب مطوّر أبل (iOS)</td><td class="num">٩٩ دولار/سنة</td><td>الحساب المؤسسي يتطلب سجلًا تجاريًا ورقم D-U-N-S — <a href="https://developer.apple.com/programs/" target="_blank">Apple Developer Program</a></td></tr>
+      <tr><td>حساب مطوّر جوجل (Android)</td><td class="num">٢٥ دولار — مرة واحدة</td><td>الحساب الشخصي يتطلب اختبارًا مغلقًا: ١٢ مختبِرًا لمدة ١٤ يومًا قبل النشر — <a href="https://play.google.com/console/about/" target="_blank">Google Play Console</a></td></tr>
+      <tr><td>التحقق بالبريد الإلكتروني (بديل مجاني معتمد للإطلاق)</td><td class="num">٠ ريال</td><td>رمز التحقق يُرسل بالبريد عبر <a href="https://resend.com/pricing" target="_blank">Resend</a> (٣٬٠٠٠ رسالة/شهر مجانًا) — نفس تجربة التحقق بدون أي تكلفة. نضيف SMS لاحقًا كميزة ثقة («موثّق بالجوال») لصنّاع المحتوى</td></tr>
+      <tr><td>رسائل التحقق SMS (لاحقًا — Unifonic)</td><td class="num">٠٫٠٥٥ ريال/رسالة</td><td>أرخص من Twilio بستة أضعاف داخل السعودية. تسجيل اسم المرسِل لدى هيئة الاتصالات ≈ ٢٩٩ ريال/سنة ويستغرق ١٠–٢٠ يوم عمل. <b>قواعد الهيئة:</b> الرسائل التشغيلية (رموز التحقق) مسموحة على مدار الساعة، أما الرسائل التسويقية فتتطلب اسم مرسِل منفصلًا (٨ أحرف كحد أقصى) ينتهي إجباريًا باللاحقة <code>-AD</code> ويُحظر إرسالها من ٩ مساءً حتى ٨ صباحًا — <a href="https://www.cst.gov.sa/en/regulations-and-licenses/regulations/Document-1560" target="_blank">لائحة هيئة الاتصالات والفضاء والتقنية</a></td></tr>
+      <tr><td>بوابة الدفع</td><td class="num">≈ ٢٫٥–٢٫٩٪ + رسوم ثابتة</td><td>Stripe غير متاح محليًا — المرشح المعتمد بعد البحث الموثق: <a href="https://www.tap.company" target="_blank">Tap Payments</a> (مرخصة من ساما، منتج «أسواق» لتقسيم المدفوعات، تغطي الكويت والخليج) — التفاصيل في القسم ٧. بطاقات مدى ≈ ١٪ بحد أقصى ٢٠٠ ريال</td></tr>
+      <tr><td>تحويل المستحقات لصنّاع المحتوى</td><td class="num">حسب عرض السعر</td><td>أرخص قناة: تحويلات «سريع» الجماعية عبر الحساب البنكي التجاري — ريالات معدودة لكل تحويل</td></tr>
+      <tr><td>مراقبة الأخطاء، التحليلات، الإشعارات</td><td class="num">٠ ريال</td><td>الباقات المجانية تغطي مرحلة الإطلاق بالكامل (Sentry، PostHog، إشعارات آبل وجوجل، بناء التطبيقات محليًا)</td></tr>
+    </table>
+    </div>
+
+    <div class="alert">
+      <b>⏰ أطول بندين زمنيًا قبل إطلاق التطبيق — ابدأ بهما فورًا:</b>
+      <ul>
+        <li>شرط جوجل: ١٢ مختبِرًا لمدة ١٤ يومًا قبل النشر في المتجر</li>
+        <li>تسجيل اسم المرسِل للرسائل النصية لدى هيئة الاتصالات (١٠–٢٠ يوم عمل) — لم يعد يعطّل الإطلاق بعد اعتماد التحقق بالبريد، لكن ابدأه مبكرًا استعدادًا لميزة «موثّق بالجوال»</li>
+      </ul>
+    </div>
+  </div>
+  </section>
+
+  <!-- ============ نقطة التعادل ============ -->
+  <section id="breakeven">
+  <h2 data-num="٠٥" class="rv">٥. متى تغطي المنصة تكاليفها؟ (نقطة التعادل)</h2>
+  <div class="card rv">
+    <p>حساب تقريبي لمرحلة الإطلاق بعد اعتماد البنية النهائية:</p>
+    <ul>
+      <li>التشغيل الشهري ≈ <b>٣٢–٤٧ دولار</b> + التكاليف السنوية موزّعة على ١٢ شهرًا ≈ <b>١٠٠ دولار/شهر إجمالًا</b> ≈ <b>٣٧٥ ريال/شهر</b></li>
+      <li>أول شهرين فقط: أضف ≈ <b>١٠٠ دولار/شهر</b> أدوات تطوير واشتراكات (مرحلة تقنية مكثفة، تنتهي باستقرار المنصة)</li>
+      <li>صافي ربح المنصة من كل صفقة ≈ <b>٣٪</b> من قيمتها (عمولة ٦٪ ناقص رسوم الدفع)</li>
+      <li>إذن نقطة التعادل ≈ <b>١٣٬٠٠٠ ريال تعاملات شهريًا</b> — أي حوالي <b>١٣ طلبًا بمتوسط ١٬٠٠٠ ريال</b> في الشهر</li>
+    </ul>
+    <p class="muted">أي نمو فوق هذا الرقم يتحول لربح مباشر، ورفع العمولة من ٦٪ نحو المعدل العالمي (١٥–٢٠٪) يخفض نقطة التعادل إلى أقل من ٥ طلبات شهريًا.</p>
+  </div>
+  </section>
+
+  <!-- ============ خطة النمو ============ -->
+  <section id="growth">
+  <h2 data-num="٠٦" class="rv">٦. خطة النمو في السوق السعودي</h2>
+  <div class="card rv">
+    <h3>لماذا السعودية سوق مثالي لنخلة؟</h3>
+    <ul>
+      <li>من أعلى دول العالم استخدامًا لوسائل التواصل — سناب شات وتيك توك وإنستقرام تصل لأغلب السكان، والإنفاق الإعلاني الرقمي ينمو سنويًا</li>
+      <li>رؤية ٢٠٣٠ تدفع الشركات الصغيرة والمتوسطة نحو التسويق الرقمي، مع دعم حكومي لريادة الأعمال (منشآت)</li>
+      <li>المنافسون العالميون (Collabstr وغيره) لا يقدمون: دفعًا محليًا (مدى)، فواتير ضريبية سعودية، دعمًا بالعربية، ولا تحويلات بنكية محلية لصنّاع المحتوى — هذه فجوتنا</li>
+    </ul>
+
+    <h3>المرحلة الأولى (الشهر ١–٣): بناء جانب العرض — صنّاع المحتوى أولًا</h3>
+    <ul>
+      <li>استقطاب <b>٥٠–١٠٠ صانع محتوى</b> يدويًا في ٣ تخصصات مركّزة (موضة وجمال، مطاعم وقهوة، تقنية) — التركيز الجغرافي: الرياض وجدة</li>
+      <li>حافز الانضمام المبكر: <b>عمولة ٠٪ لأول ٣ أشهر</b> + شارة «عضو مؤسس» — التكلفة صفر والولاء عالٍ</li>
+      <li>صنّاع المحتوى أنفسهم هم أول قناة تسويق: كل صانع يعلن عن ملفه في نخلة لجمهوره</li>
+    </ul>
+
+    <h3>المرحلة الثانية (الشهر ٤–٦): تحريك جانب الطلب — العلامات التجارية</h3>
+    <ul>
+      <li>استهداف المطاعم والمقاهي والمتاجر الإلكترونية الصغيرة: أول حملة لهم بعمولة مخفضة + دراسة حالة موثقة</li>
+      <li>شراكات مع وكالات التسويق المحلية: الوكالة تدير عملاءها عبر نخلة مقابل نسبة</li>
+      <li>التسجيل في «معروف» وإظهار السجل التجاري داخل المنصة — الثقة تسبق البيع في السوق السعودي</li>
+      <li>إعلانات مدفوعة مركزة على كلمات البحث التجارية («مؤثرين سعوديين»، «إعلانات مؤثرين») — ميزانية صغيرة عالية النية</li>
+    </ul>
+
+    <h3>المرحلة الثالثة (الشهر ٦–١٢): التوسع وتعظيم الربح</h3>
+    <ul>
+      <li>رفع العمولة تدريجيًا من ٦٪ نحو ١٠–١٥٪ بعد إثبات القيمة — تبقى أرخص من المنافس العالمي</li>
+      <li>إطلاق اشتراكات العلامات التجارية والإبراز المدفوع لصنّاع المحتوى (مصادر الدخل من القسم ٣)</li>
+      <li>تفعيل ميزة «موثّق بالجوال» عبر SMS كطبقة ثقة إضافية</li>
+    </ul>
+
+    <h3>ورقة رابحة: التقويم الموسمي السعودي</h3>
+    <p>الإنفاق الإعلاني في السعودية موسمي بشدة — نبني باقات حملات جاهزة قبل كل موسم بشهرين:</p>
+    <div class="tbl">
+    <table>
+      <tr><th>الموسم</th><th>الفرصة</th></tr>
+      <tr><td><b>رمضان وعيد الفطر</b></td><td>أكبر موسم إعلاني في السنة — ذروة الإنفاق على المؤثرين، تجهّز الباقات قبلها بشهرين</td></tr>
+      <tr><td><b>اليوم الوطني (سبتمبر) ويوم التأسيس (فبراير)</b></td><td>حملات هوية وطنية لكل العلامات التجارية تقريبًا</td></tr>
+      <tr><td><b>موسم الرياض والمواسم الترفيهية</b></td><td>مطاعم وفعاليات وترفيه — طلب مكثف على صنّاع محتوى محليين</td></tr>
+      <tr><td><b>العودة للمدارس والجمعة البيضاء</b></td><td>مواسم التجارة الإلكترونية — عروض المتاجر عبر المؤثرين</td></tr>
+    </table>
+    </div>
+
+    <p class="muted">القاعدة الحاكمة للنمو: منصات السوق تنجح بالتركيز — مدينة واحدة، تخصصات قليلة، سيولة صفقات حقيقية — ثم التوسع. لا نشتت الجهد على كل السعودية من اليوم الأول.</p>
+  </div>
+  </section>
+
+  <!-- ============ الامتثال التنظيمي ============ -->
+  <section id="compliance">
+  <h2 data-num="٠٧" class="rv">٧. الامتثال التنظيمي — نتائج بحث موثّق بالمصادر الرسمية</h2>
+
+  <div class="card rv">
+    <h3>القاعدة الذهبية: نخلة لا تحتفظ بأموال الضمان أبدًا <span class="badge">إلزامي نظامًا</span></h3>
+    <p>نظام المدفوعات وخدمات الدفع السعودي (المرسوم الملكي م/٢٦، المادة ٤) يحصر استلام الأموال وحفظها وتحويلها في مزودي خدمات الدفع المرخصين من <b>البنك المركزي السعودي (ساما)</b> — والغرامات تصل إلى <b>٢٥ مليون ريال</b>. لذلك مبلغ الضمان «المحجوز» في دورة الطلب (القسم ١) لا يجلس في حساب نخلة، بل في <b>حساب مصرفي مخصص ومحمي لدى مزود الدفع المرخص</b>، ومزود الدفع هو من ينفّذ تقسيم المبالغ والتحويلات والتحقق من هوية المستلمين. نخلة تدير الصفقة والقرار — لا المال.</p>
+    <div class="tbl">
+    <table>
+      <tr><th>القرار</th><th>الخلاصة</th><th>السبب</th></tr>
+      <tr><td><b>بوابة الدفع المرشحة: Tap Payments</b></td><td>الترشيح المعتمد بعد البحث — بانتظار التحقق التجريبي (Sandbox)</td><td>مرخصة من ساما منذ ٢٠٢٠، تدعم مدى وApple Pay وSTC Pay، لديها منتج «أسواق» جاهز (تقسيم المبالغ، خصم العمولة، إدارة التحويلات)، وتغطي الخليج كاملًا بما فيه الكويت — جاهزة للتوسّع الخليجي مستقبلًا</td></tr>
+      <tr><td><b>Stripe مستبعد نهائيًا</b></td><td>غير متاح في السعودية ولا الكويت</td><td>الإمارات هي الدولة الخليجية الوحيدة المدعومة</td></tr>
+      <tr><td><b>صفحة الدفع: تحويل كامل (Redirect)</b></td><td>قرار معماري محسوم</td><td>يُبقي نطاق شهادة أمان البطاقات (PCI-DSS) عند أدنى مستوى (SAQ A) ويتجنب اشتراطات فحص السكربتات الجديدة التي يفرضها الإصدار ٤ على الصفحات المدمجة (iframe)</td></tr>
+    </table>
+    </div>
+    <p class="muted">مقارنات Moyasar وHyperPay وPayTabs لم تنجُ من التحقق العدائي للمصادر — ترشيح Tap مبني على نقاط قوتها الموثقة واستبعاد Stripe، ويحتاج فحص العقد والرسوم ونافذة حجز الضمان قبل الالتزام النهائي.</p>
+
+    <details class="tapdrop">
+      <summary>تفاصيل Tap Payments: العقد والرسوم ونافذة التسوية/الحجز (بحث موثّق — اضغط للتوسيع)</summary>
+      <div class="tapbody">
+        <p class="muted" style="margin:8px 0">مصدر الأرقام المؤكَّدة: صفحات Tap الرسمية ومركز الدعم (support.tap.company)، بحث ٢٠٢٦. <span class="conf">✓</span> = مؤكَّد من مصادر Tap · <span class="chk">⟳</span> = يُحسم في العقد مع Tap.</p>
+
+        <h4>١) نافذة التسوية وحجز المبالغ (الأهم للتدفق النقدي)</h4>
+        <table>
+          <tr><td><span class="conf">✓</span> تسوية مدى</td><td class="num">٣ أيام عمل (T+3) · بحد أدنى ١٠٠ ريال</td></tr>
+          <tr><td><span class="conf">✓</span> تسوية Visa / Mastercard</td><td class="num">٥ أيام عمل (T+5) · بحد أدنى ١٠٠ ريال</td></tr>
+          <tr><td><span class="conf">✓</span> التحويل للحساب البنكي</td><td>تلقائي ومجاني في السعودية</td></tr>
+          <tr><td><span class="conf">✓</span> سحب مبكّر / دفعة أقل من ١٠٠ ريال</td><td class="num">رسم ٥ ريال عند الطلب</td></tr>
+          <tr><td><span class="conf">✓</span> وتيرة التحويل</td><td>قابلة للتعديل (كل أسبوعين/شهريًا) بالتواصل مع Tap</td></tr>
+          <tr><td><span class="chk">⟳</span> احتجاز متجدّد (Rolling Reserve)</td><td>ليس ضمن النموذج القياسي — Tap تُسوّي على نافذة T+3/T+5. قد يُطبَّق احتجاز بنسبة/مدة محددة على الحسابات عالية المخاطر أو حسابات «الأسواق» حسب تقدير Tap — يُؤكَّد عند التعاقد</td></tr>
+        </table>
+        <p class="muted" style="margin:8px 0"><b>الأثر على التدفق النقدي:</b> خطّط لفارق ٣–٥ أيام عمل بين خصم بطاقة العميل ووصول المال لحساب نخلة (ثم توزيعه لصانع المحتوى عبر منتج «الأسواق»). لا احتجاز طويل (٣٠–١٨٠ يومًا) في النموذج القياسي — بخلاف بعض المزودين.</p>
+
+        <h4>٢) الرسوم</h4>
+        <table>
+          <tr><td><span class="conf">✓</span> البطاقات القياسية</td><td class="num">٢٫٧٥٪ لكل عملية</td></tr>
+          <tr><td><span class="conf">✓</span> البطاقات الدولية</td><td class="num">٣٫٢٥٪ + فرق العملة (FX)</td></tr>
+          <tr><td><span class="chk">⟳</span> بطاقات مدى</td><td>أقل من البطاقات الائتمانية (النسبة الدقيقة تُؤكَّد — عُرف السوق ≈ ١٪ بحد أقصى ٢٠٠ ريال)</td></tr>
+          <tr><td><span class="conf">✓</span> رسوم شهرية / تأسيس</td><td>لا توجد (تسعير شفّاف بدون اشتراك)</td></tr>
+          <tr><td><span class="chk">⟳</span> رسوم الاسترداد (Refund)</td><td>غير معلنة — تُؤكَّد في العقد (هل تُعاد عمولة العملية الأصلية أم لا)</td></tr>
+          <tr><td><span class="chk">⟳</span> رسوم ردّ المبالغ (Chargeback)</td><td>غير معلنة — تُؤكَّد في العقد</td></tr>
+        </table>
+
+        <h4>٣) العقد</h4>
+        <ul>
+          <li><span class="conf">✓</span> نموذج «ادفع مقابل الاستخدام» بلا رسوم شهرية — يشير إلى التزام منخفض دون حبس طويل.</li>
+          <li><span class="chk">⟳</span> مدة الالتزام وشرط الإشعار قبل الإلغاء غير منشورة — راجع «اتفاقية التاجر» و«الشروط والأحكام» على tap.company.</li>
+          <li><span class="chk">⟳</span> المسؤوليات القانونية وتوزيع المخاطر (خاصة تدفق «الأسواق» وتوثيق هوية صانع المحتوى قبل صرف مستحقاته) — تُحدَّد في اتفاقية «الأسواق».</li>
+        </ul>
+
+        <h4>ما يجب تأكيده مع Tap قبل التوقيع</h4>
+        <ul>
+          <li>مدة الالتزام ومدة الإشعار للإلغاء.</li>
+          <li>رسم الاسترداد ورسم ردّ المبالغ (Chargeback).</li>
+          <li>وجود احتجاز متجدّد ونسبته ومدّته (إن وُجد) لحسابات «الأسواق».</li>
+          <li>توقيت تسوية تدفق «الأسواق» (التقسيم + الصرف لصانع المحتوى) ومتطلبات KYC للصرف.</li>
+          <li>النسبة الدقيقة لبطاقات مدى.</li>
+        </ul>
+        <p class="muted" style="margin:8px 0;font-size:12.5px">المصادر: مركز دعم Tap (مواعيد التسوية في السعودية)، صفحة تسعير Tap (٢٫٧٥٪/٣٫٢٥٪)، الشروط والأحكام. البنود <span class="chk">⟳</span> تعتمد على العرض التعاقدي وتختلف حسب حجم النشاط وملف المخاطر.</p>
+      </div>
+    </details>
+  </div>
+
+  <div class="card rv">
+    <h3>خريطة الالتزامات — كل جهة تنظيمية وماذا تطلب منا</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>الجهة / النظام</th><th>الالتزام العملي على نخلة</th><th>الحالة</th></tr>
+      <tr><td><b>ساما — نظام المدفوعات</b></td><td>كل حركة أموال عبر مزود دفع مرخص؛ نخلة تكتفي بدور الوسيط التقني وسجل مرآة للحركات</td><td>معمارية المنصة مبنية على هذا الأساس ✅</td></tr>
+      <tr><td><b>زاتكا (هيئة الزكاة والضريبة والجمارك)</b></td><td>فوترة إلكترونية (فاتورة) لكل عمولة واشتراك ورسوم إبراز + <b>إشعارات دائنة إلكترونية</b> مرتبطة بالفاتورة الأصلية عند الاسترجاع أو تعديل العمولة في الطلبات الملغاة/المتنازع عليها — القيود الداخلية وحدها لا تكفي</td><td>مطلوب قبل الإطلاق التجاري ⏳</td></tr>
+      <tr><td><b>موثوق (هيئة تنظيم الإعلام — GAMR)</b></td><td>رخصة موثوق إلزامية لكل صانع محتوى يعلن تجاريًا + التزامه بالإفصاح الواضح أن المحتوى إعلاني</td><td>مطبَّق في المنصة: التحقق من الرخصة عند التسجيل وبوابة مراجعة إدارية ✅</td></tr>
+      <tr><td><b>سدايا — نظام حماية البيانات الشخصية (PDPL)</b></td><td>لا توجد قائمة دول معتمدة — استضافة البيانات على خوادم أمريكية/أوروبية (Neon/Vercel) تتطلب <b>بنودًا تعاقدية بصيغة سدايا (SCCs)</b> مع كل مزود + <b>تقييم مخاطر نقل مكتوبًا من ٦ عناصر قبل تشغيل بيانات حقيقية</b>؛ بلاغ الاختراق خلال ٧٢ ساعة عبر بوابة تتطلب هوية/إقامة سعودية — يجب تسمية مسؤول بلاغ مقيم بالسعودية في خطة الطوارئ من الآن</td><td>قبل الإطلاق — مع مستشار قانوني ⏳</td></tr>
+      <tr><td><b>وزارة التجارة — نظام التجارة الإلكترونية (م/١٢٦)</b></td><td>عرض الأسعار شاملة الضريبة دائمًا، الإفصاح عن هوية المتجر وسجله، تسجيل المتجر الإلكتروني، وحق العميل في الانسحاب خلال ٧ أيام — <b>يسقط بمجرد الاستفادة من الخدمة</b>؛ انطباق استثناء «المنتجات المخصصة» على خدمات المحتوى يحتاج رأيًا قانونيًا (غرامات حتى مليون ريال)</td><td>سياسة الاسترجاع تحتاج اعتماد مستشار ⏳</td></tr>
+      <tr><td><b>مكافحة غسل الأموال (AML)</b></td><td>نخلة ليست «جهة ملزمة» ما دام المال كله عبر مزود الدفع المرخص — التحقق من الهوية والإبلاغ عن الاشتباه والاحتفاظ بالسجلات ١٠ سنوات مسؤولية مزود الدفع نظامًا ولا يمكن نقلها بالعقد؛ نخلة تحاكي الاحتفاظ ١٠ سنوات في سجلاتها وتبني قنوات تصعيد</td><td>السجل المالي غير القابل للتعديل جاهز ✅</td></tr>
+    </table>
+    </div>
+    <div class="alert">
+      <b>⚖️ بنود تستوجب مستشارًا قانونيًا سعوديًا قبل الإطلاق:</b>
+      <ul>
+        <li>تأكيد أن هيكلة الضمان لدى مزود الدفع تُبقي نخلة خارج نطاق ترخيص ساما تمامًا (لو اعتُبرت نخلة «مشاركًا في خدمة دفع» تنقلب كل استنتاجات الإعفاء)</li>
+        <li>انطباق استثناء الانسحاب على خدمات المحتوى المخصصة (نص النظام يقول «منتجات»)</li>
+        <li>آلية توقيع البنود التعاقدية بصيغة سدايا مع مزودين أمريكيين (Neon/Vercel) — الأرجح إلحاقها باتفاقيات معالجة البيانات القائمة</li>
+        <li>النص العربي الرسمي لضوابط المحتوى الإعلاني من هيئة تنظيم الإعلام (الملف محجوب جغرافيًا — يُجلب من داخل السعودية)</li>
+      </ul>
+    </div>
+    <p class="muted">التفاصيل الكاملة بالمصادر الأولية والاقتباسات الحرفية: <code>docs/compliance-monitoring-blueprint.md</code> و<code>docs/compliance-gaps-addendum.md</code> — كل نتيجة أعلاه مرّت بتحقق عدائي بثلاثة أصوات مستقلة (٣-٠) أو مُيّزت صراحة كغير محسومة.</p>
+  </div>
+
+  <div class="card rv">
+    <h3>الإفصاح الإعلاني داخل المنصة — قواعد «الإبراز المدفوع»</h3>
+    <p>مصدر الدخل «إبراز صنّاع المحتوى» (القسم ٣) يخضع لقواعد إفصاح صارمة عالميًا (لجنة التجارة الفيدرالية الأمريكية FTC، وهيئات الإعلان البريطانية ASA/CMA) ومحليًا (موثوق):</p>
+    <ul>
+      <li>كل بطاقة مدفوعة في نتائج البحث أو الصفحة الرئيسية تحمل شارة <b>«إعلان»</b> واضحة — لا «مميز» ولا «مروَّج» وحدها (تعتبرها FTC مصطلحات ملتبسة)</li>
+      <li>الشارة تُقرَّر من الخادم (حقل <code>isSponsored</code> في الاستجابة) حتى لا يستطيع أي تطبيق إسقاطها، وتظهر بلغة المستخدم (عربي/إنجليزي)</li>
+      <li>صانع المحتوى يؤكد أن المحتوى المنشور يحمل الإفصاح («إعلان» / #ad في أول التعليق) قبل تسليم الطلب — والإدارة تراقب وتصعّد وتوثّق (البرامج الموثقة تخفف المسؤولية في الإنفاذ)</li>
+    </ul>
+  </div>
+  </section>
+
+  <!-- ============ المراقبة والتشغيل ============ -->
+  <section id="monitoring">
+  <h2 data-num="٠٨" class="rv">٨. المراقبة المالية والتشغيلية — ما بُني فعلًا في المنصة</h2>
+
+  <div class="card rv">
+    <h3>مبدأ التصميم: كل ريال له أثر، وكل خطوة لها سجل <span class="badge">مطبَّق ✅</span></h3>
+    <p>البنية التالية مطبّقة في الكود اليوم وتحاكي واجب «تسوية الحسابات المحمية» الذي يفرضه ساما على مزودي الدفع — فنكون جاهزين للتدقيق من اليوم الأول:</p>
+    <div class="tbl">
+    <table>
+      <tr><th>الطبقة</th><th>ماذا تفعل</th><th>الحالة</th></tr>
+      <tr><td><b>السجل المالي (Ledger)</b></td><td>قيد غير قابل للتعديل لكل حركة: تحصيل، استرجاع، تحويل مستحقات، عمولة — مع مرجع مزود الدفع. المعادلة الحاكمة لكل طلب مكتمل: <code>تحصيل − استرجاع − مستحقات − عمولة = ٠</code></td><td>✅</td></tr>
+      <tr><td><b>سجل أحداث الطلب</b></td><td>كل انتقال حالة يسجَّل ببنية كاملة: مَن الفاعل وصفته، من أي حالة إلى أي حالة، السبب — يشمل تدخلات الإدارة والنظام الآلي</td><td>✅</td></tr>
+      <tr><td><b>التقاط إشعارات الدفع (Webhooks)</b></td><td>كل إشعار من بوابة الدفع يُحفظ خامًا بتوقيعه قبل معالجته، مع منع التكرار تلقائيًا — لا يضيع إشعار ولا يُعالج مرتين</td><td>✅</td></tr>
+      <tr><td><b>التسوية اليومية (Reconciliation)</b></td><td>فحص آلي كل يوم الساعة ٣ فجرًا (توقيت الرياض): الداخل = المستحقات + العمولة + المحجوز في الضمان — أي فرق يظهر فورًا بعلامة حمراء في لوحة الإدارة</td><td>✅</td></tr>
+      <tr><td><b>مراقبة الأخطاء (Sentry)</b></td><td>تتبع الأعطال في الموقع ولوحة الإدارة والواجهة البرمجية وتطبيق الجوال — يعمل فور إضافة مفتاح التفعيل، بدون أي أثر قبلها</td><td>✅</td></tr>
+      <tr><td><b>لوحة «المالية» للإدارة</b></td><td>صفحة جديدة: سجلات التسوية اليومية مع زر تشغيل فوري + سجل إشعارات الدفع مع إبراز الأخطاء</td><td>✅</td></tr>
+      <tr><td><b>مؤشرات التشغيل للإدارة</b></td><td>قمع الطلبات بكل حالاته، نسبة النزاعات، زمن صرف المستحقات (متوسط + شريحة ٩٠٪)، وتنبيهات تجاوز المدد: تسليم معلّق فوق ٧٢ ساعة أو نزاع مفتوح فوق ٧ أيام</td><td>✅</td></tr>
+    </table>
+    </div>
+    <p class="muted">القادم بعد ربط بوابة الدفع الفعلية: مطابقة السجل الداخلي مع كشوف مزود الدفع، الفوترة الإلكترونية (زاتكا)، ولوحات إدارة الاشتراكات والإبراز المدفوع عند إطلاق هذه المصادر.</p>
+  </div>
+  </section>
+
+  <!-- ============ الميزات الناقصة ============ -->
+  <section id="missing">
+  <h2 data-num="٠٩" class="rv">٩. الميزات الناقصة — لماذا، والمتطلبات، والتقدير الزمني</h2>
+
+  <div class="card rv">
+    <h3>ما يلزم للإطلاق التجاري <span class="badge">الأولوية القصوى</span></h3>
+    <div class="tbl">
+    <table>
+      <tr><th>الميزة</th><th>لماذا غير موجودة الآن</th><th>المتطلبات</th><th>التقدير الزمني</th></tr>
+      <tr>
+        <td><b>تكامل بوابة الدفع الفعلية (Tap)</b></td>
+        <td>القرار كان معلقًا حتى حسم البحث التنظيمي (القسم ٧). البنية جاهزة: واجهة موحدة للبوابات + مزود تجريبي يعمل اليوم — التبديل لا يمس بقية الكود</td>
+        <td>سجل تجاري ← فتح حساب تاجر لدى Tap (عقد + تحقق منشأة) ← مفاتيح تجريبية ← بناء موصّل Tap (تحصيل، استرجاع، إشعارات) + صفحة دفع بالتحويل الكامل (Redirect)</td>
+        <td class="num">انتظار خارجي ١–٣ أسابيع (اعتماد الحساب) + تطوير ٢–٣ أسابيع — يتداخلان</td>
+      </tr>
+      <tr>
+        <td><b>تحويل المستحقات الفعلي</b></td>
+        <td>يعتمد كليًا على بوابة الدفع وحساب بنكي تجاري — لا معنى لبنائه قبلهما</td>
+        <td>حساب بنكي تجاري، جمع IBAN لصنّاع المحتوى والتحقق منه، منتج تحويلات Tap أو تحويلات «سريع» الجماعية، ربط كل تحويل بالسجل المالي</td>
+        <td class="num">+ أسبوع فوق تكامل البوابة</td>
+      </tr>
+      <tr>
+        <td><b>التحقق من الحسابات بالبريد</b></td>
+        <td>الأولوية ذهبت لنواة الضمان والامتثال؛ المزود المجاني معتمد (Resend) لكن غير مربوط بعد</td>
+        <td>ربط Resend، رموز تحقق مؤقتة، قوالب رسائل عربي/إنجليزي</td>
+        <td class="num">٢–٣ أيام</td>
+      </tr>
+      <tr>
+        <td><b>حزمة حماية البيانات (PDPL)</b></td>
+        <td>الالتزامات اتضحت بالبحث الأخير — وهي مستندات وإجراءات أكثر منها كودًا</td>
+        <td>بنود سدايا التعاقدية مع Neon وVercel والاستضافة، تقييم مخاطر النقل المكتوب (٦ عناصر)، سياسة خصوصية، مسار طلبات أصحاب البيانات، خطة بلاغ ٧٢ ساعة بمسؤول مقيم بالسعودية — مع مستشار قانوني</td>
+        <td class="num">١–٢ أسبوع (بالتوازي، لا يعطّل التطوير)</td>
+      </tr>
+      <tr>
+        <td><b>الفوترة الإلكترونية (زاتكا)</b></td>
+        <td>تتطلب سجلًا تجاريًا وتسجيلًا ضريبيًا أولًا؛ والإلزام الفعلي يبدأ عند تجاوز حد الإيرادات (٣٧٥ ألف ريال)</td>
+        <td>تسجيل ضريبة القيمة المضافة ← مزود فوترة متوافق (أسرع من التكامل المباشر) ← فواتير لكل عمولة/اشتراك + إشعارات دائنة مرتبطة بالفاتورة الأصلية للاسترجاعات</td>
+        <td class="num">١–٢ أسبوع مع مزود جاهز</td>
+      </tr>
+    </table>
+    </div>
+    <div class="alert">
+      <b>⏰ المسار الحرج = السجل التجاري:</b> هو المفتاح الذي يفتح أربعة أبواب دفعة واحدة — حساب تاجر Tap، التسجيل الضريبي، الحساب البنكي التجاري، وحساب أبل المؤسسي (يتطلب أيضًا رقم D-U-N-S). استخراجه أولًا يجعل كل ما فوق يجري بالتوازي: <b>الإطلاق التجاري الكامل ≈ ٦–٨ أسابيع تقويمية من استخراج السجل</b>.
+    </div>
+  </div>
+
+  <div class="card rv">
+    <h3>مصادر الدخل غير المبنية بعد (من القسم ٣)</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>الميزة</th><th>لماذا غير موجودة الآن</th><th>المتطلبات</th><th>التقدير الزمني</th></tr>
+      <tr>
+        <td><b>اشتراكات العلامات التجارية</b></td>
+        <td>مخططة كمصدر دخل ثانٍ — بناؤها قبل بوابة دفع تدعم التحصيل المتكرر عبث</td>
+        <td>نماذج خطط واشتراكات في قاعدة البيانات، تحصيل متكرر عبر Tap، تمييز الميزات (بحث متقدم، حملات متعددة، مدير حساب)، لوحة إدارة اشتراكات، فواتير زاتكا</td>
+        <td class="num">٢–٣ أسابيع (بعد تكامل البوابة)</td>
+      </tr>
+      <tr>
+        <td><b>الإبراز المدفوع لصنّاع المحتوى</b></td>
+        <td>كانت قواعد الإفصاح الإعلاني غير محسومة — حُسمت الآن بالبحث (القسم ٧): شارة «إعلان» إلزامية</td>
+        <td>نموذج خانات إبراز بمدد زمنية، حقل <code>isSponsored</code> من الخادم، شارة «إعلان» في الويب والجوال، لوحة إدارة الخانات والأسعار، تحصيل الرسوم وفوترتها</td>
+        <td class="num">١–٢ أسبوع</td>
+      </tr>
+      <tr>
+        <td><b>عمولة على صانع المحتوى</b></td>
+        <td>قرار تسعير لا قرار تقني — السجل المالي يدعمها من اليوم (قيد عمولة منفصل لكل طرف)</td>
+        <td>قرار نسبة + تحديث حاسبة الأسعار وواجهات العرض وقوالب الفواتير</td>
+        <td class="num">أيام معدودة متى ما اتُّخذ القرار</td>
+      </tr>
+      <tr>
+        <td><b>خدمات إدارة الحملات الكاملة</b></td>
+        <td>تحتاج فريق تشغيل بشري (مدير حملات) — ليست أولوية إطلاق لمنصة ذاتية الخدمة</td>
+        <td>توظيف مشغّل، مسار «حملة مُدارة» في المنصة، تسعير بنسبة أعلى، عقود خدمة</td>
+        <td class="num">٢–٤ أسابيع تطويرًا + توظيف — بعد جذب علامات كبيرة</td>
+      </tr>
+    </table>
+    </div>
+  </div>
+
+  <div class="card rv">
+    <h3>تحسينات تشغيلية مؤجلة</h3>
+    <div class="tbl">
+    <table>
+      <tr><th>الميزة</th><th>لماذا غير موجودة الآن</th><th>المتطلبات</th><th>التقدير الزمني</th></tr>
+      <tr>
+        <td><b>أدوات الرقابة على الإفصاح الإعلاني</b></td>
+        <td>قواعدها خرجت من البحث الأخير للتو (القسم ٧)</td>
+        <td>خطوة تأكيد الإفصاح قبل تسليم الطلب، طابور مراقبة إداري للمحتوى المسلَّم، زر «بلّغ عن إعلان مخفي» عام، توثيق كل إجراء</td>
+        <td class="num">≈ أسبوع</td>
+      </tr>
+      <tr>
+        <td><b>مسار النزاعات الرسمي</b></td>
+        <td>حالة النزاع موجودة تقنيًا وتجمّد المبلغ، لكن بلا مسار موثق: أدلة، مهل، استئناف</td>
+        <td>رفع مرفقات كأدلة، مهل زمنية معلنة للبت، سياسة تحكيم منشورة للطرفين، قوالب قرارات مسبَّبة</td>
+        <td class="num">١–٢ أسبوع</td>
+      </tr>
+      <tr>
+        <td><b>نشر تطبيق الجوال في المتاجر</b></td>
+        <td>التطبيق يعمل كاملًا في بيئة التطوير — النشر ينتظر حسابات المطورين وشروطها الزمنية</td>
+        <td>حساب أبل المؤسسي (سجل تجاري + D-U-N-S)، حساب جوجل + اختبار مغلق ١٢ مختبِرًا لمدة ١٤ يومًا، أيقونات وشاشات المتجر، بناء الإنتاج</td>
+        <td class="num">٣–٤ أسابيع تقويمية (معظمها انتظار — تجري بالتوازي)</td>
+      </tr>
+      <tr>
+        <td><b>التحقق بالجوال «موثّق بالجوال» (SMS)</b></td>
+        <td>قرار معتمد سابقًا: البريد يكفي للإطلاق (القسم ٤) — SMS طبقة ثقة لاحقة</td>
+        <td>تسجيل اسم المرسِل لدى هيئة الاتصالات (١٠–٢٠ يوم عمل)، ربط Unifonic</td>
+        <td class="num">٢–٣ أيام تطويرًا بعد التسجيل</td>
+      </tr>
+      <tr>
+        <td><b>مطابقة كشوف مزود الدفع</b></td>
+        <td>التسوية الداخلية اليومية مبنية ✅ — مطابقتها مع كشوف Tap تحتاج البوابة الفعلية أولًا</td>
+        <td>سحب كشوف Tap آليًا ومقارنتها بالسجل الداخلي وإظهار الفروقات في لوحة «المالية»</td>
+        <td class="num">≈ أسبوع (بعد تكامل البوابة)</td>
+      </tr>
+    </table>
+    </div>
+    <p class="muted">كل التقديرات أعلاه تطوير فعلي بواقع مطوّر واحد + أدوات ذكاء اصطناعي، ولا تشمل فترات الانتظار الخارجية إلا حيث نُص عليها. الترتيب المقترح: السجل التجاري فورًا ← (Tap + زاتكا + PDPL + حسابات المتاجر بالتوازي) ← مصادر الدخل الإضافية بعد استقرار الدفع.</p>
+  </div>
+  </section>
+
+  <footer class="rv">نخلة 🌴 — ملف داخلي لشرح نموذج العمل والتكاليف وخطة النمو • الأسعار تقديرية بتاريخ يوليو ٢٠٢٦ • الدولار = ٣٫٧٥ ريال</footer>
+</div>
+
+<button id="toTop" aria-label="العودة للأعلى">↑</button>
+
+<script>
+(function () {
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var fmt = new Intl.NumberFormat("ar-EG", { maximumFractionDigits: 0 });
+
+  /* ظهور العناصر عند التمرير */
+  var revealed = document.querySelectorAll(".rv");
+  if ("IntersectionObserver" in window && !reduceMotion) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("on");
+          io.unobserve(e.target);
+          if (e.target.id === "calcCard") runCountUp();
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -8% 0px" });
+    revealed.forEach(function (el) { io.observe(el); });
+  } else {
+    revealed.forEach(function (el) { el.classList.add("on"); });
+  }
+
+  /* شريط تقدم القراءة */
+  var progress = document.getElementById("progress");
+  var ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(function () {
+      var doc = document.documentElement;
+      var max = doc.scrollHeight - window.innerHeight;
+      progress.style.transform = "scaleX(" + (max > 0 ? window.scrollY / max : 0) + ")";
+      toTop.classList.toggle("show", window.scrollY > 600);
+      highlightToc();
+      ticking = false;
+    });
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  /* زر العودة للأعلى */
+  var toTop = document.getElementById("toTop");
+  toTop.addEventListener("click", function () {
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+  });
+
+  /* تفعيل رابط القسم الحالي */
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll(".toc a"));
+  var sections = tocLinks.map(function (a) { return document.querySelector(a.getAttribute("href")); });
+  function highlightToc() {
+    var pos = window.scrollY + 140;
+    var current = -1;
+    sections.forEach(function (s, i) { if (s && s.offsetTop <= pos) current = i; });
+    tocLinks.forEach(function (a, i) { a.classList.toggle("active", i === current); });
+  }
+
+  /* حاسبة توزيع المبالغ (عمولة ٦٪ − رسوم دفع ≈ ٢٫٧٥٪) */
+  var range = document.getElementById("dealRange");
+  var dealLabels = document.querySelectorAll(".deal-v");
+  var vals = {};
+  document.querySelectorAll(".val").forEach(function (el) { vals[el.getAttribute("data-k")] = el; });
+
+  function compute(v) {
+    var brand = Math.round(v * 1.06);
+    var fee = Math.round(brand * 0.0275);
+    return { brand: brand, creator: v, fee: fee, net: brand - v - fee };
+  }
+  function render(v) {
+    var r = compute(v);
+    dealLabels.forEach(function (el) { el.textContent = fmt.format(v) + " ريال"; });
+    Object.keys(r).forEach(function (k) { if (vals[k]) vals[k].textContent = fmt.format(r[k]); });
+  }
+  range.addEventListener("input", function () { render(+range.value); });
+
+  /* عدّاد تصاعدي عند أول ظهور للمثال */
+  var counted = false;
+  function runCountUp() {
+    if (counted) return;
+    counted = true;
+    if (reduceMotion) return;
+    var target = compute(+range.value);
+    var start = null, DUR = 900;
+    function frame(t) {
+      if (!start) start = t;
+      var p = Math.min((t - start) / DUR, 1);
+      var ease = 1 - Math.pow(1 - p, 3);
+      Object.keys(target).forEach(function (k) {
+        if (vals[k]) vals[k].textContent = fmt.format(Math.round(target[k] * ease));
+      });
+      if (p < 1) requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  onScroll();
+})();
+</script>
+<script>
+function setLang(l){var doc=document.documentElement;var oldMax=doc.scrollHeight-window.innerHeight;var ratio=oldMax>0?window.scrollY/oldMax:0;var en=document.getElementById('en'),ar=document.getElementById('ar'),be=document.getElementById('btn-en'),ba=document.getElementById('btn-ar');if(l==='en'){ar.hidden=true;en.hidden=false;doc.lang='en';doc.dir='ltr';be.classList.add('active');ba.classList.remove('active');}else{en.hidden=true;ar.hidden=false;doc.lang='ar';doc.dir='rtl';ba.classList.add('active');be.classList.remove('active');}try{localStorage.setItem('nakhla_lang',l);}catch(e){}var newMax=doc.scrollHeight-window.innerHeight;window.scrollTo(0,newMax>0?ratio*newMax:0);}
+try{var s=localStorage.getItem('nakhla_lang')||'ar';setLang(s);}catch(e){}
+</script>
+</body>
+</html>

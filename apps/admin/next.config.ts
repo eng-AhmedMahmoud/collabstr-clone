@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 // Fail fast when building/serving for production without an API target — the
 // silent localhost fallback would proxy every admin request into the void.
@@ -21,4 +22,13 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Engage the Sentry build plugin only when a DSN is configured — local dev
+// builds stay completely untouched (no-op otherwise).
+export default process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN
+  ? withSentryConfig(nextConfig, {
+      silent: true,
+      telemetry: false,
+      disableLogger: true,
+      widenClientFileUpload: true,
+    })
+  : nextConfig;

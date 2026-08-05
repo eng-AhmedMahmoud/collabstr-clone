@@ -42,20 +42,71 @@
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/orders" },
-            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/campaigns" },
-            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/creator" },
-            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/messages" },
-            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/notifications" },
-            { "scheme": "https", "host": "nakhla.dev", "pathPrefix": "/saved" },
-            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/orders" },
-            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/campaigns" },
-            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/creator" },
-            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/messages" },
-            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/notifications" },
-            { "scheme": "https", "host": "www.nakhla.dev", "pathPrefix": "/saved" }
+            {
+              "scheme": "https",
+              "host": "nakhla.dev",
+              "pathPrefix": "/orders"
+            },
+            {
+              "scheme": "https",
+              "host": "nakhla.dev",
+              "pathPrefix": "/campaigns"
+            },
+            {
+              "scheme": "https",
+              "host": "nakhla.dev",
+              "pathPrefix": "/creator"
+            },
+            {
+              "scheme": "https",
+              "host": "nakhla.dev",
+              "pathPrefix": "/messages"
+            },
+            {
+              "scheme": "https",
+              "host": "nakhla.dev",
+              "pathPrefix": "/notifications"
+            },
+            {
+              "scheme": "https",
+              "host": "nakhla.dev",
+              "pathPrefix": "/saved"
+            },
+            {
+              "scheme": "https",
+              "host": "www.nakhla.dev",
+              "pathPrefix": "/orders"
+            },
+            {
+              "scheme": "https",
+              "host": "www.nakhla.dev",
+              "pathPrefix": "/campaigns"
+            },
+            {
+              "scheme": "https",
+              "host": "www.nakhla.dev",
+              "pathPrefix": "/creator"
+            },
+            {
+              "scheme": "https",
+              "host": "www.nakhla.dev",
+              "pathPrefix": "/messages"
+            },
+            {
+              "scheme": "https",
+              "host": "www.nakhla.dev",
+              "pathPrefix": "/notifications"
+            },
+            {
+              "scheme": "https",
+              "host": "www.nakhla.dev",
+              "pathPrefix": "/saved"
+            }
           ],
-          "category": ["BROWSABLE", "DEFAULT"]
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
         }
       ]
     },
@@ -74,7 +125,8 @@
         {
           "photosPermission": "Allows you to upload a profile picture."
         }
-      ]
+      ],
+      "@sentry/react-native"
     ],
     "experiments": {
       "typedRoutes": true

@@ -12,11 +12,12 @@ export function DeleteReviewButton({ id }: { id: string }) {
     if (!confirm(i.reviews.deleteConfirm)) return;
     setBusy(true);
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/admin/reviews/${id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? ""}/api/v1/admin/reviews/${id}`, {
         method: "DELETE", credentials: "include",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({}),
       });
+      if (!res.ok) alert((await res.json().catch(() => null))?.message ?? "Failed");
       router.refresh();
     } finally { setBusy(false); }
   }

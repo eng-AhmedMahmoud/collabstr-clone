@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nakhla — Competitive Gap Analysis</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:960px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  h1{font-size:26px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:10px;border-top:1px solid var(--line)}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--blue)}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+  a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  .info{background:rgba(76,159,254,.15);color:var(--blue)}
+  ul{margin:10px 0;padding-left:20px} li{margin:6px 0}
+  ol{margin:10px 0;padding-left:22px} ol li{margin:7px 0}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .flag{border-left:3px solid var(--amber);padding:8px 14px;background:rgba(240,169,43,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .win{border-left:3px solid var(--green);padding:8px 14px;background:rgba(46,194,107,.06);border-radius:0 8px 8px 0;margin:12px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Nakhla — Competitive Gap Analysis</h1>
+  <div class="sub">July 2026 · full codebase audit + competitor research (Collabstr, Insense, JoinBrands, Billo, Social Cat, Heepsy, Modash, Upfluence; KSA: Trendly, MoonTech, ShowMB)</div>
+</header>
+
+<p class="muted">See <code>production-roadmap.json</code> for the execution backlog.</p>
+
+<h2>Market position</h2>
+<ul>
+  <li>KSA influencer ad market ≈ $95M/yr, ~40% of GCC, growing &gt;30% YoY.</li>
+  <li>KSA is dominated by <b>agencies</b>, not self-serve marketplaces → whitespace for a Collabstr-style product done Arabic-first.</li>
+  <li>No platform (global or KSA) verifies <b>Mawthooq/GCAM advertising licences</b> — biggest trust differentiator available.</li>
+</ul>
+
+<h2>Feature parity vs Collabstr (baseline)</h2>
+<table>
+  <tr><th>Feature</th><th>Collabstr</th><th>Nakhla today</th></tr>
+  <tr><td>Search + buy packages</td><td><span class="pill ok">✅</span></td><td><span class="pill ok">✅</span></td></tr>
+  <tr><td>Post campaign, creators apply</td><td><span class="pill ok">✅</span></td><td><span class="pill ok">✅</span></td></tr>
+  <tr><td>Escrow, pay-on-approval</td><td><span class="pill ok">✅</span></td><td><span class="pill warn">◐</span> order states exist, <b>no payment gateway</b></td></tr>
+  <tr><td>Verified social stats (IG/TikTok/YT APIs)</td><td><span class="pill ok">✅</span></td><td><span class="pill bad">❌</span> manual stats</td></tr>
+  <tr><td>Pre-order chat &amp; negotiation</td><td><span class="pill ok">✅</span></td><td><span class="pill ok">✅</span> threads</td></tr>
+  <tr><td>Content approval flow (draft→revision→approve→release)</td><td><span class="pill ok">✅</span></td><td><span class="pill ok">✅</span></td></tr>
+  <tr><td>Reviews both directions</td><td><span class="pill ok">✅</span></td><td><span class="pill ok">✅</span> (creator reviews)</td></tr>
+  <tr><td>Usage-rights tiers in packages</td><td><span class="pill ok">✅</span></td><td><span class="pill bad">❌</span></td></tr>
+  <tr><td>Creator payouts + tax docs</td><td><span class="pill ok">✅</span></td><td><span class="pill bad">❌</span></td></tr>
+  <tr><td>AI brief generation + matching</td><td><span class="pill ok">✅</span></td><td><span class="pill bad">❌</span></td></tr>
+  <tr><td>Fake-follower scoring</td><td><span class="pill ok">✅</span></td><td><span class="pill bad">❌</span></td></tr>
+  <tr><td>Live post analytics</td><td><span class="pill ok">✅</span></td><td><span class="pill bad">❌</span></td></tr>
+  <tr><td>Free-tool SEO cluster + programmatic pages</td><td><span class="pill ok">✅</span> (moat)</td><td><span class="pill bad">❌</span></td></tr>
+  <tr><td>Brand subscription tier (fee discount)</td><td><span class="pill ok">✅</span></td><td><span class="pill bad">❌</span></td></tr>
+</table>
+
+<h2>KSA differentiators (priority order)</h2>
+<ol>
+  <li><b>Mawthooq licence verification badge</b> — block/flag unlicensed creators from paid orders. Nobody does this. <span class="pill ok">SHIPPED 2026-07-02</span>: creator submits licence → admin verify/reject queue → "Licensed" badge on cards + profile (EN/AR); order-creation gate behind <code>ENFORCE_MAWTHOOQ</code> flag. Licence no. + review note kept private (owner-only via authed <code>/creators/me</code>).</li>
+  <li><b>mada + Apple Pay + STC Pay + BNPL</b> (mada = 70%+ of KSA card volume; non-negotiable). Gateway shortlist per owner input: <b>Tap Payments</b> (strong KSA/GCC presence, bundles mada + Apple Pay + Tabby/Tamara in one contract) and <b>Tamara</b> (Saudi-born BNPL leader — integrate directly or via gateway) alongside HyperPay/Moyasar. Recommended: Tap as primary gateway + Tamara/Tabby BNPL toggles at checkout.</li>
+  <li><b>Snapchat-first profiles/packages</b> — top reach in KSA, near-zero competitor coverage. (Platform enum already includes snapchat <span class="pill ok">✅</span>)</li>
+  <li><b>ZATCA FATOORA e-invoices</b> + Jan-2026 <i>deemed-supplier</i> VAT rule (marketplace must charge VAT for non-registered resident creators) → capture creator VAT status at onboarding.</li>
+  <li><b>Instant payouts to local IBAN/STC Pay</b> (Trendly's pitch).</li>
+  <li><b>Arabic-first RTL product</b> — already strong <span class="pill ok">✅</span>; competitors have zero Arabic.</li>
+  <li><b>Coupon→revenue attribution via Salla/Zid</b> integration — MoonTech's killer feature; no global player integrates Salla/Zid.</li>
+  <li><b>Maroof-verified brand badges</b> (reverse trust for creators).</li>
+  <li><b>Ramadan seasonal planner + availability calendar</b> — no competitor has one.</li>
+  <li>Arabic SEO tool cluster ("أسعار المؤثرين", "مؤثرين الرياض" …).</li>
+</ol>
+
+<h2>Compliance status (PDPL + GDPR)</h2>
+<h3>Done (this session)</h3>
+<ul>
+  <li>Cookie consent banner, opt-in per category, AR/EN, RTL, 6-month re-consent, reopen from footer + settings.</li>
+  <li>Real bilingual privacy policy + terms (PDPL/GDPR-structured, KSA governing law, Mawthooq + ZATCA clauses).</li>
+  <li>Data export endpoint <code>GET /users/me/export</code> (portability) + settings UI.</li>
+  <li>Account deletion (already existed; cascade verified).</li>
+</ul>
+<h3>Outstanding</h3>
+<ul>
+  <li>Server-side consent log (timestamp/version per user) — needs <code>ConsentLog</code> model + migration.</li>
+  <li>Marketing-communications opt-in checkbox at signup (separate, unticked).</li>
+  <li>Breach runbook (72h SDAIA notification), RoPA, DPO designation, DPAs with processors.</li>
+  <li>In-Kingdom / adequate-region data hosting decision + transfer risk assessment.</li>
+  <li>Sensitive-data handling for future KYC/Mawthooq ID documents (encrypt at rest).</li>
+</ul>
+
+<h2>Production blockers (order)</h2>
+<ol>
+  <li>Payments: HyperPay primary (mada/Apple Pay/STC Pay/3DS2), escrow models (PaymentIntent, EscrowHold, LedgerEntry, Payout, PayoutAccount) — roadmap CF07/IN01.</li>
+  <li>Email verification + password reset + transactional email/SMS (Unifonic/Taqnyat) — CF08/IN06.</li>
+  <li>Admin mobile (tables overflow, no drawer, locale hardcoded) — CF03–CF06.</li>
+  <li>File uploads (deliveries currently URL strings) — S3-compatible storage.</li>
+  <li>ZATCA invoicing — IN05.</li>
+</ol>
+
+<h2>Design/UX notes from competitors</h2>
+<ul>
+  <li>Collabstr landing: search hero → horizontal creator rows per platform with price-on-card → 3-step how-it-works → escrow trust block → FAQ → urgency CTA. Nakhla structure matches; needs animation/micro-interaction polish.</li>
+  <li>MoonTech: smooth scroll-reveal animations, "Without vs With" table, 4-step launch roadmap, dark hero.</li>
+  <li>Trendly anti-pattern: client-only rendering, empty HTML, bad SEO — Nakhla's SSR is already ahead.</li>
+  <li>Open quality bar: real RTL mirroring + Arabic type scale + dark mode — no competitor ships all three.</li>
+</ul>
+
+<div class="foot">Converted from <code>docs/md/competitive-gap-analysis.md</code>.</div>
+</div>
+</body>
+</html>

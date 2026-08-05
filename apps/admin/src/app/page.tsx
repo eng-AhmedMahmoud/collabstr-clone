@@ -24,6 +24,28 @@ type Overview = {
   recentUsers: { id: string; name: string; email: string; role: string; createdAt: string }[];
 };
 
+type Metrics = {
+  funnel: { status: string; count: number }[];
+  disputeRate: number;
+  payoutLatency: { avgHours: number | null; p90Hours: number | null; sampled: number };
+  gmvReleased: number;
+  escrowHeld: number;
+  slaBreaches: { submittedOver72h: number; disputedOver7d: number };
+};
+
+// Canonical order lifecycle — funnel rows render in this order.
+const LIFECYCLE = [
+  "pending_payment",
+  "awaiting_creator",
+  "in_progress",
+  "submitted",
+  "revision_requested",
+  "approved",
+  "released",
+  "cancelled",
+  "disputed",
+] as const;
+
 export const dynamic = "force-dynamic";
 
 export default async function AdminOverview() {
@@ -34,7 +56,15 @@ export default async function AdminOverview() {
   const statusLabel = (s: string) => i.statuses.orders[s] ?? s.replace(/_/g, " ");
   const api = await serverApi();
   let data: Overview | null = null;
-  try { data = await api.get<Overview>("/admin/overview"); } catch {}
+  let metrics: Metrics | null = null;
+  // Fetch in parallel; each call degrades independently (the metrics endpoint
+  // may 404 while it's being rolled out).
+  const [ovr, met] = await Promise.allSettled([
+    api.get<Overview>("/admin/overview"),
+    api.get<Metrics>("/admin/metrics"),
+  ]);
+  if (ovr.status === "fulfilled") data = ovr.value;
+  if (met.status === "fulfilled") metrics = met.value;
 
   if (!data) {
     return (
@@ -48,6 +78,18 @@ export default async function AdminOverview() {
   }
 
   const tot = data.totals;
+  const intl = locale === "ar" ? "ar-SA" : "en-SA";
+  const nf = (n: number) => n.toLocaleString(intl, { maximumFractionDigits: 1 });
+  const m = i.overview.metrics;
+  // Defensive: the metrics endpoint is new — tolerate partial/missing fields.
+  const funnel = [...(metrics?.funnel ?? [])].sort((a, b) => {
+    const ia = LIFECYCLE.indexOf(a?.status as (typeof LIFECYCLE)[number]);
+    const ib = LIFECYCLE.indexOf(b?.status as (typeof LIFECYCLE)[number]);
+    return (ia === -1 ? LIFECYCLE.length : ia) - (ib === -1 ? LIFECYCLE.length : ib);
+  });
+  const maxFunnel = Math.max(1, ...funnel.map((f) => f?.count ?? 0));
+  const lat = metrics?.payoutLatency;
+  const sla = metrics?.slaBreaches;
   return (
     <Shell me={me}>
       <PageHeader title={i.overview.title} subtitle={i.overview.subTpl.replace("{time}", new Date().toLocaleTimeString())} />
@@ -60,6 +102,59 @@ export default async function AdminOverview() {
         { label: i.overview.kpis.inEscrow, value: <Money value={tot.escrow} locale={locale === "ar" ? "ar-SA" : "en-SA"} />, sub: i.overview.kpis.pendingRelease, tone: "warn" },
         { label: i.overview.kpis.openDisputes, value: String(tot.open_disputes), sub: tot.open_disputes ? i.overview.kpis.needsReview : i.overview.kpis.allClear, tone: tot.open_disputes ? "danger" : "success" },
       ]} />
+
+      {metrics ? (
+        <>
+          <div className="mt-3">
+            <StatGrid stats={[
+              {
+                label: m.disputeRate,
+                value: (metrics.disputeRate ?? 0).toLocaleString(intl, { style: "percent", maximumFractionDigits: 1 }),
+                sub: m.ofAllOrders,
+                tone: (metrics.disputeRate ?? 0) > 0.05 ? "danger" : undefined,
+              },
+              {
+                label: m.payoutLatency,
+                value: lat?.avgHours != null ? m.hoursTpl.replace("{h}", nf(lat.avgHours)) : "—",
+                sub: lat?.p90Hours != null
+                  ? m.p90Tpl.replace("{h}", nf(lat.p90Hours)).replace("{n}", String(lat?.sampled ?? 0))
+                  : m.noLatency,
+              },
+              {
+                label: m.slaSubmitted,
+                value: fmtNum(sla?.submittedOver72h ?? 0, locale),
+                sub: (sla?.submittedOver72h ?? 0) > 0 ? m.breached : m.allClear,
+                tone: (sla?.submittedOver72h ?? 0) > 0 ? "danger" : "success",
+              },
+              {
+                label: m.slaDisputed,
+                value: fmtNum(sla?.disputedOver7d ?? 0, locale),
+                sub: (sla?.disputedOver7d ?? 0) > 0 ? m.breached : m.allClear,
+                tone: (sla?.disputedOver7d ?? 0) > 0 ? "danger" : "success",
+              },
+            ]} />
+          </div>
+
+          <div className="mt-6">
+            <Card title={m.funnel} padding={false}>
+              <ul className="divide-y divide-border">
+                {funnel.map((f) => (
+                  <li key={f.status} className="px-4 sm:px-5 py-2.5 flex items-center gap-3 min-w-0">
+                    <span className="w-36 sm:w-44 shrink-0"><Pill kind={pillKindForStatus(f.status)}>{statusLabel(f.status)}</Pill></span>
+                    <div className="flex-1 h-2 rounded-full bg-surface-2 overflow-hidden min-w-0">
+                      <div className="h-full rounded-full brand-gradient" style={{ width: `${Math.max(2, ((f.count ?? 0) / maxFunnel) * 100)}%` }} />
+                    </div>
+                    <span className="w-14 text-end text-sm font-bold tabular-nums shrink-0">{fmtNum(f.count ?? 0, locale)}</span>
+                  </li>
+                ))}
+                {funnel.length === 0 && <li className="px-5 py-8 text-center text-muted text-sm">{m.noFunnel}</li>}
+              </ul>
+            </Card>
+          </div>
+        </>
+      ) : (
+        <p className="text-xs text-muted mt-3">{m.unavailable}</p>
+      )}
 
       <div className="grid lg:grid-cols-3 gap-5 mt-6 min-w-0">
         <div className="lg:col-span-2 min-w-0">

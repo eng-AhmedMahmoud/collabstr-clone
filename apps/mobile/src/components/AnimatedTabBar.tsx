@@ -12,6 +12,7 @@ import {
 import type { ComponentProps } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { Tabs } from "expo-router";
 import { useTheme } from "@/theme/context";
 
@@ -27,12 +28,13 @@ if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
-const ICON_MAP: Record<string, IconName> = {
-  index: "search",
-  campaigns: "megaphone-outline",
-  inbox: "chatbubbles-outline",
-  orders: "receipt-outline",
-  account: "person-circle-outline",
+// Outline at rest, filled when focused — the swap reads as a "lit up" state.
+const ICON_MAP: Record<string, { active: IconName; inactive: IconName }> = {
+  index: { active: "search", inactive: "search-outline" },
+  campaigns: { active: "megaphone", inactive: "megaphone-outline" },
+  inbox: { active: "chatbubbles", inactive: "chatbubbles-outline" },
+  orders: { active: "receipt", inactive: "receipt-outline" },
+  account: { active: "person-circle", inactive: "person-circle-outline" },
 };
 
 export function AnimatedTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -57,10 +59,11 @@ export function AnimatedTabBar({ state, descriptors, navigation }: BottomTabBarP
           typeof options.tabBarLabel === "string"
             ? options.tabBarLabel
             : (options.title ?? route.name);
-        const icon = ICON_MAP[route.name] ?? "ellipse-outline";
+        const icon = ICON_MAP[route.name] ?? { active: "ellipse", inactive: "ellipse-outline" };
         const onPress = () => {
           const event = navigation.emit({ type: "tabPress", target: route.key, canPreventDefault: true });
           if (!focused && !event.defaultPrevented) {
+            Haptics.selectionAsync().catch(() => {});
             (navigation as any).navigate(route.name, route.params);
           }
         };
@@ -87,42 +90,52 @@ function TabButton({
   palette,
 }: {
   label: string;
-  icon: IconName;
+  icon: { active: IconName; inactive: IconName };
   focused: boolean;
   onPress: () => void;
   palette: { brand: string; fg: string; fgMuted: string; surface: string };
 }) {
-  const scale = useRef(new Animated.Value(focused ? 1 : 0)).current;
+  const focus = useRef(new Animated.Value(focused ? 1 : 0)).current;
+  const press = useRef(new Animated.Value(1)).current;
+
   useEffect(() => {
-    Animated.spring(scale, {
+    Animated.spring(focus, {
       toValue: focused ? 1 : 0,
       useNativeDriver: true,
       speed: 20,
-      bounciness: 10,
+      bounciness: 12,
     }).start();
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-  }, [focused, scale]);
+  }, [focused, focus]);
 
-  const iconScale = scale.interpolate({ inputRange: [0, 1], outputRange: [1, 1.15] });
-  const translateY = scale.interpolate({ inputRange: [0, 1], outputRange: [0, -2] });
+  const pressIn = () =>
+    Animated.spring(press, { toValue: 0.85, useNativeDriver: true, speed: 40, bounciness: 0 }).start();
+  const pressOut = () =>
+    Animated.spring(press, { toValue: 1, useNativeDriver: true, speed: 30, bounciness: 12 }).start();
+
+  const iconScale = focus.interpolate({ inputRange: [0, 1], outputRange: [1, 1.15] });
+  const translateY = focus.interpolate({ inputRange: [0, 1], outputRange: [0, -2] });
 
   return (
     <Pressable
       onPress={onPress}
+      onPressIn={pressIn}
+      onPressOut={pressOut}
       accessibilityRole="tab"
       accessibilityState={{ selected: focused }}
       style={styles.btn}
     >
-      <Animated.View
-        style={[
-          styles.iconPill,
-          focused && { backgroundColor: palette.brand + "22" },
-          { transform: [{ translateY }] },
-        ]}
-      >
+      <Animated.View style={[styles.iconPill, { transform: [{ translateY }, { scale: press }] }]}>
+        <Animated.View
+          style={[
+            StyleSheet.absoluteFill,
+            styles.pillBg,
+            { backgroundColor: palette.brand + "22", opacity: focus },
+          ]}
+        />
         <Animated.View style={{ transform: [{ scale: iconScale }] }}>
           <Ionicons
-            name={icon}
+            name={focused ? icon.active : icon.inactive}
             size={22}
             color={focused ? palette.brand : palette.fgMuted}
           />
@@ -155,6 +168,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 4,
     borderRadius: radius.pill,
+    overflow: "hidden",
   },
+  pillBg: { borderRadius: radius.pill },
   label: { fontSize: 11 },
 });

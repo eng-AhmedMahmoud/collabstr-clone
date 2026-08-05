@@ -30,6 +30,16 @@ export function OrderAdminActions({ order }: { order: { id: string; status: stri
     call("force-release", { note: reason });
   }
 
+  function forceCancel() {
+    if (!confirm(i.orders.detail.forceCancelConfirm.replace("{id}", order.id.slice(0, 8)))) return;
+    call("force-cancel", { reason });
+  }
+
+  function forceDispute() {
+    if (!confirm(i.orders.detail.forceDisputeConfirm.replace("{id}", order.id.slice(0, 8)))) return;
+    call("force-dispute", { reason });
+  }
+
   return (
     <div className="card p-5">
       <h2 className="font-bold mb-3">{i.orders.detail.actions}</h2>
@@ -39,10 +49,10 @@ export function OrderAdminActions({ order }: { order: { id: string; status: stri
         <button disabled={busy || !reason} onClick={forceRelease} className="w-full px-3 py-2 rounded-lg border border-emerald-500/40 text-emerald-300 text-sm font-semibold hover:bg-emerald-500/10 disabled:opacity-50">
           {i.orders.detail.forceRelease}
         </button>
-        <button disabled={busy || !reason} onClick={() => call("force-cancel", { reason })} className="w-full px-3 py-2 rounded-lg border border-red-500/40 text-red-300 text-sm font-semibold hover:bg-red-500/10 disabled:opacity-50">
+        <button disabled={busy || !reason} onClick={forceCancel} className="w-full px-3 py-2 rounded-lg border border-red-500/40 text-red-300 text-sm font-semibold hover:bg-red-500/10 disabled:opacity-50">
           {i.orders.detail.forceCancel}
         </button>
-        <button disabled={busy || !reason} onClick={() => call("force-dispute", { reason })} className="w-full px-3 py-2 rounded-lg border border-amber-500/40 text-amber-300 text-sm font-semibold hover:bg-amber-500/10 disabled:opacity-50">
+        <button disabled={busy || !reason} onClick={forceDispute} className="w-full px-3 py-2 rounded-lg border border-amber-500/40 text-amber-300 text-sm font-semibold hover:bg-amber-500/10 disabled:opacity-50">
           {i.orders.detail.forceDispute}
         </button>
       </div>

@@ -18,7 +18,7 @@ export default function AdminPayouts() {
     <Screen padded={false} header={<AppHeader title={t.admin.payouts} />}>
       <FlatList
         data={q.data ?? []}
-        keyExtractor={(it) => it.id}
+        keyExtractor={(it) => it.creatorId}
         contentContainerStyle={styles.list}
         ItemSeparatorComponent={() => <View style={{ height: spacing.sm }} />}
         refreshing={q.isRefetching}
@@ -34,11 +34,11 @@ export default function AdminPayouts() {
           <Card>
             <View style={styles.rowBetween}>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: palette.fg, fontWeight: "700" }}>@{item.creator.username}</Text>
-                <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{new Date(item.createdAt).toLocaleString()}</Text>
+                <Text style={{ color: palette.fg, fontWeight: "700" }}>@{item.username}</Text>
+                <Text style={{ color: palette.fgMuted, fontSize: 12 }}>{item.name}</Text>
               </View>
               <Money value={item.amount} style={{ color: palette.brand, fontWeight: "700" }} />
-              <Badge label={item.status} tone="brand" />
+              <Badge label={`${item.orders} ${t.admin.orders}`} tone="brand" />
             </View>
           </Card>
         )}

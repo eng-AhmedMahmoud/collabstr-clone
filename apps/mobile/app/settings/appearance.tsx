@@ -9,11 +9,12 @@ import { spacing } from "@/theme";
 
 export default function AppearanceSettings() {
   const { palette, mode, setMode, scheme } = useTheme();
-  const { t } = useI18n();
+  const { t, isRTL } = useI18n();
+  const align = isRTL ? "right" : "left";
   return (
     <Screen scroll padded header={<AppHeader title={t.settings.appearance} />}>
       <Card>
-        <Text style={{ color: palette.fgMuted, fontSize: 12, textTransform: "uppercase", fontWeight: "700" }}>
+        <Text style={{ color: palette.fgMuted, fontSize: 12, textTransform: "uppercase", fontWeight: "700", textAlign: align }}>
           {t.settings.appearance}
         </Text>
         <SegmentedControl<ThemeMode>
@@ -26,7 +27,7 @@ export default function AppearanceSettings() {
           onChange={setMode}
         />
         <View style={{ marginTop: spacing.sm }}>
-          <Text style={{ color: palette.fgMuted, fontSize: 12 }}>
+          <Text style={{ color: palette.fgMuted, fontSize: 12, textAlign: align }}>
             {t.settings.modeSystem} → {scheme}
           </Text>
         </View>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nakhla — Build vs Buy Roadmap (Investor Brief)</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:1000px;margin:0 auto;padding:30px 22px 90px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:26px}
+  h1{font-size:27px;margin:0 0 8px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:12px;border-top:1px solid var(--line)}
+  h3{font-size:14px;margin:16px 0 8px;color:var(--blue);text-transform:uppercase;letter-spacing:.04em}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  .build{color:var(--red)} .buy{color:var(--green)}
+  ul{margin:10px 0;padding-left:20px} li{margin:7px 0}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}}
+  .kpis{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0}
+  .kpi{flex:1;min-width:150px;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .kpi b{display:block;font-size:24px;margin-bottom:2px}
+  .kpi span{color:var(--muted);font-size:12px}
+  .bars{margin:16px 0}
+  .barrow{display:flex;align-items:center;gap:12px;margin:9px 0}
+  .barlbl{width:130px;font-size:13px;color:var(--muted)}
+  .bartrack{flex:1;background:var(--card2);border-radius:6px;overflow:hidden;height:26px;direction:ltr}
+  .barfill{height:100%;display:flex;align-items:center;padding:0 10px;font-size:12.5px;font-weight:700;color:#fff;white-space:nowrap}
+  .fb{background:linear-gradient(90deg,#b23a3c,#f2585b)}
+  .fy{background:linear-gradient(90deg,#1e8a4c,#2ec26b)}
+  .rec{border-left:3px solid var(--green);padding:12px 16px;background:rgba(46,194,107,.07);border-radius:0 10px 10px 0;margin:14px 0}
+  .flag{border-left:3px solid var(--amber);padding:10px 16px;background:rgba(240,169,43,.06);border-radius:0 10px 10px 0;margin:14px 0}
+  .foot{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .horizon{border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;background:var(--card)}
+  .horizon h4{margin:0 0 8px;font-size:15px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:6px;background:var(--card2);color:var(--muted);margin-left:6px}
+  /* language switcher */
+  .langbar{display:flex;justify-content:flex-end;gap:6px;margin-bottom:14px}
+  .langbtn{background:var(--card2);color:var(--muted);border:1px solid var(--line);border-radius:8px;
+    padding:6px 14px;font-size:13px;font-weight:600;cursor:pointer}
+  .langbtn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .lang[hidden]{display:none}
+  /* RTL */
+  [dir="rtl"] body,[dir="rtl"]{text-align:right}
+  #ar{direction:rtl}
+  #ar ul{padding-left:0;padding-right:20px}
+  #ar th,#ar td{text-align:right}
+  #ar .rec{border-left:none;border-right:3px solid var(--green);border-radius:10px 0 0 10px}
+  #ar .flag{border-left:none;border-right:3px solid var(--amber);border-radius:10px 0 0 10px}
+  #ar .tag{margin-left:0;margin-right:6px}
+  #ar .langbar{justify-content:flex-start}
+  #ar .barlbl{text-align:right}
+  #ar,[dir="rtl"] .ar-serif{font-family:"Segoe UI","Tahoma","Geeza Pro","Noto Naskh Arabic",serif;line-height:1.8}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="langbar">
+  <button class="langbtn active" id="btn-en" onclick="setLang('en')">English</button>
+  <button class="langbtn" id="btn-ar" onclick="setLang('ar')">العربية</button>
+</div>
+
+<!-- ================= ENGLISH ================= -->
+<div class="lang" id="en">
+<header class="top">
+  <h1>Nakhla — Build vs Buy: 6-month → 5-year Roadmap &amp; Cost</h1>
+  <div class="sub">Investor brief · KSA/GCC influencer-marketing marketplace · 2026-07-27 · Devya Solutions</div>
+</header>
+
+<div class="card">
+  <b>Thesis.</b> Build the <b>core marketplace</b> (our moat); <b>buy the commodity + regulated layers</b> — influencer analytics (HypeAuditor), verified metrics (Phyllo/official APIs), and payments (Tap). Buying is <b class="buy">~$1.1M cheaper over 5 years</b>, ships <b class="buy">~12 months sooner</b>, matches vendor-grade accuracy we could never build alone, and is <b>legally required</b> for payments.
+</div>
+
+<div class="kpis">
+  <div class="kpi"><b class="buy">~$1.1M</b><span>5-yr saving by buying (analytics + verified-metrics layer)</span></div>
+  <div class="kpi"><b class="buy">~12 mo</b><span>faster to a live, trustworthy product</span></div>
+  <div class="kpi"><b class="buy">every year</b><span>buy stays below the in-house run-rate through Y5</span></div>
+  <div class="kpi"><b class="build">2×</b><span>Y1 engineering burn if we build in-house</span></div>
+</div>
+
+<h2>1 · Executive summary</h2>
+<table>
+  <tr><th>Horizon</th><th class="n">Build in-house (cum.)</th><th class="n">Buy / subscribe (cum.)</th><th class="n">Saving by buying</th><th>Shipped?</th></tr>
+  <tr><td><b>6 months</b></td><td class="n build">~$145k</td><td class="n buy">~$18k</td><td class="n buy">~$127k</td><td>Buy: live 4–8 wks · Build: <b>not shippable</b></td></tr>
+  <tr><td><b>12 months</b></td><td class="n build">~$290k</td><td class="n buy">~$36k</td><td class="n buy">~$254k</td><td>Build: v0.3 inferior · Buy: live since month 1</td></tr>
+  <tr><td><b>2 years</b></td><td class="n build">~$590k</td><td class="n buy">~$95k</td><td class="n buy">~$495k</td><td>Buy = vendor-grade throughout</td></tr>
+  <tr><td><b>5 years</b></td><td class="n build">~$1.57M</td><td class="n buy">~$483k</td><td class="n buy">~$1.09M</td><td>Buy cheaper <b>every year</b></td></tr>
+</table>
+<div class="bars">
+  <h3>Cumulative cost of the decision layer (analytics + verified metrics)</h3>
+  <div class="barrow"><div class="barlbl build">Build · 5 yr</div><div class="bartrack"><div class="barfill fb" style="width:100%">$1.57M</div></div></div>
+  <div class="barrow"><div class="barlbl buy">Buy · 5 yr</div><div class="bartrack"><div class="barfill fy" style="width:31%">$0.48M</div></div></div>
+  <div class="barrow"><div class="barlbl build">Build · 2 yr</div><div class="bartrack"><div class="barfill fb" style="width:37.6%">$590k</div></div></div>
+  <div class="barrow"><div class="barlbl buy">Buy · 2 yr</div><div class="bartrack"><div class="barfill fy" style="width:6%">$95k</div></div></div>
+  <p class="muted" style="font-size:12.5px">Bars scaled to the $1.57M 5-yr build figure. Payments &amp; core-product/infra costs are shared across both streams and excluded.</p>
+</div>
+
+<h2>2 · What we build vs what we buy</h2>
+<table>
+  <tr><th>Layer</th><th>Decision</th><th>Why</th></tr>
+  <tr><td><b>Core marketplace</b> (web, admin, API, mobile, escrow ledger, messaging, discovery UX, Arabic/RTL)</td><td><span class="pill ok">BUILD</span></td><td>The product and the moat. ~70% built (Next.js 16 + NestJS + Prisma + React Native).</td></tr>
+  <tr><td><b>Influencer analytics / fraud</b></td><td><span class="pill warn">BUY</span></td><td>HypeAuditor (in test) / Modash — billions of scored accounts, years of labeled data, GNN models.</td></tr>
+  <tr><td><b>Verified metrics</b> (OAuth to IG/TikTok/YouTube/Snapchat)</td><td><span class="pill warn">BUY / thin</span></td><td>Phyllo or official APIs — offloads app-review, normalization, token refresh.</td></tr>
+  <tr><td><b>Payments / escrow / payouts</b></td><td><span class="pill bad">BUY — mandatory</span></td><td>SAMA: pooling buyer funds is a <b>licensed</b> activity. Self-custody is illegal; must use a licensed PSP (Tap, PayTabs).</td></tr>
+  <tr><td><b>Infra</b> (Vercel, Neon, Sentry, Blob, socket.io)</td><td><span class="pill ok">SaaS</span></td><td>Commodity; shared across both streams.</td></tr>
+</table>
+
+<h2>3 · Assumptions</h2>
+<div class="card muted" style="font-size:13.5px">
+  <b>Fully-loaded engineer cost (MENA-competitive):</b> general $60k/yr · senior/ML $96k/yr · data $72k/yr.
+  <b>In-house decision-layer team:</b> 1 ML + 1 data + 1 platform/OAuth engineer + data-acquisition/infra ≈ <b>$290k/yr</b>, +3%/yr.
+  <b>Vendor analytics:</b> HypeAuditor-style credits, Modash-anchored ~$0.50/report + annual floor (~$16.2k).
+  <b>Volume ramp:</b> ~300 creators piloted (6mo) → 2k (Y1) → 8k (Y2) → 20k (Y3) → 60k (Y5); GMV ~$0.5M → ~$30M.
+  <b>Shared / excluded:</b> core team (~$200k/yr), infra SaaS, PSP fees (~2.75% GMV).
+</div>
+<h3>Cost detail — decision layer only ($ thousands)</h3>
+<table>
+  <tr><th>&nbsp;</th><th class="n">6 mo</th><th class="n">Y1</th><th class="n">Y2</th><th class="n">Y3</th><th class="n">Y4</th><th class="n">Y5</th><th class="n">5-yr cum.</th></tr>
+  <tr><td class="build">Build — annual</td><td class="n">145</td><td class="n">290</td><td class="n">299</td><td class="n">308</td><td class="n">318</td><td class="n">328</td><td class="n">—</td></tr>
+  <tr><td class="build"><b>Build — cumulative</b></td><td class="n">145</td><td class="n">290</td><td class="n">590</td><td class="n">898</td><td class="n">1,216</td><td class="n">1,570</td><td class="n build"><b>~1,570</b></td></tr>
+  <tr><td class="buy">Buy — annual</td><td class="n">18</td><td class="n">36</td><td class="n">59</td><td class="n">90</td><td class="n">126</td><td class="n">172</td><td class="n">—</td></tr>
+  <tr><td class="buy"><b>Buy — cumulative</b></td><td class="n">18</td><td class="n">36</td><td class="n">95</td><td class="n">185</td><td class="n">311</td><td class="n">483</td><td class="n buy"><b>~483</b></td></tr>
+  <tr><td><b>Annual saving (buy)</b></td><td class="n buy">127</td><td class="n buy">254</td><td class="n buy">240</td><td class="n buy">218</td><td class="n buy">192</td><td class="n buy">156</td><td class="n">—</td></tr>
+</table>
+
+<h2>4 · Roadmap by horizon</h2>
+<div class="horizon"><h4>6 months — MVP → soft launch <span class="tag">KSA pilot</span></h4>
+  <p><b>Product:</b> finish core marketplace; Tap escrow live; HypeAuditor validation at onboarding; verified-metrics badge; Mawthooq licence gate; Snapchat + IG + TikTok.</p>
+  <p><b class="buy">Buy:</b> HypeAuditor test → paid; Tap; Phyllo. Analytics live in <b>4–8 weeks</b>.</p>
+  <p><b class="build">Build:</b> still hiring ML/data; <b>no analytics, verification cannot ship</b>; launch slips.</p></div>
+<div class="horizon"><h4>12 months — public launch + first GMV</h4>
+  <p><b>Product:</b> open marketplace, campaign flow, discovery, reviews, payouts.</p>
+  <p><b class="buy">Buy:</b> paying subscriptions, vetting at scale, campaign reporting; 100% focus on growth.</p>
+  <p><b class="build">Build:</b> fraud engine v0.3 (inferior), ~$290k burned, <b>zero revenue contribution</b>.</p></div>
+<div class="horizon"><h4>2 years — scale + Series A</h4>
+  <p><b>Product:</b> multi-market (Kuwait + wider GCC), more networks, brand tooling, dashboards.</p>
+  <p><b class="buy">Buy:</b> predictable per-usage COGS (~$59k/yr), clean unit economics for the raise.</p>
+  <p><b class="build">Build:</b> ~$590k sunk + ~$300k/yr team; a v1 still trailing vendors on accuracy.</p></div>
+<div class="horizon"><h4>5 years — regional leader</h4>
+  <p><b>Product:</b> GCC category leader, deep data products, enterprise brand features.</p>
+  <p><b class="buy">Buy:</b> mature; evaluate selective in-sourcing of the hottest analytics call only (§7). Payments stays with a licensed PSP forever.</p>
+  <p><b class="build">Build:</b> ~$1.57M sunk — and <b>still</b> paying a PSP for payments (can't build).</p></div>
+
+<h2>5 · Why buy wins beyond raw cost</h2>
+<div class="grid">
+  <div class="card"><h3>Time-to-market</h3>Analytics live in weeks vs 12–18 months to a credible model. In a KSA land-grab, delay is the priciest line item.</div>
+  <div class="card"><h3>Capital efficiency</h3>In-house ~doubles Y1 engineering burn (~$500k vs ~$250k all-in) and roughly halves runway.</div>
+  <div class="card"><h3>Quality we can't match</h3>Vendors score billions of accounts with years of labeled fraud data + GNN models — a data network effect.</div>
+  <div class="card"><h3>Risk &amp; compliance</h3>Payments must use a SAMA-licensed PSP; DIY scraping carries platform-ToS/legal risk vendors absorb.</div>
+</div>
+
+<h2>6 · Hard constraint — payments is buy-only (SAMA)</h2>
+<div class="flag">Under SAMA's Law of Payments (Royal Decree M/26), pooling buyer funds ("Payment Aggregation") is a <b>licensed</b> activity. Nakhla cannot legally hold escrow itself — it must route funds through a <b>SAMA-licensed PSP</b> (Tap, PayTabs). A regulatory gate, not a cost trade-off.</div>
+
+<h2>7 · The honest nuance — when to revisit in-sourcing</h2>
+<p>In-house run-rate is <b>flat (~$290–340k/yr)</b>; buy <b>scales with volume</b>. In-sourcing analytics only pays off once annual vendor spend exceeds the fixed team cost — roughly <b>&gt; $300k/yr</b>, which lands <b>beyond year 5</b> at our projected volumes. <b>Trigger:</b> annual analytics vendor spend &gt; $300k <i>and</i> one dominant call type &gt; 60% of it — then in-source only that hot path (hybrid), never payments.</p>
+
+<div class="rec"><b>Recommendation.</b> Buy the commodity + regulated layers; build the core. Ships ~12 months sooner, costs ~$1.1M less over 5 years, de-risks compliance, and concentrates engineering on the marketplace itself.</div>
+
+<div class="foot">Planning estimates with stated assumptions — refine with actual vendor quotes and hiring costs before the raise. Companion: <code>docs/build-vs-buy-roadmap.md</code>.</div>
+</div>
+
+<!-- ================= العربية ================= -->
+<div class="lang ar-serif" id="ar" dir="rtl" hidden>
+<header class="top">
+  <h1>نخلة — البناء الداخلي مقابل الاشتراك الخارجي: خارطة الطريق والتكلفة (6 أشهر ← 5 سنوات)</h1>
+  <div class="sub">مذكّرة للمستثمرين · منصّة تسويق عبر المؤثّرين للسوق السعودي والخليجي · 2026-07-27 · ديفيا سوليوشنز</div>
+</header>
+
+<div class="card">
+  <b>الأطروحة.</b> نبني <b>جوهر المنصّة</b> (ميزتنا التنافسية)، ونشترك في <b>الطبقات النمطية والمنظَّمة</b> — تحليلات المؤثّرين (HypeAuditor)، والمقاييس الموثّقة (Phyllo/الواجهات الرسمية)، والمدفوعات (Tap). الاشتراك <b class="buy">أوفر بنحو 1.1 مليون دولار على مدى 5 سنوات</b>، و<b class="buy">أسرع بنحو 12 شهرًا</b> للوصول إلى منتج موثوق، ويضاهي دقّة المزوّدين التي يتعذّر بناؤها داخليًا، وهو <b>إلزامي قانونًا</b> للمدفوعات.
+</div>
+
+<div class="kpis">
+  <div class="kpi"><b class="buy">~$1.1M</b><span>التوفير خلال 5 سنوات بالاشتراك (طبقة التحليلات والمقاييس الموثّقة)</span></div>
+  <div class="kpi"><b class="buy">~12 شهرًا</b><span>أسرع للوصول إلى منتج حيّ وموثوق</span></div>
+  <div class="kpi"><b class="buy">كل سنة</b><span>يبقى الاشتراك أقل من تكلفة الفريق الداخلي حتى السنة الخامسة</span></div>
+  <div class="kpi"><b class="build">2×</b><span>استهلاك ميزانية الهندسة في السنة الأولى عند البناء الداخلي</span></div>
+</div>
+
+<h2>1 · الملخّص التنفيذي</h2>
+<table>
+  <tr><th>الأفق</th><th class="n">البناء الداخلي (تراكمي)</th><th class="n">الاشتراك (تراكمي)</th><th class="n">التوفير بالاشتراك</th><th>جاهز؟</th></tr>
+  <tr><td><b>6 أشهر</b></td><td class="n build">~$145k</td><td class="n buy">~$18k</td><td class="n buy">~$127k</td><td>الاشتراك: خلال 4–8 أسابيع · البناء: <b>غير قابل للإطلاق</b></td></tr>
+  <tr><td><b>12 شهرًا</b></td><td class="n build">~$290k</td><td class="n buy">~$36k</td><td class="n buy">~$254k</td><td>البناء: إصدار 0.3 أدنى جودة · الاشتراك: حيّ منذ الشهر الأول</td></tr>
+  <tr><td><b>سنتان</b></td><td class="n build">~$590k</td><td class="n buy">~$95k</td><td class="n buy">~$495k</td><td>الاشتراك بجودة المزوّد طوال الفترة</td></tr>
+  <tr><td><b>5 سنوات</b></td><td class="n build">~$1.57M</td><td class="n buy">~$483k</td><td class="n buy">~$1.09M</td><td>الاشتراك أوفر <b>كل سنة</b></td></tr>
+</table>
+<div class="bars">
+  <h3>التكلفة التراكمية لطبقة القرار (التحليلات + المقاييس الموثّقة)</h3>
+  <div class="barrow"><div class="barlbl build">البناء · 5 سنوات</div><div class="bartrack"><div class="barfill fb" style="width:100%">$1.57M</div></div></div>
+  <div class="barrow"><div class="barlbl buy">الاشتراك · 5 سنوات</div><div class="bartrack"><div class="barfill fy" style="width:31%">$0.48M</div></div></div>
+  <div class="barrow"><div class="barlbl build">البناء · سنتان</div><div class="bartrack"><div class="barfill fb" style="width:37.6%">$590k</div></div></div>
+  <div class="barrow"><div class="barlbl buy">الاشتراك · سنتان</div><div class="bartrack"><div class="barfill fy" style="width:6%">$95k</div></div></div>
+  <p class="muted" style="font-size:12.5px">الأعمدة مقيسة على رقم البناء لخمس سنوات (1.57M). تكاليف المدفوعات والمنتج الأساسي والبنية التحتية مشتركة بين المسارين ومستبعَدة من المقارنة.</p>
+</div>
+
+<h2>2 · ماذا نبني وماذا نشترك</h2>
+<table>
+  <tr><th>الطبقة</th><th>القرار</th><th>السبب</th></tr>
+  <tr><td><b>جوهر المنصّة</b> (الويب، لوحة الإدارة، الواجهة الخلفية، تطبيق الجوال، دفتر الضمان، المراسلة، تجربة الاكتشاف، العربية/الاتجاه من اليمين)</td><td><span class="pill ok">بناء</span></td><td>المنتج والميزة التنافسية. مكتمل ~70% (Next.js 16 + NestJS + Prisma + React Native).</td></tr>
+  <tr><td><b>تحليلات المؤثّرين/الاحتيال</b> (نسبة المتابعين الوهميين، جودة الجمهور، AQS، الوصول)</td><td><span class="pill warn">اشتراك</span></td><td>HypeAuditor (قيد الاختبار)/Modash — مليارات الحسابات المُقيَّمة وسنوات من البيانات المُصنَّفة ونماذج GNN.</td></tr>
+  <tr><td><b>المقاييس الموثّقة</b> (ربط حسابات إنستغرام/تيك توك/يوتيوب/سناب شات عبر OAuth)</td><td><span class="pill warn">اشتراك/تكامل خفيف</span></td><td>Phyllo أو الواجهات الرسمية — يختصر مراجعة التطبيقات والتوحيد وتحديث الرموز.</td></tr>
+  <tr><td><b>المدفوعات/الضمان/التحويلات</b></td><td><span class="pill bad">اشتراك إلزامي</span></td><td>ساما: تجميع أموال المشترين نشاط <b>مُرخَّص</b>. الاحتفاظ الذاتي غير قانوني؛ يجب استخدام مزوّد مدفوعات مرخّص (Tap، PayTabs).</td></tr>
+  <tr><td><b>البنية التحتية</b> (Vercel، Neon، Sentry، Blob، socket.io)</td><td><span class="pill ok">خدمة سحابية</span></td><td>نمطية؛ مشتركة بين المسارين.</td></tr>
+</table>
+
+<h2>3 · الافتراضات</h2>
+<div class="card muted" style="font-size:13.5px">
+  <b>التكلفة المُحمَّلة بالكامل للمهندس (تنافسية لمنطقة الشرق الأوسط):</b> عام $60k/سنة · أول/تعلّم آلي $96k/سنة · بيانات $72k/سنة.
+  <b>فريق طبقة القرار الداخلي:</b> مهندس تعلّم آلي + مهندس بيانات + مهندس منصّات/OAuth + جمع بيانات/بنية تحتية ≈ <b>$290k/سنة</b>، +3% سنويًا.
+  <b>تحليلات المزوّد:</b> أرصدة بنمط HypeAuditor، مُرتكزة على Modash ~$0.50/تقرير + حدّ أدنى سنوي (~$16.2k).
+  <b>منحنى الحجم:</b> ~300 مؤثّر تجريبيًا (6 أشهر) ← 2k (س1) ← 8k (س2) ← 20k (س3) ← 60k (س5)؛ إجمالي قيمة المعاملات ~$0.5M ← ~$30M.
+  <b>مشترك/مستبعَد:</b> الفريق الأساسي (~$200k/سنة)، خدمات البنية التحتية، رسوم مزوّد المدفوعات (~2.75% من قيمة المعاملات).
+</div>
+<h3>تفصيل التكلفة — طبقة القرار فقط (بآلاف الدولارات)</h3>
+<table>
+  <tr><th>&nbsp;</th><th class="n">6 أشهر</th><th class="n">س1</th><th class="n">س2</th><th class="n">س3</th><th class="n">س4</th><th class="n">س5</th><th class="n">تراكمي 5 سنوات</th></tr>
+  <tr><td class="build">البناء — سنوي</td><td class="n">145</td><td class="n">290</td><td class="n">299</td><td class="n">308</td><td class="n">318</td><td class="n">328</td><td class="n">—</td></tr>
+  <tr><td class="build"><b>البناء — تراكمي</b></td><td class="n">145</td><td class="n">290</td><td class="n">590</td><td class="n">898</td><td class="n">1,216</td><td class="n">1,570</td><td class="n build"><b>~1,570</b></td></tr>
+  <tr><td class="buy">الاشتراك — سنوي</td><td class="n">18</td><td class="n">36</td><td class="n">59</td><td class="n">90</td><td class="n">126</td><td class="n">172</td><td class="n">—</td></tr>
+  <tr><td class="buy"><b>الاشتراك — تراكمي</b></td><td class="n">18</td><td class="n">36</td><td class="n">95</td><td class="n">185</td><td class="n">311</td><td class="n">483</td><td class="n buy"><b>~483</b></td></tr>
+  <tr><td><b>التوفير السنوي (اشتراك)</b></td><td class="n buy">127</td><td class="n buy">254</td><td class="n buy">240</td><td class="n buy">218</td><td class="n buy">192</td><td class="n buy">156</td><td class="n">—</td></tr>
+</table>
+
+<h2>4 · خارطة الطريق حسب الأفق</h2>
+<div class="horizon"><h4>6 أشهر — المنتج الأولي ← الإطلاق التجريبي <span class="tag">تجربة سعودية</span></h4>
+  <p><b>المنتج:</b> إكمال جوهر المنصّة؛ ضمان Tap حيّ؛ التحقّق عبر HypeAuditor عند الانضمام؛ شارة المقاييس الموثّقة؛ بوابة ترخيص "موثوق"؛ سناب شات + إنستغرام + تيك توك.</p>
+  <p><b class="buy">الاشتراك:</b> اختبار HypeAuditor ← مدفوع؛ Tap؛ Phyllo. التحليلات حيّة خلال <b>4–8 أسابيع</b>.</p>
+  <p><b class="build">البناء:</b> ما زال توظيف فريق التعلّم الآلي/البيانات جاريًا؛ <b>لا تحليلات، وميزة التحقّق غير قابلة للإطلاق</b>؛ يتأخّر الإطلاق.</p></div>
+<div class="horizon"><h4>12 شهرًا — الإطلاق العام + أول إيرادات</h4>
+  <p><b>المنتج:</b> منصّة مفتوحة، مسار الحملات، الاكتشاف، التقييمات، التحويلات.</p>
+  <p><b class="buy">الاشتراك:</b> اشتراكات مدفوعة، تحقّق واسع، تقارير الحملات؛ تركيز كامل على النمو.</p>
+  <p><b class="build">البناء:</b> محرّك احتيال بإصدار 0.3 (أدنى جودة)، ~$290k مُنفَقة، <b>دون أي مساهمة في الإيراد</b>.</p></div>
+<div class="horizon"><h4>سنتان — التوسّع + الجولة الأولى (Series A)</h4>
+  <p><b>المنتج:</b> أسواق متعدّدة (الكويت والخليج الأوسع)، شبكات أكثر، أدوات للعلامات، لوحات تحليلية.</p>
+  <p><b class="buy">الاشتراك:</b> تكلفة تشغيل متوقّعة حسب الاستخدام (~$59k/سنة)، واقتصاديات وحدة نظيفة للجولة.</p>
+  <p><b class="build">البناء:</b> ~$590k مُستهلكة + ~$300k/سنة للفريق؛ إصدار أوّل ما زال دون دقّة المزوّدين.</p></div>
+<div class="horizon"><h4>5 سنوات — الريادة الإقليمية</h4>
+  <p><b>المنتج:</b> ريادة الفئة خليجيًا، منتجات بيانات عميقة، ميزات للعلامات المؤسسية.</p>
+  <p><b class="buy">الاشتراك:</b> ناضج؛ تقييم إدخال أعلى نداء تحليلي فقط داخليًا (القسم 7). تبقى المدفوعات لدى مزوّد مرخّص دائمًا.</p>
+  <p><b class="build">البناء:</b> ~$1.57M مُستهلكة — ومع ذلك يستمرّ دفع مزوّد المدفوعات (يتعذّر بناؤه).</p></div>
+
+<h2>5 · لماذا يتفوّق الاشتراك بعيدًا عن التكلفة المباشرة</h2>
+<div class="grid">
+  <div class="card"><h3>سرعة الوصول للسوق</h3>تحليلات حيّة خلال أسابيع مقابل 12–18 شهرًا لنموذج موثوق. في سوق سعودي سريع، التأخير أغلى بند.</div>
+  <div class="card"><h3>كفاءة رأس المال</h3>البناء الداخلي يضاعف تقريبًا استهلاك السنة الأولى (~$500k مقابل ~$250k إجمالًا) ويقلّص المدى المالي إلى النصف تقريبًا.</div>
+  <div class="card"><h3>جودة يتعذّر مضاهاتها</h3>يقيّم المزوّدون مليارات الحسابات بسنوات من بيانات الاحتيال المُصنَّفة ونماذج GNN — أثر شبكي يصعب تكراره.</div>
+  <div class="card"><h3>المخاطر والامتثال</h3>يجب أن تمرّ المدفوعات عبر مزوّد مرخّص من ساما؛ والكشط الذاتي يحمل مخاطر قانونية/شروط المنصّات.</div>
+</div>
+
+<h2>6 · قيد صارم — المدفوعات اشتراك فقط (ساما)</h2>
+<div class="flag">بموجب نظام المدفوعات وخدماتها (المرسوم الملكي م/26)، يُعدّ تجميع أموال المشترين ("تجميع المدفوعات") نشاطًا <b>مُرخَّصًا</b>. لا يجوز لنخلة الاحتفاظ بأموال الضمان بنفسها — بل يجب توجيه الأموال عبر <b>مزوّد مدفوعات مرخّص من ساما</b> (Tap، PayTabs). قيد تنظيمي وليس مفاضلة تكلفة.</div>
+
+<h2>7 · الفارق الصادق — متى نعيد النظر في البناء الداخلي</h2>
+<p>تكلفة التشغيل الداخلي <b>ثابتة (~$290–340k/سنة)</b>؛ بينما ينمو الاشتراك مع الحجم. لا يصبح البناء الداخلي مجديًا إلا حين تتجاوز نفقات المزوّد السنوية تكلفة الفريق الثابتة — أي <b>&gt; $300k/سنة</b> تقريبًا، وهو ما يقع <b>بعد السنة الخامسة</b> عند أحجامنا المتوقعة. <b>المحفّز:</b> تجاوز نفقات مزوّد التحليلات $300k/سنة <i>مع</i> استحواذ نوع نداء واحد على &gt; 60% منها — عندها يُدخَل هذا المسار الساخن فقط داخليًا (هجين)، دون المدفوعات أبدًا.</p>
+
+<div class="rec"><b>التوصية.</b> اشترِ الطبقات النمطية والمنظَّمة، وابنِ الجوهر. يصل أسرع بنحو 12 شهرًا، ويوفّر ~$1.1M على مدى 5 سنوات، ويخفّض مخاطر الامتثال، ويركّز الهندسة على المنصّة ذاتها.</div>
+
+<div class="foot">تقديرات تخطيطية بافتراضات معلنة — تُحدَّث بعروض المزوّدين وتكاليف التوظيف الفعلية قبل الجولة. المرافق: <code>docs/build-vs-buy-roadmap.md</code>.</div>
+</div>
+
+</div>
+<script>
+function setLang(l){
+  var en=document.getElementById('en'), ar=document.getElementById('ar');
+  var be=document.getElementById('btn-en'), ba=document.getElementById('btn-ar');
+  if(l==='ar'){ en.hidden=true; ar.hidden=false; document.documentElement.lang='ar';
+    document.documentElement.dir='rtl'; ba.classList.add('active'); be.classList.remove('active'); }
+  else { ar.hidden=true; en.hidden=false; document.documentElement.lang='en';
+    document.documentElement.dir='ltr'; be.classList.add('active'); ba.classList.remove('active'); }
+  try{ localStorage.setItem('nakhla_brief_lang', l); }catch(e){}
+}
+try{ var saved=localStorage.getItem('nakhla_brief_lang'); if(saved) setLang(saved); }catch(e){}
+</script>
+</body>
+</html>

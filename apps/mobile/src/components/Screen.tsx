@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { StyleSheet, View, ScrollView, KeyboardAvoidingView, Platform, type ViewStyle } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, type Edge } from "react-native-safe-area-context";
 import { useTheme } from "../theme/context";
 
 type Props = {
@@ -10,9 +10,13 @@ type Props = {
   header?: ReactNode;
   keyboard?: boolean;
   style?: ViewStyle;
+  /** Which safe-area edges to inset. Defaults to top+left+right.
+   *  Pass ["left","right"] for screens inside a Stack with a custom AppHeader
+   *  (the header already consumes the top inset). */
+  edges?: Edge[];
 };
 
-export function Screen({ children, scroll, padded = true, header, keyboard, style }: Props) {
+export function Screen({ children, scroll, padded = true, header, keyboard, style, edges = ["top", "left", "right"] }: Props) {
   const { palette } = useTheme();
   const bg = { backgroundColor: palette.bg };
   const contentStyle = padded ? styles.padded : undefined;
@@ -29,7 +33,7 @@ export function Screen({ children, scroll, padded = true, header, keyboard, styl
   );
 
   const body = (
-    <SafeAreaView style={[styles.root, bg]} edges={["top", "left", "right"]}>
+    <SafeAreaView style={[styles.root, bg]} edges={edges}>
       {header}
       {inner}
     </SafeAreaView>

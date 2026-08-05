@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MENA Freelance-Platform Teardown → Nakhla</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:960px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  h1{font-size:26px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:19px;margin:38px 0 12px;padding-top:10px;border-top:1px solid var(--line)}
+  h3{font-size:15px;margin:20px 0 8px;color:var(--blue)}
+  p{margin:10px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:14px 0}
+  .muted{color:var(--muted)}
+  code{background:var(--card2);padding:2px 6px;border-radius:5px;font-size:12.5px}
+  a{color:var(--accent)}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px}
+  th,td{text-align:left;padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--muted);font-weight:600;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em}
+  .pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+  .ok{background:rgba(46,194,107,.15);color:var(--green)}
+  .warn{background:rgba(240,169,43,.15);color:var(--amber)}
+  .bad{background:rgba(242,88,91,.15);color:var(--red)}
+  .info{background:rgba(76,159,254,.15);color:var(--blue)}
+  ul{margin:10px 0;padding-left:20px} li{margin:6px 0}
+  ol{margin:10px 0;padding-left:22px} ol li{margin:7px 0}
+  .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin:12px 0}
+  .stat{flex:1;min-width:110px;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+  .stat b{display:block;font-size:20px} .stat span{color:var(--muted);font-size:12px}
+  .foot{margin-top:40px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+  .flag{border-left:3px solid var(--amber);padding:8px 14px;background:rgba(240,169,43,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .win{border-left:3px solid var(--green);padding:8px 14px;background:rgba(46,194,107,.06);border-radius:0 8px 8px 0;margin:12px 0}
+  .langbar{display:flex;justify-content:flex-end;gap:6px;margin-bottom:14px}
+  .langbtn{background:#1e222b;color:#a3a9b5;border:1px solid #2a2f3a;border-radius:8px;padding:6px 14px;font:600 13px/1 inherit;cursor:pointer}
+  .langbtn.active{background:#7c5cff;color:#fff;border-color:#7c5cff}
+  .lang[hidden]{display:none}
+  #ar{direction:rtl}
+  #ar ul{padding-left:0;padding-right:20px}
+  #ar th,#ar td{text-align:right}
+  #ar .links a{border-bottom-color:#2a2f3a}
+  #ar .langbar{justify-content:flex-start}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="langbar"><button class="langbtn active" id="btn-en" onclick="setLang('en')">English</button><button class="langbtn" id="btn-ar" onclick="setLang('ar')">العربية</button></div>
+<div class="lang" id="en">
+
+<header class="top">
+  <h1>MENA Freelance-Platform Teardown → Nakhla</h1>
+  <div class="sub">Mostaql (مستقل) + Khamsat (خمسات), both Hsoub-owned · 2026-07-24 · escrow · fees · dispute · tech stack · KSA/SAMA</div>
+</header>
+
+<p><b>Why:</b> Nakhla is structurally a marketplace like these freelancing platforms. This teardown pulls their proven escrow/commission/dispute mechanics, their real tech stack, and the KSA payment-regulation reality — and maps each to Nakhla's actual schema.</p>
+<p class="muted">Two verified deep-research passes: 24 sources / 22-of-25 claims 3-0 (model &amp; fees) + a focused pass on stack &amp; SAMA. All from operator-owned or primary-regulator sources. <code>[F#]</code> refer to the markdown doc's citations.</p>
+
+<div class="card">
+  <b>Headlines</b>
+  <ul>
+    <li><span class="pill info">MODEL</span> Two storefronts, one escrow engine. Khamsat = fixed micro-gigs, Mostaql = project bidding.</li>
+    <li><span class="pill info">FEES</span> Khamsat <b>20%</b> off seller · Mostaql <b>15%</b> off freelancer · both add ~<b>2.75%</b> buyer processing fee.</li>
+    <li><span class="pill ok">NAKHLA</span> Your <code>OrderStatus</code> + <code>LedgerEntry</code> + Tap escrow already implement most of it.</li>
+    <li><span class="pill bad">MYTH BUSTED</span> Hsoub is <b>not</b> PHP/Laravel — it's polyglot (Rails + Laravel). Don't copy the stack.</li>
+    <li><span class="pill ok">COMPLIANCE</span> SAMA makes "route funds through a licensed PSP (Tap)" <b>legally required</b> — your design is correct.</li>
+  </ul>
+</div>
+
+<h2>1 · The model</h2>
+<p>Hsoub runs two storefronts on <b>one escrow engine</b>, unified Hsoub account, shared banking + KYC <span class="muted">[F1]</span>.
+<b>Khamsat</b> = Fiverr-style fixed micro-gigs (single delivery). <b>Mostaql</b> = Upwork-style project bidding (freelancer submits a priced offer the buyer accepts). Both are an intermediary (<i>waseet</i>) holding the buyer's money until delivery is approved. The lesson: <b>build the escrow/verification/payout core once</b>, skin it per marketplace — which is what Nakhla already does.</p>
+
+<h2>2 · Fees / take-rate</h2>
+<table>
+  <tr><th>&nbsp;</th><th>Khamsat</th><th>Mostaql</th><th>Nakhla today</th></tr>
+  <tr><td>Platform commission</td><td><b>20%</b> ($1/$5)</td><td><b>15%</b> (cut from 20%, 2024-04-30)</td><td><code>Order.serviceFee</code></td></tr>
+  <tr><td>Who bears it</td><td>seller only · non-shiftable</td><td>freelancer only · non-shiftable</td><td><b>brand</b> (fee added on top) — divergent ↓</td></tr>
+  <tr><td>Buyer processing fee</td><td>~2.75% ($2.75 min)</td><td>2.75% ($2.75 min), on top-up only</td><td>folded into serviceFee (Tap fee separate)</td></tr>
+  <tr><td>Enforcement</td><td colspan="2">asking buyer to cover commission = <b>suspendable</b></td><td>not yet enforced</td></tr>
+</table>
+<div class="flag"><b>Uncertain:</b> a weaker signal says Mostaql reinstated tiers (20% free / 15% paid); granular per-tier figures were <b>refuted</b>. Direction (supply side pays, non-shiftable) is solid; the exact % is not.</div>
+
+<h2>3 · Escrow → payout flow (uniform)</h2>
+<ol>
+  <li>Buyer funds the <b>full amount up-front</b> into an on-platform balance (card or PayPal).</li>
+  <li>Platform <b>holds</b> it — neither party can touch it.</li>
+  <li>Seller delivers → buyer clicks <b>receive/approve</b> → funds move to seller. Buyer with notes → <b>request modifications</b> (funds stay locked). Khamsat <b>auto-releases after 72h</b> of buyer silence.</li>
+  <li>Released earnings sit <b>suspended</b> ~14 days (settlement + anti-fraud) before withdrawal.</li>
+  <li><b>Withdrawal:</b> PayPal (min $25) or bank/wire (min $250, ~10 countries), the latter requiring <b>Hsoub KYC</b> + IBAN/SWIFT.</li>
+  <li><b>Refunds:</b> cancel → instant on-platform credit; external refund only to original card, within 170 days (Mostaql).</li>
+</ol>
+
+<h2>4 · Nakhla mapping (grounded in your schema)</h2>
+<p class="muted"><code>OrderStatus</code>: pending_payment → awaiting_creator → in_progress → submitted → revision_requested → approved → released → cancelled → disputed · <code>LedgerEntry</code>: charge/refund/payout/commission/adjustment (invariant <code>charge − refund − payout − commission = 0</code>, funds at Tap).</p>
+<table>
+  <tr><th>Hsoub mechanic</th><th>Nakhla today</th><th>Action</th></tr>
+  <tr><td>Buyer funds up-front, held by intermediary</td><td><span class="pill ok">have</span> <code>pending_payment</code> → Tap escrow</td><td>none</td></tr>
+  <tr><td>Delivery + buyer-approval release</td><td><span class="pill ok">have</span> <code>submitted→approved→released</code></td><td>none</td></tr>
+  <tr><td>Request-modifications branch</td><td><span class="pill ok">have</span> <code>revision_requested</code></td><td>none</td></tr>
+  <tr><td>Auto-release after buyer inaction (72h)</td><td><span class="pill bad">missing</span></td><td><b>ADD</b> cron auto-approve <code>submitted</code> after N hours</td></tr>
+  <tr><td>Guarantee / dispute window (14d)</td><td><span class="pill warn">partial</span> <code>disputed</code> exists, no time-box</td><td><b>ADD</b> window after <code>released</code>, then auto-finalize</td></tr>
+  <tr><td>Payout hold / balance suspension (~14d)</td><td><span class="pill bad">missing</span> per-order payout</td><td><b>DECIDE</b> hold N days <i>inside the PSP</i> — see §8</td></tr>
+  <tr><td>Non-shiftable commission + enforcement</td><td><span class="pill bad">missing</span></td><td>ADD to ToS + admin action (low priority)</td></tr>
+  <tr><td>KYC-gated payout</td><td><span class="pill warn">Mawthooq = ad-licence</span></td><td>Tap creator-onboarding covers payout KYC</td></tr>
+  <tr><td>Currency</td><td><span class="pill ok">SAR</span></td><td>none (Hsoub uses USD)</td></tr>
+</table>
+
+<h3>The one deliberate divergence — who pays commission</h3>
+<p><b>Hsoub:</b> commission deducted <b>from the seller</b> (freelancer nets amount − commission). <b>Nakhla today:</b> <code>charge = amount + serviceFee</code> — the <b>brand pays the fee on top</b>, creator receives the full listed amount. Both are valid (Fiverr does both). <b>Recommendation:</b> keep <b>brand-pays</b> early — creators see their full quoted price, which helps win supply — and revisit once supply is dense. Either way, make the split explicit at checkout and non-shiftable in ToS.</p>
+
+<h2>5 · Hsoub tech stack <span class="muted" style="font-size:13px">(verified live 2026-07-24)</span></h2>
+<div class="card">
+  <p><b>Polyglot — "Hsoub = PHP/Laravel" is wrong.</b> Fingerprinted from live production HTTP:</p>
+  <table>
+    <tr><th>Property</th><th>Stack</th><th>Evidence</th></tr>
+    <tr><td>Khamsat + Hsoub I/O</td><td><b>Ruby on Rails</b></td><td><code>rack.session</code>/<code>_hsoub_io_session</code> cookies, <code>x-runtime</code>, Rails <code>csrf_meta_tags</code>, Sprockets SHA-256 asset hashes (one recomputed to match)</td></tr>
+    <tr><td>Mostaql</td><td><b>PHP / Laravel</b></td><td><code>XSRF-TOKEN</code> + session cookie in Laravel's <code>iv/value/mac/tag</code> envelope</td></tr>
+    <tr><td>academy.hsoub.com</td><td>off-the-shelf PHP</td><td>Invision Power Board on Apache</td></tr>
+    <tr><td>Frontend + mobile</td><td><b>React + React Native + PWA</b></td><td>Hsoub job posts (React/Redux, Webpack/Gulp)</td></tr>
+    <tr><td>CDN / infra</td><td>in-house <code>hsoubcdn.com</code> · nginx · AWS ELB</td><td>"Hsoub Accelerator" edge (not Cloudflare); <code>awselb/2.0</code>, eu-west-1 EC2</td></tr>
+  </table>
+  <p class="muted">Unconfirmed: primary datastore (Postgres/MySQL claim refuted); "single shared codebase" is inference.</p>
+</div>
+<div class="win"><b>Takeaway:</b> don't copy their stack — it's a historical Rails+Laravel+forum-PHP mix. Your <b>Next.js + NestJS + Prisma/Postgres + React Native</b> is a more modern, unified choice. The reusable asset is the escrow/product model (§1–4), not the tech.</div>
+
+<h2>6 · KSA payment rails &amp; SAMA regulation <span class="muted" style="font-size:13px">(verified)</span></h2>
+<div class="win"><b>SAMA makes your existing design legally required.</b> Under the Law of Payments and Payment Services (Royal Decree M/26) + Implementing Regs (in force 2023-06-13), <b>"Payment Aggregation Services"</b> — pooling/collecting buyer funds on sellers' behalf — is a <b>licensed activity</b>; providing it unlicensed is prohibited (penalties + up to 1 yr imprisonment). Since Jul 2024 banks may deal <b>only</b> with licensed PSPs. <span class="muted">[F15]</span></div>
+<ul>
+  <li><b>Nakhla cannot hold buyer escrow unlicensed.</b> Legal paths: get a SAMA license (heavy), or <b>route funds through a SAMA-licensed PSP</b> — which is exactly your current design (<code>LedgerEntry</code> mirrors movements at <b>Tap</b>; platform never self-custodies).</li>
+  <li>Licensed PSPs safeguard client funds <b>bankruptcy-remote</b> in a dedicated Licensed-Bank account, returned to users on PSP insolvency (Art 93–94). <span class="muted">[F16]</span></li>
+</ul>
+<div class="flag"><b>Do NOT</b> build a creator wallet/balance that holds user money on Nakhla's own books. If you add a payout hold (§4), implement it <b>inside the PSP</b>, not as a Nakhla-custodied balance.</div>
+<p class="muted">PSP comparison completed — see §7 below.</p>
+
+<h2>7 · KSA PSP matrix &amp; recommendation</h2>
+<div class="flag"><b>Confidence:</b> the adversarial-verify pass hit an <b>API outage</b> mid-run — only PayTabs "Split Payout" survived a clean 3-0. The rest is inline-verified against PSP docs + KSA comparisons. <b>Fees are indicative — confirm with each PSP;</b> capabilities are reliable.</div>
+<table>
+  <tr><th>PSP</th><th>SAMA / KSA</th><th>Mada</th><th>Marketplace / split</th><th>Payout to seller</th><th>Indicative fees</th><th>Fit</th></tr>
+  <tr><td><b>Tap Payments</b></td><td>✅ licensed, SAR</td><td>✅ +ApplePay/STCPay/BNPL</td><td>✅ <b>Marketplace</b> — split+commission, escrow-hold until seller KYC</td><td>✅ bank/wallet, daily–monthly</td><td>2.75% cards · 3.25% intl</td><td><span class="pill ok">★ Primary</span></td></tr>
+  <tr><td><b>PayTabs</b></td><td>✅ licensed, next-day SAR</td><td>✅ +ApplePay/SADAD/BNPL</td><td>✅ <b>Split Payout</b> API — richer multi-vendor/escrow</td><td>✅ multi-beneficiary API</td><td><b>1% Mada</b> · 2.25%+SAR1 cards</td><td><span class="pill ok">★ Fallback</span></td></tr>
+  <tr><td>Moyasar</td><td>✅ licensed, Saudi-built</td><td>✅ +ApplePay/STCPay</td><td>❌ no native split</td><td>❌ not native</td><td>~1.5%+SAR1 Mada</td><td><span class="pill warn">skip for mkt</span></td></tr>
+  <tr><td>HyperPay</td><td>✅ licensed, ZATCA2</td><td>✅ high approval</td><td>✅ split/wallet</td><td>✅</td><td>quote</td><td><span class="pill warn">enterprise</span></td></tr>
+  <tr><td>Checkout.com</td><td>✅ KSA entity + license</td><td>✅ (Mada first-mover)</td><td>✅ Platforms (Payfac)</td><td>✅ sub-entity payouts</td><td>quote</td><td><span class="pill warn">enterprise</span></td></tr>
+  <tr><td>Stripe</td><td>❌ no KSA acquiring</td><td>❌</td><td>Connect (N/A in KSA)</td><td>—</td><td>—</td><td><span class="pill bad">ruled out</span></td></tr>
+</table>
+<p><b>Buyer methods to accept (KSA), ranked:</b> Mada (mandatory, dominant) → Apple Pay (high penetration) → intl cards → STC Pay → SADAD/BNPL. Tap/PayTabs/HyperPay/Checkout.com all cover these.</p>
+<div class="win"><b>Recommendation:</b> <b>Tap Payments as primary</b> — it's already your target (<code>PaymentProviderKind { mock, tap }</code>) and its <b>Marketplace</b> product natively splits buyer payment → creator amount + platform commission, holds the creator's share until KYC (escrow-like), and disburses to the creator. Your architecture is sound as-is. <b>Document PayTabs as the fallback</b> (add to the enum later) for cheaper Mada (1%) / next-day SAR / richer split rules. Don't use Moyasar for the marketplace flow (no native split → drifts toward self-custody, which §6 forbids); don't design around Stripe (unavailable in KSA).</div>
+
+<h2>8 · What to do next</h2>
+<ol>
+  <li><span class="pill ok">quick win</span> Add an <b>auto-release timer</b> on <code>submitted</code> (Khamsat's 72h) — protects creators from unresponsive brands.</li>
+  <li>Add a <b>time-boxed dispute window</b> after <code>released</code>, then auto-finalize.</li>
+  <li>Decide the <b>payout-hold</b> — a hold period inside Tap, not a self-custodied balance.</li>
+  <li>Keep <b>brand-pays commission</b> for now; make it explicit + non-shiftable in ToS.</li>
+  <li><span class="pill ok">decided</span> Wire <b>Tap Marketplace</b> (split + payout + KYC-hold) as primary; document <b>PayTabs</b> as the enum fallback. Accept Mada + Apple Pay + cards + STC Pay from brands.</li>
+</ol>
+
+<div class="foot">
+  Files: <code>docs/freelance-platform-teardown.md</code> (full cited teardown) · <code>docs/freelance-platform-teardown.html</code> (this report) · <code>docs/influencer-verification-plan.md</code> (companion, from the earlier session).<br>
+  All facts from operator-owned primary pages or the SAMA rulebook (in force 2026). Flagged items are inference or unverified and marked as such.
+</div>
+
+</div>
+
+<div class="lang" id="ar" dir="rtl" hidden>
+
+<header class="top">
+  <h1>تشريح منصات العمل الحر في الشرق الأوسط وشمال إفريقيا ← نخلة</h1>
+  <div class="sub">Mostaql (مستقل) + Khamsat (خمسات)، وكلاهما مملوك لـ Hsoub · 2026-07-24 · الضمان · الرسوم · النزاعات · الحزمة التقنية · KSA/SAMA</div>
+</header>
+
+<p><b>لماذا:</b> نخلة من حيث البنية سوق إلكتروني مثل منصات العمل الحر هذه. يستخلص هذا التشريح آليات الضمان والعمولة وحل النزاعات المثبتة لديها، وحزمتها التقنية الفعلية، وواقع تنظيم المدفوعات في المملكة العربية السعودية — ويربط كلًّا منها بمخطط قاعدة بيانات نخلة الفعلي.</p>
+<p class="muted">جولتا بحث معمّق مُتحقَّق منهما: 24 مصدرًا / 22 من 25 ادّعاءً بنتيجة 3-0 (النموذج والرسوم) + جولة مركّزة على الحزمة التقنية وSAMA. جميعها من مصادر مملوكة للمشغّل أو من الجهة التنظيمية الأساسية. تشير <code>[F#]</code> إلى الاستشهادات الواردة في مستند markdown.</p>
+
+<div class="card">
+  <b>أبرز النقاط</b>
+  <ul>
+    <li><span class="pill info">النموذج</span> واجهتا متجر، ومحرّك ضمان واحد. Khamsat = خدمات مصغّرة بسعر ثابت، Mostaql = مزايدة على المشاريع.</li>
+    <li><span class="pill info">الرسوم</span> Khamsat <b>20%</b> من البائع · Mostaql <b>15%</b> من المستقل · وكلاهما يضيف نحو <b>2.75%</b> رسوم معالجة على المشتري.</li>
+    <li><span class="pill ok">نخلة</span> إن <code>OrderStatus</code> + <code>LedgerEntry</code> + ضمان Tap لديك يطبّقان معظم ذلك بالفعل.</li>
+    <li><span class="pill bad">خرافة مُفنَّدة</span> Hsoub ليست PHP/Laravel — بل متعدّدة اللغات (Rails + Laravel). لا تنسخ الحزمة التقنية.</li>
+    <li><span class="pill ok">الامتثال</span> تجعل SAMA "تمرير الأموال عبر مزوّد خدمة دفع مرخّص (Tap)" <b>مطلبًا قانونيًا</b> — فتصميمك صحيح.</li>
+  </ul>
+</div>
+
+<h2>1 · النموذج</h2>
+<p>تُشغّل Hsoub واجهتَي متجر على <b>محرّك ضمان واحد</b>، بحساب Hsoub موحّد، وخدمات مصرفية ومعرفة العميل (KYC) مشتركة <span class="muted">[F1]</span>.
+<b>Khamsat</b> = خدمات مصغّرة بسعر ثابت على غرار Fiverr (تسليم واحد). <b>Mostaql</b> = مزايدة على المشاريع على غرار Upwork (يقدّم المستقل عرضًا مُسعّرًا يقبله المشتري). وكلاهما وسيط (<i>وسيط</i>) يحتجز أموال المشتري حتى يُعتمد التسليم. الدرس المستفاد: <b>ابنِ نواة الضمان/التحقق/الصرف مرّة واحدة</b>، ثم اكسُها لكل سوق — وهو ما تفعله نخلة بالفعل.</p>
+
+<h2>2 · الرسوم / نسبة الاقتطاع</h2>
+<table>
+  <tr><th>&nbsp;</th><th>Khamsat</th><th>Mostaql</th><th>نخلة اليوم</th></tr>
+  <tr><td>عمولة المنصة</td><td><b>20%</b> ($1/$5)</td><td><b>15%</b> (خُفّضت من 20% في 2024-04-30)</td><td><code>Order.serviceFee</code></td></tr>
+  <tr><td>مَن يتحمّلها</td><td>البائع فقط · غير قابلة للتحويل</td><td>المستقل فقط · غير قابلة للتحويل</td><td><b>العلامة التجارية</b> (تُضاف الرسوم فوق السعر) — اختلاف ↓</td></tr>
+  <tr><td>رسوم معالجة المشتري</td><td>نحو 2.75% (بحد أدنى $2.75)</td><td>2.75% (بحد أدنى $2.75)، على الشحن فقط</td><td>مدمجة في serviceFee (رسوم Tap منفصلة)</td></tr>
+  <tr><td>الإنفاذ</td><td colspan="2">مطالبة المشتري بتغطية العمولة = <b>قابلة للإيقاف</b></td><td>غير مُنفَّذة بعد</td></tr>
+</table>
+<div class="flag"><b>غير مؤكّد:</b> تشير إشارة أضعف إلى أن Mostaql أعادت العمل بالشرائح (20% للمجاني / 15% للمدفوع)؛ أمّا الأرقام التفصيلية لكل شريحة فقد <b>فُنِّدت</b>. الاتجاه (جانب العرض يدفع، وغير قابلة للتحويل) راسخ؛ أمّا النسبة الدقيقة فلا.</div>
+
+<h2>3 · تدفّق الضمان ← الصرف (موحّد)</h2>
+<ol>
+  <li>يموّل المشتري <b>المبلغ الكامل مقدّمًا</b> في رصيد على المنصة (بطاقة أو PayPal).</li>
+  <li>تحتجزه المنصة <b>ولا يستطيع أيّ طرف الوصول إليه</b>.</li>
+  <li>يُسلّم البائع ← ينقر المشتري على <b>الاستلام/الاعتماد</b> ← تنتقل الأموال إلى البائع. وإذا كانت لدى المشتري ملاحظات ← <b>طلب تعديلات</b> (تبقى الأموال محتجزة). وتُطلق Khamsat الأموال <b>تلقائيًا بعد 72 ساعة</b> من صمت المشتري.</li>
+  <li>تبقى الأرباح المُطلقة <b>موقوفة</b> نحو 14 يومًا (تسوية ومكافحة احتيال) قبل السحب.</li>
+  <li><b>السحب:</b> PayPal (بحد أدنى $25) أو حوالة مصرفية/بنكية (بحد أدنى $250، نحو 10 دول)، ويتطلّب الأخير <b>معرفة العميل (KYC) لدى Hsoub</b> + IBAN/SWIFT.</li>
+  <li><b>الاستردادات:</b> الإلغاء ← رصيد فوري على المنصة؛ أمّا الاسترداد الخارجي فيكون إلى البطاقة الأصلية فقط، خلال 170 يومًا (Mostaql).</li>
+</ol>
+
+<h2>4 · ربط نخلة (مبني على مخطط قاعدة بياناتك)</h2>
+<p class="muted"><code>OrderStatus</code>: pending_payment → awaiting_creator → in_progress → submitted → revision_requested → approved → released → cancelled → disputed · <code>LedgerEntry</code>: charge/refund/payout/commission/adjustment (الثابت <code>charge − refund − payout − commission = 0</code>، الأموال لدى Tap).</p>
+<table>
+  <tr><th>آلية Hsoub</th><th>نخلة اليوم</th><th>الإجراء</th></tr>
+  <tr><td>المشتري يموّل مقدّمًا، ويحتجزها الوسيط</td><td><span class="pill ok">متوفّر</span> <code>pending_payment</code> ← ضمان Tap</td><td>لا شيء</td></tr>
+  <tr><td>التسليم + الإطلاق باعتماد المشتري</td><td><span class="pill ok">متوفّر</span> <code>submitted→approved→released</code></td><td>لا شيء</td></tr>
+  <tr><td>مسار طلب التعديلات</td><td><span class="pill ok">متوفّر</span> <code>revision_requested</code></td><td>لا شيء</td></tr>
+  <tr><td>الإطلاق التلقائي بعد تقاعس المشتري (72 ساعة)</td><td><span class="pill bad">مفقود</span></td><td><b>أضِف</b> مهمة cron تعتمد <code>submitted</code> تلقائيًا بعد N ساعة</td></tr>
+  <tr><td>نافذة الضمان / النزاع (14 يومًا)</td><td><span class="pill warn">جزئي</span> <code>disputed</code> موجودة، دون تحديد زمني</td><td><b>أضِف</b> نافذة بعد <code>released</code>، ثم إنهاء تلقائي</td></tr>
+  <tr><td>احتجاز الصرف / إيقاف الرصيد (نحو 14 يومًا)</td><td><span class="pill bad">مفقود</span> الصرف لكل طلب</td><td><b>قرِّر</b> الاحتجاز N يومًا <i>داخل مزوّد خدمة الدفع</i> — انظر §8</td></tr>
+  <tr><td>عمولة غير قابلة للتحويل + إنفاذ</td><td><span class="pill bad">مفقود</span></td><td>أضِفها إلى شروط الخدمة + إجراء إداري (أولوية منخفضة)</td></tr>
+  <tr><td>صرف مشروط بمعرفة العميل (KYC)</td><td><span class="pill warn">موثوق = ترخيص إعلاني</span></td><td>يغطّي تأهيل المُنشئ لدى Tap معرفة العميل الخاصة بالصرف</td></tr>
+  <tr><td>العملة</td><td><span class="pill ok">SAR</span></td><td>لا شيء (تستخدم Hsoub الدولار الأمريكي)</td></tr>
+</table>
+
+<h3>الاختلاف المتعمَّد الوحيد — مَن يدفع العمولة</h3>
+<p><b>Hsoub:</b> تُقتطع العمولة <b>من البائع</b> (يحصل المستقل على المبلغ − العمولة). <b>نخلة اليوم:</b> <code>charge = amount + serviceFee</code> — <b>تدفع العلامة التجارية الرسوم فوق السعر</b>، ويحصل المُنشئ على كامل المبلغ المُعلن. وكلاهما صحيح (تفعل Fiverr كليهما). <b>التوصية:</b> أبقِ خيار <b>دفع العلامة التجارية</b> في المرحلة المبكرة — إذ يرى المُنشئون سعرهم المعروض كاملًا، ما يساعد على كسب جانب العرض — وأعِد النظر عندما يكثُف العرض. وفي كلتا الحالتين، اجعل تقسيم الرسوم واضحًا عند الدفع وغير قابل للتحويل في شروط الخدمة.</p>
+
+<h2>5 · الحزمة التقنية لـ Hsoub <span class="muted" style="font-size:13px">(تم التحقق منها مباشرةً في 2026-07-24)</span></h2>
+<div class="card">
+  <p><b>متعدّدة اللغات — القول إن "Hsoub = PHP/Laravel" خاطئ.</b> جرى تحديد البصمة من بيئة الإنتاج الحيّة عبر HTTP:</p>
+  <table>
+    <tr><th>الخاصية</th><th>الحزمة</th><th>الدليل</th></tr>
+    <tr><td>Khamsat + Hsoub I/O</td><td><b>Ruby on Rails</b></td><td>ملفّات تعريف الارتباط <code>rack.session</code>/<code>_hsoub_io_session</code>، و<code>x-runtime</code>، و<code>csrf_meta_tags</code> الخاصة بـ Rails، وبصمات أصول Sprockets بخوارزمية SHA-256 (أُعيد حساب إحداها للمطابقة)</td></tr>
+    <tr><td>Mostaql</td><td><b>PHP / Laravel</b></td><td><code>XSRF-TOKEN</code> + ملف تعريف ارتباط الجلسة ضمن غلاف Laravel <code>iv/value/mac/tag</code></td></tr>
+    <tr><td>academy.hsoub.com</td><td>PHP جاهز</td><td>Invision Power Board على Apache</td></tr>
+    <tr><td>الواجهة الأمامية + التطبيق</td><td><b>React + React Native + PWA</b></td><td>إعلانات وظائف Hsoub (React/Redux، Webpack/Gulp)</td></tr>
+    <tr><td>شبكة توصيل المحتوى / البنية التحتية</td><td>داخلية <code>hsoubcdn.com</code> · nginx · AWS ELB</td><td>حافة "Hsoub Accelerator" (وليست Cloudflare)؛ <code>awselb/2.0</code>، EC2 في eu-west-1</td></tr>
+  </table>
+  <p class="muted">غير مؤكّد: مخزن البيانات الأساسي (فُنِّد ادّعاء Postgres/MySQL)؛ و"قاعدة شفرة موحّدة واحدة" مجرّد استنتاج.</p>
+</div>
+<div class="win"><b>الخلاصة:</b> لا تنسخ حزمتهم التقنية — فهي مزيج تاريخي من Rails+Laravel+منتدى PHP. إن حزمتك <b>Next.js + NestJS + Prisma/Postgres + React Native</b> خيار أحدث وموحّد. الأصل القابل لإعادة الاستخدام هو نموذج الضمان/المنتج (§1–4)، لا التقنية.</div>
+
+<h2>6 · قنوات الدفع في المملكة العربية السعودية وتنظيم SAMA <span class="muted" style="font-size:13px">(تم التحقق)</span></h2>
+<div class="win"><b>تجعل SAMA تصميمك الحالي مطلبًا قانونيًا.</b> بموجب نظام المدفوعات وخدمات المدفوعات (المرسوم الملكي رقم م/26) + اللائحة التنفيذية (سارية منذ 2023-06-13)، فإن <b>"خدمات تجميع المدفوعات"</b> — أي تجميع/تحصيل أموال المشترين نيابةً عن البائعين — <b>نشاط مرخَّص</b>؛ ويُحظَر تقديمه دون ترخيص (عقوبات + سجن يصل إلى سنة). ومنذ يوليو 2024 لا يجوز للبنوك التعامل <b>إلا</b> مع مزوّدي خدمات الدفع المرخّصين. <span class="muted">[F15]</span></div>
+<ul>
+  <li><b>لا تستطيع نخلة احتجاز ضمان المشتري دون ترخيص.</b> المسارات القانونية: الحصول على ترخيص من SAMA (عبء كبير)، أو <b>تمرير الأموال عبر مزوّد خدمة دفع مرخّص من SAMA</b> — وهو بالضبط تصميمك الحالي (<code>LedgerEntry</code> يعكس الحركات لدى <b>Tap</b>؛ ولا تحتجز المنصة الأموال بنفسها).</li>
+  <li>يحفظ مزوّدو خدمات الدفع المرخّصون أموال العملاء <b>بمعزل عن الإفلاس</b> في حساب مخصّص لدى بنك مرخّص، وتُعاد إلى المستخدمين عند إعسار المزوّد (المادتان 93–94). <span class="muted">[F16]</span></li>
+</ul>
+<div class="flag"><b>لا</b> تبنِ محفظة/رصيدًا للمُنشئ يحتجز أموال المستخدمين في دفاتر نخلة نفسها. وإذا أضفت احتجاز صرف (§4)، فطبّقه <b>داخل مزوّد خدمة الدفع</b>، لا كرصيد تحتجزه نخلة.</div>
+<p class="muted">اكتملت مقارنة مزوّدي خدمات الدفع — انظر §7 أدناه.</p>
+
+<h2>7 · مصفوفة مزوّدي خدمات الدفع في السعودية والتوصية</h2>
+<div class="flag"><b>مستوى الثقة:</b> واجهت جولة التحقق العدائي <b>انقطاعًا في واجهة برمجة التطبيقات</b> في منتصفها — ولم تنجُ بنتيجة 3-0 نظيفة سوى ميزة "Split Payout" من PayTabs. أمّا البقية فتم التحقق منها مباشرةً مقابل وثائق مزوّدي خدمات الدفع + مقارنات المملكة. <b>الرسوم إرشادية — تأكّد منها مع كل مزوّد؛</b> أمّا القدرات فموثوقة.</div>
+<table>
+  <tr><th>المزوّد</th><th>SAMA / السعودية</th><th>مدى</th><th>السوق / التقسيم</th><th>الصرف للبائع</th><th>رسوم إرشادية</th><th>الملاءمة</th></tr>
+  <tr><td><b>Tap Payments</b></td><td>✅ مرخّص، SAR</td><td>✅ +ApplePay/STCPay/BNPL</td><td>✅ <b>Marketplace</b> — تقسيم+عمولة، احتجاز ضمان حتى معرفة عميل البائع</td><td>✅ بنك/محفظة، يوميًا–شهريًا</td><td>2.75% بطاقات · 3.25% دولية</td><td><span class="pill ok">★ أساسي</span></td></tr>
+  <tr><td><b>PayTabs</b></td><td>✅ مرخّص، SAR في اليوم التالي</td><td>✅ +ApplePay/SADAD/BNPL</td><td>✅ واجهة <b>Split Payout</b> — تقسيم أثرى متعدّد البائعين/الضمان</td><td>✅ واجهة متعدّدة المستفيدين</td><td><b>1% مدى</b> · 2.25%+SAR1 بطاقات</td><td><span class="pill ok">★ احتياطي</span></td></tr>
+  <tr><td>Moyasar</td><td>✅ مرخّص، سعودي المنشأ</td><td>✅ +ApplePay/STCPay</td><td>❌ لا تقسيم أصلي</td><td>❌ غير أصلي</td><td>نحو 1.5%+SAR1 مدى</td><td><span class="pill warn">تجاوزه للسوق</span></td></tr>
+  <tr><td>HyperPay</td><td>✅ مرخّص، ZATCA2</td><td>✅ نسبة قبول عالية</td><td>✅ تقسيم/محفظة</td><td>✅</td><td>بعرض سعر</td><td><span class="pill warn">للمؤسسات</span></td></tr>
+  <tr><td>Checkout.com</td><td>✅ كيان + ترخيص في السعودية</td><td>✅ (سبّاق في مدى)</td><td>✅ Platforms (Payfac)</td><td>✅ صرف للكيانات الفرعية</td><td>بعرض سعر</td><td><span class="pill warn">للمؤسسات</span></td></tr>
+  <tr><td>Stripe</td><td>❌ لا استحواذ في السعودية</td><td>❌</td><td>Connect (غير متاح في السعودية)</td><td>—</td><td>—</td><td><span class="pill bad">مُستبعد</span></td></tr>
+</table>
+<p><b>طرق الدفع المطلوب قبولها (السعودية)، مرتّبة:</b> مدى (إلزامية، مهيمنة) ← Apple Pay (انتشار عالٍ) ← البطاقات الدولية ← STC Pay ← SADAD/BNPL. ويغطّيها جميعًا Tap/PayTabs/HyperPay/Checkout.com.</p>
+<div class="win"><b>التوصية:</b> <b>Tap Payments كمزوّد أساسي</b> — فهو أصلًا هدفك (<code>PaymentProviderKind { mock, tap }</code>) ومنتجه <b>Marketplace</b> يقسّم أصلًا مدفوعات المشتري ← مبلغ المُنشئ + عمولة المنصة، ويحتجز حصّة المُنشئ حتى معرفة العميل (شبيه بالضمان)، ثم يصرفها للمُنشئ. بنيتك سليمة كما هي. <b>وثّق PayTabs كخيار احتياطي</b> (أضفه إلى القائمة لاحقًا) لأجل مدى أرخص (1%) / SAR في اليوم التالي / قواعد تقسيم أثرى. لا تستخدم Moyasar لتدفّق السوق (لا تقسيم أصلي ← ينجرف نحو الاحتجاز الذاتي الذي يحظره §6)؛ ولا تصمّم اعتمادًا على Stripe (غير متاح في السعودية).</div>
+
+<h2>8 · ما العمل تاليًا</h2>
+<ol>
+  <li><span class="pill ok">مكسب سريع</span> أضِف <b>مؤقّت إطلاق تلقائي</b> على <code>submitted</code> (72 ساعة على غرار Khamsat) — يحمي المُنشئين من العلامات التجارية غير المتجاوبة.</li>
+  <li>أضِف <b>نافذة نزاع محدّدة زمنيًا</b> بعد <code>released</code>، ثم إنهاء تلقائي.</li>
+  <li>قرِّر <b>احتجاز الصرف</b> — مدة احتجاز داخل Tap، لا رصيدًا محتجزًا ذاتيًا.</li>
+  <li>أبقِ <b>دفع العلامة التجارية للعمولة</b> في الوقت الحالي؛ واجعله واضحًا وغير قابل للتحويل في شروط الخدمة.</li>
+  <li><span class="pill ok">مُقرَّر</span> اربط <b>Tap Marketplace</b> (تقسيم + صرف + احتجاز بمعرفة العميل) كمزوّد أساسي؛ ووثّق <b>PayTabs</b> كخيار احتياطي في القائمة. واقبل مدى + Apple Pay + البطاقات + STC Pay من العلامات التجارية.</li>
+</ol>
+
+<div class="foot">
+  الملفّات: <code>docs/freelance-platform-teardown.md</code> (التشريح الكامل الموثّق) · <code>docs/freelance-platform-teardown.html</code> (هذا التقرير) · <code>docs/influencer-verification-plan.md</code> (مرافق، من الجلسة السابقة).<br>
+  جميع الحقائق مستمدّة من صفحات أساسية مملوكة للمشغّل أو من كتيّب قواعد SAMA (ساري في 2026). العناصر المُعلَّمة استنتاجية أو غير مُتحقَّق منها ومُشار إلى ذلك.
+</div>
+
+</div>
+
+</div>
+<script>
+function setLang(l){var en=document.getElementById('en'),ar=document.getElementById('ar'),be=document.getElementById('btn-en'),ba=document.getElementById('btn-ar');if(l==='ar'){en.hidden=true;ar.hidden=false;document.documentElement.lang='ar';document.documentElement.dir='rtl';ba.classList.add('active');be.classList.remove('active');}else{ar.hidden=true;en.hidden=false;document.documentElement.lang='en';document.documentElement.dir='ltr';be.classList.add('active');ba.classList.remove('active');}try{localStorage.setItem('nakhla_lang',l);}catch(e){}}
+try{var s=localStorage.getItem('nakhla_lang');if(s)setLang(s);}catch(e){}
+</script>
+</body>
+</html>

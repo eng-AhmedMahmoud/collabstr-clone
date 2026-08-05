@@ -43,7 +43,7 @@ export default function Login() {
   return (
     <>
       <Stack.Screen options={{ title: "" }} />
-      <Screen scroll padded>
+      <Screen scroll padded edges={["left", "right"]}>
         <View style={styles.hero}>
           <BrandMark size={64} />
           <Text style={[styles.title, { color: palette.fg }]}>{t.auth.loginTitle}</Text>

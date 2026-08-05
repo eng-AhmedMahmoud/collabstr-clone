@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Nakhla — Docs Index</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#171a21; --card2:#1e222b; --ink:#e8eaed; --muted:#a3a9b5;
+    --line:#2a2f3a; --accent:#7c5cff; --green:#2ec26b; --amber:#f0a92b; --red:#f2585b; --blue:#4c9ffe;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:15px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;padding:40px 22px 80px}
+  header.top{border-bottom:1px solid var(--line);padding-bottom:22px;margin-bottom:30px}
+  h1{font-size:26px;margin:0 0 6px}
+  .sub{color:var(--muted);font-size:14px}
+  h2{font-size:15px;margin:34px 0 12px;color:var(--blue);text-transform:uppercase;letter-spacing:.05em}
+  .grid{display:grid;gap:10px}
+  a.card{display:block;background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:14px 18px;text-decoration:none;color:var(--ink);transition:border-color .15s,background .15s}
+  a.card:hover{border-color:var(--accent);background:var(--card2)}
+  a.card .t{font-size:14.5px;font-weight:600}
+  a.card .d{color:var(--muted);font-size:12.5px;margin-top:3px}
+  .pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:10.5px;font-weight:700;
+    margin-left:8px;vertical-align:middle;letter-spacing:.03em}
+  .ar{background:rgba(76,159,254,.15);color:var(--blue)}
+  .foot{margin-top:44px;padding-top:18px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <h1>Nakhla — Docs Index</h1>
+  <div class="sub">Generated reference docs · <code>docs/*.html</code> (source markdown in <code>docs/md/</code>)</div>
+</header>
+
+<h2>Compliance &amp; Legal</h2>
+<div class="grid">
+  <a class="card" href="compliance-monitoring-blueprint.html" target="_blank" rel="noopener">
+    <div class="t">Compliance &amp; Monitoring Blueprint</div>
+    <div class="d">SAMA escrow licensing, PSP recommendation (Tap), ZATCA, Mawthooq, Sentry observability · 2026-07-12</div>
+  </a>
+  <a class="card" href="compliance-gaps-addendum.html" target="_blank" rel="noopener">
+    <div class="t">Compliance Gaps Addendum</div>
+    <div class="d">PDPL, MoC E-Commerce Law, AML/CTF, PCI-DSS, ad-disclosure — the 5 tracks the first pass missed · 2026-07-13</div>
+  </a>
+</div>
+
+<h2>Business &amp; Strategy</h2>
+<div class="grid">
+  <a class="card" href="build-vs-buy-roadmap.html" target="_blank" rel="noopener">
+    <div class="t">Build vs Buy Roadmap (Investor Brief)</div>
+    <div class="d">6mo → 5yr cost/timeline: build core marketplace, buy analytics/verified/payments · 2026-07-27</div>
+  </a>
+  <a class="card" href="business-model-ar.html" target="_blank" rel="noopener">
+    <div class="t">نموذج العمل والأرباح والتكاليف <span class="pill ar">AR</span></div>
+    <div class="d">Business model, revenue &amp; cost structure (Arabic)</div>
+  </a>
+  <a class="card" href="competitive-gap-analysis.html" target="_blank" rel="noopener">
+    <div class="t">Competitive Gap Analysis</div>
+    <div class="d">Feature parity vs Collabstr, KSA differentiators, production blockers · July 2026</div>
+  </a>
+  <a class="card" href="freelance-platform-teardown.html" target="_blank" rel="noopener">
+    <div class="t">MENA Freelance-Platform Teardown → Nakhla</div>
+    <div class="d">Mostaql + Khamsat (Hsoub): escrow/fee/dispute model, tech stack, SAMA reality · 2026-07-24</div>
+  </a>
+  <a class="card" href="cost-analysis.html" target="_blank" rel="noopener">
+    <div class="t">Service Cost Analysis</div>
+    <div class="d">Fixed costs, infra $/mo by phase, payment-gateway fees · verified 2026-07-06/07</div>
+  </a>
+</div>
+
+<h2>Influencer Verification</h2>
+<div class="grid">
+  <a class="card" href="influencer-verification-plan.html" target="_blank" rel="noopener">
+    <div class="t">Influencer Review &amp; Metric Verification — Implementation Plan</div>
+    <div class="d">OAuth verified-metrics layer + fraud/audience-quality layer, phased rollout · 2026-07-23</div>
+  </a>
+  <a class="card" href="influencer-verification-session-report.html" target="_blank" rel="noopener">
+    <div class="t">Influencer Verification — Session Report</div>
+    <div class="d">Research → plan → vendor outreach summary · 2026-07-23</div>
+  </a>
+  <a class="card" href="hypeauditor-api-reply.html" target="_blank" rel="noopener">
+    <div class="t">HypeAuditor — API Reply &amp; Brief</div>
+    <div class="d">Reply to Victoria Bakker (Partnership Manager EMEA) · rev. 2026-07-25</div>
+  </a>
+</div>
+
+<h2>Ops &amp; Runbooks</h2>
+<div class="grid">
+  <a class="card" href="social-login-runbook.html" target="_blank" rel="noopener">
+    <div class="t">Social Login Runbook</div>
+    <div class="d">Google (live) + Apple (pending) — GCP config, known issues, domain-migration steps · updated 2026-07-07</div>
+  </a>
+  <a class="card" href="smoke-test-accounts.html" target="_blank" rel="noopener">
+    <div class="t">Smoke Test Accounts</div>
+    <div class="d">Local dev environment demo logins — passwords are demo-only</div>
+  </a>
+</div>
+
+<h2>Roadmap</h2>
+<div class="grid">
+  <a class="card" href="remaining-roadmap.html" target="_blank" rel="noopener">
+    <div class="t">Roadmap · Nakhla (KSA) + Kuwait</div>
+    <div class="d">Applies to both Nakhla and Kuwait repos unless the file path is product-specific</div>
+  </a>
+</div>
+
+<div class="foot">Auto-generated index. Regenerate by hand when files are added/removed under <code>docs/</code>.</div>
+</div>
+</body>
+</html>

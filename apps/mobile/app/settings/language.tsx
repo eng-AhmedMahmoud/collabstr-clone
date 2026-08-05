@@ -1,41 +1,38 @@
-import { useState } from "react";
 import { Text } from "react-native";
 import { Screen } from "@/components/Screen";
 import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/Card";
-import { Button } from "@/components/Button";
 import { SegmentedControl } from "@/components/SegmentedControl";
 import { useI18n } from "@/i18n/context";
 import { useTheme } from "@/theme/context";
 import { useSetLocale } from "@/api/mutations";
 import { spacing } from "@/theme";
 import type { Locale } from "@/i18n/dict";
-import * as Updates from "expo-updates";
 
 export default function LanguageSettings() {
   const { palette } = useTheme();
-  const { t, locale, setLocale, needsRestart } = useI18n();
+  const { t, locale, setLocale, isRTL } = useI18n();
   const mirror = useSetLocale();
-  const [restartFailed, setRestartFailed] = useState(false);
 
   const change = async (l: Locale) => {
+    // Applies live — the root direction wrapper flips layout instantly, no
+    // restart. We still persist locally and mirror the choice to the server.
     await setLocale(l);
     mirror.mutate(l);
-  };
-
-  const restart = async () => {
-    try {
-      await Updates.reloadAsync();
-    } catch {
-      // Expo Go: updates are disabled — tell the user what to do instead.
-      setRestartFailed(true);
-    }
   };
 
   return (
     <Screen scroll padded header={<AppHeader title={t.settings.language} />}>
       <Card>
-        <Text style={{ color: palette.fgMuted, fontSize: 12, textTransform: "uppercase", fontWeight: "700" }}>
+        <Text
+          style={{
+            color: palette.fgMuted,
+            fontSize: 12,
+            textTransform: "uppercase",
+            fontWeight: "700",
+            textAlign: isRTL ? "right" : "left",
+          }}
+        >
           {t.settings.language}
         </Text>
         <SegmentedControl<Locale>
@@ -47,15 +44,14 @@ export default function LanguageSettings() {
           onChange={change}
         />
       </Card>
-      {needsRestart ? (
-        <Card>
-          <Text style={{ color: palette.fg }}>
-            {restartFailed ? t.settings.restartFailed : t.settings.rtlBanner}
-          </Text>
-          {!restartFailed ? <Button title={t.settings.restartNow} onPress={restart} /> : null}
-        </Card>
-      ) : null}
-      <Text style={{ color: palette.fgMuted, fontSize: 12, marginTop: spacing.sm }}>
+      <Text
+        style={{
+          color: palette.fgMuted,
+          fontSize: 12,
+          marginTop: spacing.sm,
+          textAlign: isRTL ? "right" : "left",
+        }}
+      >
         {t.brand.tagline}
       </Text>
     </Screen>
