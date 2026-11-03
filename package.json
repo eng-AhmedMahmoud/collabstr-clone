@@ -7,6 +7,7 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
     "web": "pnpm --filter @collabstr/web",
     "api": "pnpm --filter @collabstr/api",
     "db:migrate": "pnpm --filter @collabstr/api prisma:migrate",

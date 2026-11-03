@@ -1,10 +1,10 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { useColorScheme } from "react-native";
 import * as SecureStore from "expo-secure-store";
 import { colors, type Palette } from "./index";
+import { DEFAULT_THEME_MODE, resolveThemeMode, type ThemeMode } from "./mode";
 
-export type ThemeMode = "system" | "light" | "dark";
-export type Scheme = "light" | "dark";
+export { THEME_MODES, type ThemeMode } from "./mode";
+export type Scheme = ThemeMode;
 
 type ThemeCtx = {
   palette: Palette;
@@ -16,21 +16,17 @@ type ThemeCtx = {
 const Ctx = createContext<ThemeCtx | null>(null);
 const KEY = "nakhla.themeMode";
 
-function isMode(v: unknown): v is ThemeMode {
-  return v === "system" || v === "light" || v === "dark";
-}
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const system = useColorScheme();
-  const [mode, setModeState] = useState<ThemeMode>("system");
+  const [mode, setModeState] = useState<ThemeMode>(DEFAULT_THEME_MODE);
 
   useEffect(() => {
     SecureStore.getItemAsync(KEY).then((v) => {
-      if (isMode(v)) setModeState(v);
+      const m = resolveThemeMode(v);
+      setModeState(m);
+      // Rewrite a legacy "system" (or any unknown value) as the resolved mode.
+      if (v !== null && v !== m) SecureStore.setItemAsync(KEY, m).catch(() => {});
     });
   }, []);
-
-  const scheme: Scheme = mode === "system" ? (system === "dark" ? "dark" : "light") : mode;
 
   const setMode = useCallback(async (m: ThemeMode) => {
     await SecureStore.setItemAsync(KEY, m);
@@ -38,8 +34,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo<ThemeCtx>(
-    () => ({ palette: colors[scheme], scheme, mode, setMode }),
-    [scheme, mode, setMode],
+    () => ({ palette: colors[mode], scheme: mode, mode, setMode }),
+    [mode, setMode],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

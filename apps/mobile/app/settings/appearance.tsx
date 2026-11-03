@@ -1,14 +1,13 @@
-import { Text, View } from "react-native";
+import { Text } from "react-native";
 import { Screen } from "@/components/Screen";
 import { AppHeader } from "@/components/AppHeader";
 import { Card } from "@/components/Card";
 import { SegmentedControl } from "@/components/SegmentedControl";
-import { useTheme, type ThemeMode } from "@/theme/context";
+import { useTheme, THEME_MODES, type ThemeMode } from "@/theme/context";
 import { useI18n } from "@/i18n/context";
-import { spacing } from "@/theme";
 
 export default function AppearanceSettings() {
-  const { palette, mode, setMode, scheme } = useTheme();
+  const { palette, mode, setMode } = useTheme();
   const { t, isRTL } = useI18n();
   const align = isRTL ? "right" : "left";
   return (
@@ -18,19 +17,14 @@ export default function AppearanceSettings() {
           {t.settings.appearance}
         </Text>
         <SegmentedControl<ThemeMode>
-          options={[
-            { value: "system", label: t.settings.modeSystem },
-            { value: "light", label: t.settings.modeLight },
-            { value: "dark", label: t.settings.modeDark },
-          ] as const}
+          options={THEME_MODES.map((value) => ({
+            value,
+            label: value === "light" ? t.settings.modeLight : t.settings.modeDark,
+            icon: value === "light" ? ("sunny-outline" as const) : ("moon-outline" as const),
+          }))}
           value={mode}
           onChange={setMode}
         />
-        <View style={{ marginTop: spacing.sm }}>
-          <Text style={{ color: palette.fgMuted, fontSize: 12, textAlign: align }}>
-            {t.settings.modeSystem} → {scheme}
-          </Text>
-        </View>
       </Card>
     </Screen>
   );

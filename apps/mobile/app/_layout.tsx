@@ -9,7 +9,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/auth/context";
-import { ThemeProvider } from "@/theme/context";
+import { ThemeProvider, useTheme } from "@/theme/context";
 import { I18nProvider, useI18n } from "@/i18n/context";
 import { ToastProvider } from "@/components/Toast";
 import { queryClient } from "@/api/queryClient";
@@ -19,9 +19,11 @@ import { queryClient } from "@/api/queryClient";
 // start/end for the subtree — RTL applies live, no native reload needed.
 function DirectionRoot() {
   const { dir } = useI18n();
+  const { scheme } = useTheme();
   return (
     <View style={{ flex: 1, direction: dir }}>
-      <StatusBar style="auto" />
+      {/* Follow the in-app theme, not the OS ("auto" would track the device). */}
+      <StatusBar style={scheme === "dark" ? "light" : "dark"} />
       <Stack screenOptions={{ headerShown: false }} />
     </View>
   );
