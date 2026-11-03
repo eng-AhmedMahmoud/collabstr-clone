@@ -1,32 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
-type Mode = "light" | "dark";
+import { DEFAULT_THEME, THEME_STORAGE_KEY, resolveTheme, type Theme as Mode } from "@/lib/theme";
 
 function applyMode(mode: Mode) {
   const root = document.documentElement;
   if (mode === "dark") root.classList.add("dark");
   else root.classList.remove("dark");
   try {
-    localStorage.setItem("nakhla.theme", mode);
+    localStorage.setItem(THEME_STORAGE_KEY, mode);
   } catch {}
 }
 
 export function ThemeToggle() {
-  const [mode, setMode] = useState<Mode>("light");
+  const [mode, setMode] = useState<Mode>(DEFAULT_THEME);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     const stored = (() => {
       try {
-        return localStorage.getItem("nakhla.theme") as Mode | null;
+        return localStorage.getItem(THEME_STORAGE_KEY);
       } catch {
         return null;
       }
     })();
-    const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    const initial: Mode = stored ?? prefers;
+    // Unsaved or legacy values fall back to the designed default, never the OS.
+    const initial: Mode = resolveTheme(stored);
     setMode(initial);
     applyMode(initial);
     setMounted(true);

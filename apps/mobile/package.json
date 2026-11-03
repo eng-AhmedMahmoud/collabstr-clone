@@ -9,6 +9,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
+    "test": "node --test 'src/**/*.test.mjs'",
     "lint": "echo 'no lint'"
   },
   "dependencies": {

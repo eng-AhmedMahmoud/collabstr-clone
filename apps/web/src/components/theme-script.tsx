@@ -1,11 +1,5 @@
-const SCRIPT = `(() => {
-  try {
-    var s = localStorage.getItem('nakhla.theme');
-    var m = s || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    if (m === 'dark') document.documentElement.classList.add('dark');
-  } catch (e) {}
-})();`;
+import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
 export function ThemeScript() {
-  return <script dangerouslySetInnerHTML={{ __html: SCRIPT }} />;
+  return <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />;
 }
